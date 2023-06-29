@@ -38,6 +38,10 @@ public class Country {
         this.lastUpdatedBy = lastUpdatedBy;
     }
 
+    Country(int countryId, String countryName, LocalDateTime createdDate, String createdBy, java.sql.Timestamp lastUpdated, String lastUpdatedBy) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
     /**
      * setCountryId
      * @param countryId sets the country id

@@ -43,7 +43,7 @@ public class CountryDB {
 private final Connection conn = FXMain.conn;
     private final String selectAllCountries = "SELECT * FROM countries";
     private PreparedStatement preparedStatement;
-    private ResultSet resultSet
+    private ResultSet resultSet;
     
    
     private ObservableList<Country> countries = FXCollections.observableArrayList();
@@ -56,7 +56,6 @@ private final Connection conn = FXMain.conn;
     }
   
     
-    @Override
     public ObservableList<Country> getAllCountries() throws IOException {
         try {
             while (resultSet.next()) {
@@ -93,6 +92,12 @@ private final Connection conn = FXMain.conn;
             country = new Country(countryId, countryName, createdDate, createdBy, lastUpdated, lastUpdatedBy);
         }
         return country;
+    }
+
+    static class getAllCountries {
+
+        public getAllCountries() {
+        }
     }
     
 }

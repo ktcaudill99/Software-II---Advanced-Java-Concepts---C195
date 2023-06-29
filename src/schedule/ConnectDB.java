@@ -19,11 +19,11 @@ import java.sql.SQLException;
 public class ConnectDB {
     
       //variables used to connect to database
-    private static final String databaseName = "WGU";
+    private static final String databaseName = "wgu";
   //  private static final String DB_URL = "jdbc:mysql://52.206.157.109:3306/" + databaseName;
    private static final String DB_URL = "jdbc:mysql://localhost/" + databaseName;
    private static final String username = "root";
-    private static final String password = "JKLas123";
+   // private static final String password = "";
     private static final String driver = "com.mysql.jdbc.Driver";
     
    static Connection conn;
@@ -31,7 +31,7 @@ public class ConnectDB {
     //establishes connection to the database 
     public static Connection makeConnection() throws ClassNotFoundException, SQLException, Exception{
         Class.forName(driver);
-        conn = DriverManager.getConnection(DB_URL, username, password);
+        conn = DriverManager.getConnection(DB_URL);
         System.out.println("Connection successful.");
         return conn;
     }
