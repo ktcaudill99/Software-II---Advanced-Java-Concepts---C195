@@ -3,14 +3,19 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Katie-BAMF/Documents/NetBeansProjects/sw2/src/schedule/LoginController.java</file>
-            <file>file:/C:/Users/Katie-BAMF/Documents/NetBeansProjects/sw2/src/schedule/ConnectDB.java</file>
-            <file>file:/C:/Users/Katie-BAMF/Documents/NetBeansProjects/sw2/src/schedule/DateAndTime.java</file>
-            <file>file:/C:/Users/Katie-BAMF/Documents/NetBeansProjects/sw2/src/schedule/User.java</file>
-            <file>file:/C:/Users/Katie-BAMF/Documents/NetBeansProjects/sw2/src/schedule/Customer.java</file>
-            <file>file:/C:/Users/Katie-BAMF/Documents/NetBeansProjects/sw2/src/schedule/HomeController.java</file>
-            <file>file:/C:/Users/Katie-BAMF/Documents/NetBeansProjects/sw2/src/schedule/FXMain.java</file>
-            <file>file:/C:/Users/Katie-BAMF/Documents/NetBeansProjects/sw2/src/schedule/AddCustomerController.java</file>
+            <file>file:/home/ubuntu/School/c195/sw2-main/src/schedule/ConnectDB.java</file>
+            <file>file:/home/ubuntu/School/c195/sw2-main/src/schedule/AddCustomerController.java</file>
+            <file>file:/home/ubuntu/School/c195/sw2-main/src/schedule/FXMain.java</file>
+            <file>file:/home/ubuntu/School/c195/sw2-main/src/schedule/HomeController.java</file>
+            <file>file:/home/ubuntu/School/c195/sw2-main/src/schedule/CountryDB.java</file>
+            <file>file:/home/ubuntu/School/c195/sw2-main/src/schedule/LoginController.java</file>
+            <file>file:/home/ubuntu/School/c195/sw2-main/sql/wgu_appointments.sql</file>
+            <file>file:/home/ubuntu/School/c195/sw2-main/src/schedule/User.java</file>
+            <file>file:/home/ubuntu/School/c195/sw2-main/src/schedule/home.fxml</file>
+            <file>file:/home/ubuntu/School/c195/sw2-main/nbproject/project.properties</file>
+            <file>file:/home/ubuntu/School/c195/sw2-main/src/schedule/QueryDatabase.java</file>
+            <file>file:/home/ubuntu/School/c195/sw2-main/src/schedule/login.fxml</file>
+            <file>file:/home/ubuntu/School/c195/sw2-main/src/schedule/DateAndTime.java</file>
         </group>
     </open-files>
 </project-private>
