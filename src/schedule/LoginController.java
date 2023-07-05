@@ -297,29 +297,23 @@ public class LoginController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
         Locale locale = Locale.getDefault();
     }
 
     @FXML
     private void login(ActionEvent event)throws SQLException, IOException {
 
-        String userIdInput = txtUserName.getText();
+        String userName = txtUserName.getText();
         String password = txtPassword.getText();
-        int userID;
-        try {
-            userID = Integer.parseInt(userIdInput);
-        } catch (NumberFormatException e) {
-            return;
-        }
+        int userID = getUserID(userName);
 
         Parent root;
         Stage stage;
         User user = new User();
 
-        if(correctPassword(userID, password)) {
+        if(userID != -1 && correctPassword(userID, password)) {
             user.setUserID(userID);
-            user.setUsername(getUsername(userID));
+            user.setUsername(userName);
 
             loginLog(user.getUsername());
 
@@ -331,25 +325,25 @@ public class LoginController implements Initializable {
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("");
-            alert.setHeaderText("Incorrect User ID or Password");
-            alert.setContentText("Enter valid User ID and Password");
+            alert.setHeaderText("Incorrect Username or Password");
+            alert.setContentText("Enter valid Username and Password");
             Optional<ButtonType> result = alert.showAndWait();
         }
     }
 
-    private String getUsername(int userID) throws SQLException {
-        String userName = "";
+    private int getUserID(String userName) throws SQLException {
+        int userID = -1;
 
         Statement statement = ConnectDB.conn.createStatement();
 
-        String sqlStatement = "SELECT User_Name FROM client_schedule.users WHERE User_ID =" + userID;
+        String sqlStatement = "SELECT User_ID FROM client_schedule.users WHERE User_Name ='" + userName + "'";
 
         ResultSet result = statement.executeQuery(sqlStatement);
 
         while (result.next()) {
-            userName = result.getString("User_Name");
+            userID = result.getInt("User_ID");
         }
-        return userName;
+        return userID;
     }
 
     private boolean correctPassword(int userID, String password) throws SQLException {
