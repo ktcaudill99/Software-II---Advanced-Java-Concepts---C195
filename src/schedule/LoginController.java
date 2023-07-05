@@ -154,7 +154,7 @@ public class LoginController implements Initializable {
         Statement statement = ConnectDB.conn.createStatement();
 
         //write SQL statement
-        String sqlStatement = "SELECT User_ID FROM user WHERE Users ='" + userName + "'";
+        String sqlStatement = "SELECT User_ID FROM client_schedule.users WHERE User_ID ='" + userName + "'";
 
         //create resultset object
         ResultSet result = statement.executeQuery(sqlStatement);
@@ -172,7 +172,7 @@ public class LoginController implements Initializable {
         Statement statement = ConnectDB.conn.createStatement();
 //
         //write SQL statement
-        String sqlStatement = "SELECT password FROM user WHERE userId ='" + userID + "'";;
+        String sqlStatement = "SELECT Password FROM client_schedule.users WHERE User_ID ='" + userID + "'";;
 
         //create resultset object
         ResultSet result = statement.executeQuery(sqlStatement);
