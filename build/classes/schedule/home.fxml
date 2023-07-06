@@ -10,8 +10,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Text?>
 
-
-<AnchorPane id="AnchorPane" prefHeight="548.0" prefWidth="1000.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/16" fx:controller="schedule.HomeController">
+<AnchorPane id="AnchorPane" prefHeight="548.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="schedule.HomeController">
    <children>
       <Pane prefHeight="386.0" prefWidth="1136.0">
          <children>
@@ -47,7 +46,7 @@
       </Pane>
       <Pane layoutX="2.0" layoutY="385.0" prefHeight="317.0" prefWidth="925.0">
          <children>
-            <TableView layoutX="61.0" layoutY="59.0" prefHeight="170.0" prefWidth="822.0">
+            <TableView fx:id="tvCustomer" layoutX="61.0" layoutY="59.0" prefHeight="170.0" prefWidth="822.0">
               <columns>
                 <TableColumn fx:id="customerID" prefWidth="75.0" text="Customer ID" />
                 <TableColumn fx:id="name" prefWidth="75.0" text="Name" />

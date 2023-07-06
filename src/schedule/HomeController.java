@@ -8,17 +8,27 @@ package schedule;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javafx.collections.ObservableList;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+
 import java.util.MissingResourceException;
 
 
@@ -58,17 +68,19 @@ public class HomeController implements Initializable {
     @FXML
     private Button btnAppDel;
     @FXML
-    private TableColumn<?, ?> customerID;
+    private TableView<Customer> tvCustomers;
     @FXML
-    private TableColumn<?, ?> name;
+    private TableColumn<Customer, Integer> customerID;
     @FXML
-    private TableColumn<?, ?> phoneNumber;
+    private TableColumn<Customer, String> name;
     @FXML
-    private TableColumn<?, ?> address;
+    private TableColumn<Customer, String> phoneNumber;
     @FXML
-    private TableColumn<?, ?> state;
+    private TableColumn<Customer, String> address;
     @FXML
-    private TableColumn<?, ?> postal;
+    private TableColumn<Customer, String> state;
+    @FXML
+    private TableColumn<Customer, String> postal;
     @FXML
     private Button btnCustomerAdd;
     @FXML
@@ -80,12 +92,25 @@ public class HomeController implements Initializable {
     @FXML
     private Button logout;
 
+    private static ObservableList<Customer> allCustomers = FXCollections.observableArrayList();
+   // private static ObservableList<Appointment> allAppointments = FXCollections.observableArrayList();
+
+    // private static ObservableList<Appointment> allAppointmentsByMonth = FXCollections.observableArrayList();
+  //  private static ObservableList<Appointment> allAppointmentsByWeek = FXCollections.observableArrayList();
+
+
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        this.customerID.setCellValueFactory(new PropertyValueFactory<>("customerId"));
+        this.name.setCellValueFactory(new PropertyValueFactory<>("customerName"));
+        this.address.setCellValueFactory(new PropertyValueFactory<>("customerAddress"));
+       // this.state.setCellValueFactory(new PropertyValueFactory<>("customerDivision"));
+        this.phoneNumber.setCellValueFactory(new PropertyValueFactory<>("customerPhone"));
+        this.postal.setCellValueFactory(new PropertyValueFactory<>("customerZip"));
+        this.tvCustomers.setItems(getAllCustomers());
     }    
 
     @FXML
@@ -118,5 +143,40 @@ public class HomeController implements Initializable {
     @FXML
     private void deleteCustomerAction(ActionEvent event) {
     }
-    
+
+
+    public static ObservableList<Customer> getAllCustomers() {
+        System.out.println("Retrieving Customer Records");
+        allCustomers.clear();
+
+        try {
+            Statement statement = ConnectDB.conn.createStatement();
+            String query = "SELECT Customer_ID, Customer_Name, Address, Division_ID, Phone, Postal_Code FROM client_schedule.customers";
+            ResultSet results = statement.executeQuery(query);
+
+            while(results.next()) {
+                Customer customer = new Customer(results.getInt("Customer_ID"), results.getString("Customer_Name"), results.getString("Address"), results.getString("Division_ID"), results.getString("Phone"), results.getString("Postal_Code"));
+                allCustomers.add(customer);
+                System.out.println("Customer ID: " + results.getInt("Customer_ID"));
+            }
+
+            statement.close();
+            return allCustomers;
+        } catch (SQLException var4) {
+            System.out.println("Cannot retrieve Customers: " + var4.getMessage());
+            return null;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 }

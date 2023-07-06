@@ -5,57 +5,84 @@
  */
 package schedule;
 
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+
 /**
  *
  * @author Katie-BAMF
  */
 public class Customer {
-    
-    
-    private static int userID; //auto incremented in database
-    private static String username;
-    private static String password;
-    
+
+    private final SimpleIntegerProperty customerId = new SimpleIntegerProperty();
+    private final SimpleStringProperty customerName = new SimpleStringProperty();
+    private final SimpleStringProperty customerAddress = new SimpleStringProperty();
+    private final SimpleStringProperty customerCity = new SimpleStringProperty();
+    private final SimpleStringProperty customerZip = new SimpleStringProperty();
+    private final SimpleStringProperty customerPhone = new SimpleStringProperty();
 
     public Customer() {
-        userID = 0;
-        username = null;
-        password = null;
-
     }
 
-    
-    //constructor
-    public Customer(int userID, String username, String password) {
-        this.userID = userID;
-        this.username = username;
-        this.password = password;
+    public Customer(int id, String name, String address, String city, String phone, String zip) {
+        this.setCustomerId(id);
+        this.setCustomerName(name);
+        this.setCustomerAddress(address);
+        this.setCustomerCity(city);
+        this.setCustomerPhone(phone);
+        this.setCustomerZip(zip);
     }
 
     //getters
-    public static int getUserID() {
-        return userID;
+
+    public int getCustomerId() {
+        return this.customerId.get();
     }
-    
-    public static String  getUsername() {
-        return username;
+
+    public String getCustomerName() {
+        return this.customerName.get();
     }
-     
-    public String getPassword() {
-        return this.password;
+
+    public String getCustomerAddress() {
+        return this.customerAddress.get();
+    }
+
+    public String getCustomerCity() {
+        return this.customerCity.get();
+    }
+
+    public String getCustomerZip() {
+        return this.customerZip.get();
+    }
+
+    public String getCustomerPhone() {
+        return this.customerPhone.get();
     }
 
     //setters
-    public static void setUserID(int userID) {
-        Customer.userID = userID;
+    public void setCustomerId(int id) {
+        this.customerId.set(id);
     }
 
-    public static void setUsername(String username) {
-        Customer.username = username;
+    public void setCustomerName(String name) {
+        this.customerName.set(name);
     }
 
-    public static void setPassword(String password) {
-        Customer.password = password;
+    public void setCustomerAddress(String address) {
+        this.customerAddress.set(address);
     }
-    
+
+    public void setCustomerCity(String city) {
+        this.customerCity.set(city);
+    }
+
+    public void setCustomerZip(String zip) {
+        this.customerZip.set(zip);
+    }
+
+    public void setCustomerPhone(String phone) {
+        this.customerPhone.set(phone);
+    }
+
+
 }
