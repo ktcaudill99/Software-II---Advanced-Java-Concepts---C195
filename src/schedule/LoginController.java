@@ -66,7 +66,34 @@ public class LoginController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Gets the default locale of the system running the application
-        Locale locale = Locale.getDefault();
+       // Locale locale = Locale.getDefault();
+
+        try
+        {
+            // Gets the default locale of the system running the application
+            Locale locale = Locale.getDefault();
+            Locale.setDefault(locale);
+
+            ZoneId zone = ZoneId.systemDefault();
+
+            //removed
+            //loginScreenLocationField.setText(Locale.getDefault().getDisplayCountry());
+  //          loginScreenLocationField.setText(String.valueOf(zone));
+
+            rb = ResourceBundle.getBundle("language/login", Locale.getDefault());
+            title.setText(rb.getString("Login"));
+            lblUserName.setText(rb.getString("username"));
+            lblPassword.setText(rb.getString("password"));
+            btnLogIn.setText(rb.getString("Login"));
+   //         cancelButtonField.setText(rb.getString("Exit"));
+    //        locationText.setText(rb.getString("Location"));
+
+        } catch(MissingResourceException e) {
+            System.out.println("Resource file missing: " + e);
+        } catch (Exception e)
+        {
+            System.out.println(e);
+        }
     }
 
     // Method to handle login operations
