@@ -62,31 +62,35 @@ public class LoginController implements Initializable {
     private final ZoneId newzid = ZoneId.systemDefault();
     private final DateTimeFormatter timeDTF = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT);
 
+    // Gets the default locale of the system running the application
+    public static Locale getCurrentLocale() {
+        return Locale.getDefault();
+    }
+
+    ZoneId zone = ZoneId.systemDefault();
+
+    //removed
+    //loginScreenLocationField.setText(Locale.getDefault().getDisplayCountry());
+    //          loginScreenLocationField.setText(String.valueOf(zone));
+    public void setLoginLabels(ResourceBundle language) {
+        Locale locale =  getCurrentLocale();
+        ResourceBundle rb = ResourceBundle.getBundle("language/login", Locale.getDefault());
+        title.setText(rb.getString("Login"));
+        lblUserName.setText(rb.getString("username"));
+        lblPassword.setText(rb.getString("password"));
+        btnLogIn.setText(rb.getString("Login"));
+        //         cancelButtonField.setText(rb.getString("Exit"));
+        //        locationText.setText(rb.getString("Location"));
+
+    }
     // Initial setup method when the class is instantiated
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Gets the default locale of the system running the application
        // Locale locale = Locale.getDefault();
 
-        try
-        {
-            // Gets the default locale of the system running the application
-            Locale locale = Locale.getDefault();
-            Locale.setDefault(locale);
-
-            ZoneId zone = ZoneId.systemDefault();
-
-            //removed
-            //loginScreenLocationField.setText(Locale.getDefault().getDisplayCountry());
-  //          loginScreenLocationField.setText(String.valueOf(zone));
-
-            rb = ResourceBundle.getBundle("language/login", Locale.getDefault());
-            title.setText(rb.getString("Login"));
-            lblUserName.setText(rb.getString("username"));
-            lblPassword.setText(rb.getString("password"));
-            btnLogIn.setText(rb.getString("Login"));
-   //         cancelButtonField.setText(rb.getString("Exit"));
-    //        locationText.setText(rb.getString("Location"));
+        try {
+            this.setLoginLabels(rb);
 
         } catch(MissingResourceException e) {
             System.out.println("Resource file missing: " + e);
