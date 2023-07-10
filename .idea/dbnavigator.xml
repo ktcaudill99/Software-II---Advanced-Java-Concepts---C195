@@ -24,6 +24,7 @@
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
     <filter-actions connection-id="7764ca6a-8fca-414d-bdf3-2e13b4e7d769" dataset="client_schedule.users" active-filter-id="" />
+    <filter-actions connection-id="7764ca6a-8fca-414d-bdf3-2e13b4e7d769" dataset="client_schedule.appointments" active-filter-id="" />
   </component>
   <component name="DBNavigator.Project.ExecutionManager">
     <retain-sticky-names value="false" />

@@ -17,8 +17,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -26,10 +24,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonBar.ButtonData;
-
-import java.util.MissingResourceException;
+import jdk.jfr.Description;
 
 
 /**
@@ -40,7 +35,7 @@ import java.util.MissingResourceException;
 public class HomeController implements Initializable {
 
     @FXML
-    private TableView<?> tvAppointments;
+    private TableView<Appointment> tvAppointments;
     @FXML
     private TableColumn<?, ?> colAppID;
     @FXML
@@ -93,6 +88,10 @@ public class HomeController implements Initializable {
     private Button logout;
 
     private static ObservableList<Customer> allCustomers = FXCollections.observableArrayList();
+
+    private static ObservableList<Appointment> allAppointments = FXCollections.observableArrayList();
+
+
    // private static ObservableList<Appointment> allAppointments = FXCollections.observableArrayList();
 
     // private static ObservableList<Appointment> allAppointmentsByMonth = FXCollections.observableArrayList();
@@ -111,6 +110,31 @@ public class HomeController implements Initializable {
         this.phoneNumber.setCellValueFactory(new PropertyValueFactory<>("customerPhone"));
         this.postal.setCellValueFactory(new PropertyValueFactory<>("customerZip"));
         this.tvCustomers.setItems(getAllCustomers());
+
+
+
+        this.customerID.setCellValueFactory(new PropertyValueFactory<>("customerId"));
+        this.name.setCellValueFactory(new PropertyValueFactory<>("customerName"));
+        this.address.setCellValueFactory(new PropertyValueFactory<>("customerAddress"));
+        // this.state.setCellValueFactory(new PropertyValueFactory<>("customerDivision"));
+        this.phoneNumber.setCellValueFactory(new PropertyValueFactory<>("customerPhone"));
+        this.postal.setCellValueFactory(new PropertyValueFactory<>("customerZip"));
+        this.tvCustomers.setItems(getAllCustomers());
+
+
+
+        this.colAppID.setCellValueFactory(new PropertyValueFactory<>("appointmentId"));
+        this.colTitle.setCellValueFactory(new PropertyValueFactory<>("appointmentTitle"));
+        this.colDescription.setCellValueFactory(new PropertyValueFactory<>("appointmentDescription"));
+        this.colLocation.setCellValueFactory(new PropertyValueFactory<>("appointmentLocation"));
+        this.colContact.setCellValueFactory(new PropertyValueFactory<>("appointmentContact"));
+        this.colType.setCellValueFactory(new PropertyValueFactory<>("appointmentType"));
+        this.colStart.setCellValueFactory(new PropertyValueFactory<>("appointmentStart"));
+        this.colEnd.setCellValueFactory(new PropertyValueFactory<>("appointmentEnd"));
+        this.colCustomerID.setCellValueFactory(new PropertyValueFactory<>("customerId"));
+        this.colUserID.setCellValueFactory(new PropertyValueFactory<>("userId"));
+        this.tvAppointments.setItems(getAllAppointments());
+
     }    
 
     @FXML
@@ -145,6 +169,8 @@ public class HomeController implements Initializable {
     }
 
 
+
+    //get all customers from database and add to observable list for tableview
     public static ObservableList<Customer> getAllCustomers() {
         System.out.println("Retrieving Customer Records");
         allCustomers.clear();
@@ -166,6 +192,40 @@ public class HomeController implements Initializable {
             System.out.println("Cannot retrieve Customers: " + var4.getMessage());
             return null;
         }
+
+
+
+        }
+
+    public static ObservableList<Appointment> getAllAppointments() {
+        System.out.println("Retrieving Appointment Records");
+        allAppointments.clear();
+
+        try {
+            Statement statement = ConnectDB.conn.createStatement();
+            String query = "SELECT Appointment_ID, Contact_ID, Create_Date, Created_By, Customer_ID, Description, End, Last_Update, Last_Updated_By, Location, Start, Title, Type, User_ID FROM client_schedule.appointments";
+            ResultSet results = statement.executeQuery(query);
+
+
+            while (results.next()) {
+                Appointment appointment = new Appointment(results.getInt("Appointment_ID"), results.getString("Appointment_Title"), results.getString("Appointment_Description"), results.getString("Appointment_Location"), results.getString("Appointment_Contact"));
+                allAppointments.add(appointment);
+                System.out.println("Appointment ID: " + results.getInt("Appointment_ID"));
+            }
+
+            statement.close();
+            return allAppointments;
+        } catch (SQLException var4) {
+            System.out.println("Cannot retrieve Appointments: " + var4.getMessage());
+            return null;
+        }
+
+    }
+
+
+
+
+
     }
 
 
@@ -179,4 +239,4 @@ public class HomeController implements Initializable {
 
 
 
-}
+

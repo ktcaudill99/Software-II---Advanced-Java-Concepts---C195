@@ -21,8 +21,7 @@ public class Appointment {
     public int contactID;
 
     public Appointment(int appointmentID, String appointmentTitle, String appointmentDescription,
-                       String appointmentLocation, String appointmentType, LocalDateTime start, LocalDateTime end, int customerID,
-                       int userID, int contactID) {
+                       String appointmentLocation, String appointmentType) {
         this.appointmentID = appointmentID;
         this.appointmentTitle = appointmentTitle;
         this.appointmentDescription = appointmentDescription;
