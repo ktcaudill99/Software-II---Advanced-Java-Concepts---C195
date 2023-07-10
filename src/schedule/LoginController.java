@@ -72,9 +72,9 @@ public class LoginController implements Initializable {
     //removed
     //loginScreenLocationField.setText(Locale.getDefault().getDisplayCountry());
     //          loginScreenLocationField.setText(String.valueOf(zone));
-    public void setLoginLabels(ResourceBundle language) {
+    public void setLoginLabels(ResourceBundle rb) {
         Locale locale =  getCurrentLocale();
-        ResourceBundle rb = ResourceBundle.getBundle("language/login", Locale.getDefault());
+        rb = ResourceBundle.getBundle("schedule/language", Locale.getDefault());
         title.setText(rb.getString("Login"));
         lblUserName.setText(rb.getString("username"));
         lblPassword.setText(rb.getString("password"));
@@ -90,6 +90,8 @@ public class LoginController implements Initializable {
        // Locale locale = Locale.getDefault();
 
         try {
+            Locale locale = getCurrentLocale();
+            rb = ResourceBundle.getBundle("schedule/language", locale);
             this.setLoginLabels(rb);
 
         } catch(MissingResourceException e) {
