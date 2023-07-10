@@ -114,15 +114,16 @@ public class HomeController implements Initializable {
 
 
         this.colAppID.setCellValueFactory(new PropertyValueFactory<>("appointmentID"));
-        this.colTitle.setCellValueFactory(new PropertyValueFactory<>("appointmentTitle"));
-        this.colDescription.setCellValueFactory(new PropertyValueFactory<>("appointmentDescription"));
-        this.colLocation.setCellValueFactory(new PropertyValueFactory<>("appointmentLocation"));
         this.colContact.setCellValueFactory(new PropertyValueFactory<>("contactID"));
-        this.colType.setCellValueFactory(new PropertyValueFactory<>("appointmentType"));
         this.colStart.setCellValueFactory(new PropertyValueFactory<>("start"));
-        this.colEnd.setCellValueFactory(new PropertyValueFactory<>("end"));
+        this.colTitle.setCellValueFactory(new PropertyValueFactory<>("appointmentTitle"));
+        this.colType.setCellValueFactory(new PropertyValueFactory<>("appointmentType"));
         this.colCustomerID.setCellValueFactory(new PropertyValueFactory<>("customerID"));
+        this.colDescription.setCellValueFactory(new PropertyValueFactory<>("appointmentDescription"));
+        this.colEnd.setCellValueFactory(new PropertyValueFactory<>("end"));
+        this.colLocation.setCellValueFactory(new PropertyValueFactory<>("appointmentLocation"));
         this.colUserID.setCellValueFactory(new PropertyValueFactory<>("userID"));
+
         this.tvAppointments.setItems(getAllAppointments());
 
     }    
@@ -198,7 +199,22 @@ public class HomeController implements Initializable {
 
 
             while (results.next()) {
-                Appointment appointment = new Appointment(results.getInt("Appointment_ID"), results.getInt("Contact_ID"), results.getString("Create_Date"), results.getString("Created_By"), results.getInt("Customer_ID"), results.getString("Description"), results.getString("End"), results.getString("Last_Update"), results.getString("Last_Updated_By"), results.getString("Location"), results.getString("Start"), results.getString("Title"), results.getString("Type"), results.getInt("User_ID"));
+                Appointment appointment = new Appointment(
+                        results.getInt("Appointment_ID"),
+                        results.getInt("Contact_ID"),
+                        results.getTimestamp("Create_Date").toLocalDateTime(), // Convert Timestamp to LocalDateTime
+                        results.getString("Created_By"),
+                        results.getInt("Customer_ID"),
+                        results.getString("Description"),
+                        results.getTimestamp("End").toLocalDateTime(), // Convert Timestamp to LocalDateTime
+                        results.getTimestamp("Last_Update").toLocalDateTime(), // Convert Timestamp to LocalDateTime
+                        results.getString("Last_Updated_By"),
+                        results.getString("Location"),
+                        results.getTimestamp("Start").toLocalDateTime(), // Convert Timestamp to LocalDateTime
+                        results.getString("Title"),
+                        results.getString("Type"),
+                        results.getInt("User_ID")
+                );
                 allAppointments.add(appointment);
                 System.out.println("Appointment ID: " + results.getInt("Appointment_ID"));
             }

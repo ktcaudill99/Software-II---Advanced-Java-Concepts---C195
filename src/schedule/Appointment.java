@@ -1,11 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package schedule;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Appointment {
     private int appointmentID;
@@ -14,119 +17,89 @@ public class Appointment {
     private String appointmentLocation;
     private String appointmentType;
     private LocalDateTime start;
-    //private String start;
     private LocalDateTime end;
-    public int customerID;
-    public int userID;
-    public int contactID;
+    private int customerID;
+    private int userID;
+    private int contactID;
+    private LocalDateTime createDate;
+    private String createdBy;
+    private LocalDateTime lastUpdate;
+    private String lastUpdatedBy;
 
-    public Appointment(int appointmentID, int contactId, String appointmentTitle, String appointmentDescription,
-                       int customerId, String appointmentLocation, String appointmentType, String lastUpdate, String lastUpdatedBy, String location, String start, String title, String type, int userId) {
+
+    public Appointment(int appointmentID, int contactId, LocalDateTime createDate, String createdBy,
+                       int customerId, String appointmentDescription, LocalDateTime end, LocalDateTime lastUpdate,
+                       String lastUpdatedBy, String appointmentLocation, LocalDateTime start, String appointmentTitle,
+                       String appointmentType, int userId) {
         this.appointmentID = appointmentID;
-        this.appointmentTitle = appointmentTitle;
+        this.contactID = contactId;
+        this.createDate = createDate;
+        this.createdBy = createdBy;
+        this.customerID = customerId;
         this.appointmentDescription = appointmentDescription;
-        this.appointmentLocation = appointmentLocation;
-        this.appointmentType = appointmentType;
-        this.start = this.start;
         this.end = end;
-        this.customerID = customerID;
-        this.userID = userID;
-        this.contactID = contactID;
+        this.lastUpdate = lastUpdate;
+        this.lastUpdatedBy = lastUpdatedBy;
+        this.appointmentLocation = appointmentLocation;
+        this.start = start;
+        this.appointmentTitle = appointmentTitle;
+        this.appointmentType = appointmentType;
+        this.userID = userId;
     }
 
-    /**
-     *
-     * @return appointmentID
-     */
     public int getAppointmentID() {
+            return appointmentID;
+        }
 
-        return appointmentID;
+        public String getAppointmentTitle() {
+            return appointmentTitle;
+        }
+
+        public String getAppointmentDescription() {
+            return appointmentDescription;
+        }
+
+        public String getAppointmentLocation() {
+            return appointmentLocation;
+        }
+
+        public String getAppointmentType() {
+            return appointmentType;
+        }
+
+        public LocalDateTime getStart() {
+            return start;
+        }
+
+        public LocalDateTime getEnd() {
+            return end;
+        }
+
+        public int getCustomerID() {
+            return customerID;
+        }
+
+        public int getUserID() {
+            return userID;
+        }
+
+        public int getContactID() {
+            return contactID;
+        }
+
+        public LocalDateTime getCreateDate() {
+            return createDate;
+        }
+
+        public String getCreatedBy() {
+            return createdBy;
+        }
+
+        public LocalDateTime getLastUpdate() {
+            return lastUpdate;
+        }
+
+        public String getLastUpdatedBy() {
+            return lastUpdatedBy;
+        }
     }
-
-    /**
-     *
-     * @return appointmentTitle
-     */
-    public String getAppointmentTitle() {
-
-        return appointmentTitle;
-    }
-
-    /**
-     *
-     * @return appointmentDescription
-     */
-    public String getAppointmentDescription() {
-
-        return appointmentDescription;
-    }
-
-    /**
-     *
-     * @return appointmentLocation
-     */
-    public String getAppointmentLocation() {
-
-        return appointmentLocation;
-    }
-
-    /**
-     *
-     * @return appointmentType
-     */
-    public String getAppointmentType() {
-
-        return appointmentType;
-    }
-
-
-    /**
-     *
-     * @return start
-     */
-    public LocalDateTime getStart() {
-        System.out.println("start " + start);
-
-        return start;
-    }
-
-
-
-    /**
-     *
-     * @return end
-     */
-    public LocalDateTime getEnd() {
-
-        return end;
-    }
-
-    /**
-     *
-     * @return customerID
-     */
-    public int getCustomerID () {
-
-        return customerID;
-    }
-
-    /**
-     *
-     * @return userID
-     */
-    public int getUserID() {
-
-        return userID;
-    }
-
-    /**
-     *
-     * @return contactID
-     */
-    public int getContactID() {
-
-        return contactID;
-    }
-
-}
-
