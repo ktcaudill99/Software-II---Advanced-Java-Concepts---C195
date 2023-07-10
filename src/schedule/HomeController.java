@@ -37,25 +37,25 @@ public class HomeController implements Initializable {
     @FXML
     private TableView<Appointment> tvAppointments;
     @FXML
-    private TableColumn<?, ?> colAppID;
+    private TableColumn<Appointment, Integer> colAppID;
     @FXML
-    private TableColumn<?, ?> colTitle;
+    private TableColumn<Appointment, String> colTitle;
     @FXML
-    private TableColumn<?, ?> colDescription;
+    private TableColumn<Appointment, String> colDescription;
     @FXML
-    private TableColumn<?, ?> colLocation;
+    private TableColumn<Appointment, String> colLocation;
     @FXML
-    private TableColumn<?, ?> colContact;
+    private TableColumn<Appointment, String> colContact;
     @FXML
-    private TableColumn<?, ?> colType;
+    private TableColumn<Appointment, String> colType;
     @FXML
-    private TableColumn<?, ?> colStart;
+    private TableColumn<Appointment, String> colStart;
     @FXML
-    private TableColumn<?, ?> colEnd;
+    private TableColumn<Appointment, String> colEnd;
     @FXML
-    private TableColumn<?, ?> colCustomerID;
+    private TableColumn<Appointment, Integer> colCustomerID;
     @FXML
-    private TableColumn<?, ?> colUserID;
+    private TableColumn<Appointment, Integer> colUserID;
     @FXML
     private Button btnAppAdd;
     @FXML
@@ -113,26 +113,16 @@ public class HomeController implements Initializable {
 
 
 
-        this.customerID.setCellValueFactory(new PropertyValueFactory<>("customerId"));
-        this.name.setCellValueFactory(new PropertyValueFactory<>("customerName"));
-        this.address.setCellValueFactory(new PropertyValueFactory<>("customerAddress"));
-        // this.state.setCellValueFactory(new PropertyValueFactory<>("customerDivision"));
-        this.phoneNumber.setCellValueFactory(new PropertyValueFactory<>("customerPhone"));
-        this.postal.setCellValueFactory(new PropertyValueFactory<>("customerZip"));
-        this.tvCustomers.setItems(getAllCustomers());
-
-
-
-        this.colAppID.setCellValueFactory(new PropertyValueFactory<>("appointmentId"));
+        this.colAppID.setCellValueFactory(new PropertyValueFactory<>("appointmentID"));
         this.colTitle.setCellValueFactory(new PropertyValueFactory<>("appointmentTitle"));
         this.colDescription.setCellValueFactory(new PropertyValueFactory<>("appointmentDescription"));
         this.colLocation.setCellValueFactory(new PropertyValueFactory<>("appointmentLocation"));
-        this.colContact.setCellValueFactory(new PropertyValueFactory<>("appointmentContact"));
+        this.colContact.setCellValueFactory(new PropertyValueFactory<>("contactID"));
         this.colType.setCellValueFactory(new PropertyValueFactory<>("appointmentType"));
-        this.colStart.setCellValueFactory(new PropertyValueFactory<>("appointmentStart"));
-        this.colEnd.setCellValueFactory(new PropertyValueFactory<>("appointmentEnd"));
-        this.colCustomerID.setCellValueFactory(new PropertyValueFactory<>("customerId"));
-        this.colUserID.setCellValueFactory(new PropertyValueFactory<>("userId"));
+        this.colStart.setCellValueFactory(new PropertyValueFactory<>("start"));
+        this.colEnd.setCellValueFactory(new PropertyValueFactory<>("end"));
+        this.colCustomerID.setCellValueFactory(new PropertyValueFactory<>("customerID"));
+        this.colUserID.setCellValueFactory(new PropertyValueFactory<>("userID"));
         this.tvAppointments.setItems(getAllAppointments());
 
     }    
@@ -208,7 +198,7 @@ public class HomeController implements Initializable {
 
 
             while (results.next()) {
-                Appointment appointment = new Appointment(results.getInt("Appointment_ID"), results.getString("Appointment_Title"), results.getString("Appointment_Description"), results.getString("Appointment_Location"), results.getString("Appointment_Contact"));
+                Appointment appointment = new Appointment(results.getInt("Appointment_ID"), results.getInt("Contact_ID"), results.getString("Create_Date"), results.getString("Created_By"), results.getInt("Customer_ID"), results.getString("Description"), results.getString("End"), results.getString("Last_Update"), results.getString("Last_Updated_By"), results.getString("Location"), results.getString("Start"), results.getString("Title"), results.getString("Type"), results.getInt("User_ID"));
                 allAppointments.add(appointment);
                 System.out.println("Appointment ID: " + results.getInt("Appointment_ID"));
             }

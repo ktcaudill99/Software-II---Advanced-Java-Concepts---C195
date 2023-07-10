@@ -20,14 +20,14 @@ public class Appointment {
     public int userID;
     public int contactID;
 
-    public Appointment(int appointmentID, String appointmentTitle, String appointmentDescription,
-                       String appointmentLocation, String appointmentType) {
+    public Appointment(int appointmentID, int contactId, String appointmentTitle, String appointmentDescription,
+                       int customerId, String appointmentLocation, String appointmentType, String lastUpdate, String lastUpdatedBy, String location, String start, String title, String type, int userId) {
         this.appointmentID = appointmentID;
         this.appointmentTitle = appointmentTitle;
         this.appointmentDescription = appointmentDescription;
         this.appointmentLocation = appointmentLocation;
         this.appointmentType = appointmentType;
-        this.start = start;
+        this.start = this.start;
         this.end = end;
         this.customerID = customerID;
         this.userID = userID;
