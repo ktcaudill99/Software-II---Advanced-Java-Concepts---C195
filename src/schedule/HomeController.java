@@ -123,7 +123,7 @@ public class HomeController implements Initializable {
 
 
         this.getAllAppointments();
-        this.tvAppointments.setItems(getAllAppointments());
+        this.tvAppointments.setItems(allAppointments);
 
         this.colAppID.setCellValueFactory(new PropertyValueFactory<>("appointmentID"));
         this.colContact.setCellValueFactory(new PropertyValueFactory<>("contactID"));
@@ -374,7 +374,7 @@ public class HomeController implements Initializable {
     }
 
 
-    public ObservableList<Appointment> getAllAppointments() {
+    public void getAllAppointments() {
         System.out.println("Retrieving Appointment Records");
         allAppointments.clear();
 
@@ -406,10 +406,10 @@ public class HomeController implements Initializable {
             }
 
             statement.close();
-            return allAppointments;
+       //     return allAppointments;
         } catch (SQLException var4) {
             System.out.println("Cannot retrieve Appointments: " + var4.getMessage());
-            return null;
+         //   return null;
         }
 
     }
