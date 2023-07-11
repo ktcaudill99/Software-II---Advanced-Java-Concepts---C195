@@ -22,6 +22,8 @@ public class ModifyAppointmentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-    }    
-    
+    }
+
+    public void setAppointment(Appointment selectedAppointment) {
+    }
 }

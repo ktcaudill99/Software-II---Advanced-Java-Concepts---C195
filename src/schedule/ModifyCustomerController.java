@@ -22,6 +22,8 @@ public class ModifyCustomerController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-    }    
-    
+    }
+
+    public void setCustomer(Customer selectedCustomer) {
+    }
 }

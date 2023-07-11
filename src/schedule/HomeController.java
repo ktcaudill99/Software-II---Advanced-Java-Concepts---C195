@@ -157,11 +157,37 @@ public class HomeController implements Initializable {
     }    
 
     @FXML
-    private void addAppAction(ActionEvent event) {
+    private void addAppAction(ActionEvent event) throws IOException {
+            Stage stage;
+            Parent root;
+            stage = (Stage) btnAppAdd.getScene().getWindow();
+            root = FXMLLoader.load(getClass().getResource("AddAppointment.fxml"));
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
     }
 
     @FXML
-    private void modifyAppAction(ActionEvent event) {
+    private void modifyAppAction(ActionEvent event) throws IOException {
+        if (selectedAppointment != null) {
+            System.out.println("Selected Customer: " + selectedAppointment.getAppointmentID()); // Debug line
+            // Load the modify customer screen
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("ModifyAppointment.fxml"));
+                Parent root = loader.load();
+                Scene scene = new Scene(root);
+                Stage stage = new Stage();
+                stage.setScene(scene);
+                stage.show();
+                // Pass the selected customer to the modify customer controller
+                ModifyAppointmentController controller = loader.getController();
+                controller.setAppointment(selectedAppointment);
+            } catch (IOException ex) {
+                System.err.println("Error loading modify customer screen: " + ex.getMessage()); // Debug line
+            }
+        } else {
+            // Inform the user that no customer was selected
+        }
     }
 
     @FXML
@@ -235,6 +261,26 @@ public class HomeController implements Initializable {
 
     @FXML
     private void modifyCustomerAction(ActionEvent event) {
+        if (selectedCustomer != null) {
+            System.out.println("Selected Customer: " + selectedCustomer.getCustomerId()); // Debug line
+            // Load the modify customer screen
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("ModifyCustomer.fxml"));
+                Parent root = loader.load();
+                Scene scene = new Scene(root);
+                Stage stage = new Stage();
+                stage.setScene(scene);
+                stage.show();
+                // Pass the selected customer to the modify customer controller
+                ModifyCustomerController controller = loader.getController();
+                controller.setCustomer(selectedCustomer);
+            } catch (IOException ex) {
+                System.err.println("Error loading modify customer screen: " + ex.getMessage()); // Debug line
+            }
+        } else {
+            // Inform the user that no customer was selected
+        }
+
     }
 
     @FXML
