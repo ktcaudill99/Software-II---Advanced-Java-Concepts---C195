@@ -7,6 +7,7 @@ package schedule;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.PreparedStatement;
 import java.util.ResourceBundle;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,7 +25,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import jdk.jfr.Description;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 
 
 /**
@@ -87,10 +89,12 @@ public class HomeController implements Initializable {
     @FXML
     private Button logout;
 
-    private static ObservableList<Customer> allCustomers = FXCollections.observableArrayList();
+    private Customer selectedCustomer;
 
-    private static ObservableList<Appointment> allAppointments = FXCollections.observableArrayList();
 
+    private ObservableList<Customer> allCustomers = FXCollections.observableArrayList();
+
+    private ObservableList<Appointment> allAppointments = FXCollections.observableArrayList();
 
    // private static ObservableList<Appointment> allAppointments = FXCollections.observableArrayList();
 
@@ -103,15 +107,21 @@ public class HomeController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+        this.getAllCustomers();
+        this.tvCustomers.setItems(allCustomers);
+
         this.customerID.setCellValueFactory(new PropertyValueFactory<>("customerId"));
         this.name.setCellValueFactory(new PropertyValueFactory<>("customerName"));
         this.address.setCellValueFactory(new PropertyValueFactory<>("customerAddress"));
        // this.state.setCellValueFactory(new PropertyValueFactory<>("customerDivision"));
         this.phoneNumber.setCellValueFactory(new PropertyValueFactory<>("customerPhone"));
         this.postal.setCellValueFactory(new PropertyValueFactory<>("customerZip"));
-        this.tvCustomers.setItems(getAllCustomers());
+      //  this.tvCustomers.setItems(getAllCustomers());
 
 
+        this.getAllAppointments();
+        this.tvAppointments.setItems(getAllAppointments());
 
         this.colAppID.setCellValueFactory(new PropertyValueFactory<>("appointmentID"));
         this.colContact.setCellValueFactory(new PropertyValueFactory<>("contactID"));
@@ -124,7 +134,14 @@ public class HomeController implements Initializable {
         this.colLocation.setCellValueFactory(new PropertyValueFactory<>("appointmentLocation"));
         this.colUserID.setCellValueFactory(new PropertyValueFactory<>("userID"));
 
-        this.tvAppointments.setItems(getAllAppointments());
+
+        this.tvCustomers.getSelectionModel().selectedItemProperty().addListener(
+                (obs, oldSelection, newSelection) -> {
+                    if (newSelection != null) {
+                        this.selectedCustomer = newSelection;
+                    }
+                }
+        );
 
     }    
 
@@ -156,13 +173,75 @@ public class HomeController implements Initializable {
     }
 
     @FXML
-    private void deleteCustomerAction(ActionEvent event) {
+    private void deleteCustomerAction(ActionEvent event) throws SQLException {
+        if (selectedCustomer != null) {
+            System.out.println("Selected Customer: " + selectedCustomer.getCustomerId()); // Debug line
+
+            // Confirm deletion
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation Dialog");
+            alert.setHeaderText("Delete Customer");
+            alert.setContentText("Are you sure you want to delete this customer?");
+
+            // Show alert and wait for user to close it
+            ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
+
+            // Only proceed with deletion if OK was clicked
+            if (result == ButtonType.OK) {
+                String sqlDeleteAppointments = "DELETE FROM client_schedule.appointments WHERE customer_ID = ?";
+                String sqlDeleteCustomer = "DELETE FROM client_schedule.customers WHERE customer_ID = ?";
+                try (PreparedStatement pstmtAppointments = ConnectDB.conn.prepareStatement(sqlDeleteAppointments);
+                     PreparedStatement pstmtCustomer = ConnectDB.conn.prepareStatement(sqlDeleteCustomer)) {
+                    // Start a transaction
+                    ConnectDB.conn.setAutoCommit(false);
+                    // Delete appointments
+                    pstmtAppointments.setInt(1, selectedCustomer.getCustomerId());
+                    int rowsAffectedAppointments = pstmtAppointments.executeUpdate(); // Returns number of affected rows
+                    System.out.println("Appointments Deleted: " + rowsAffectedAppointments); // Debug line
+                    // Delete customer
+                    pstmtCustomer.setInt(1, selectedCustomer.getCustomerId());
+                    int rowsAffectedCustomer = pstmtCustomer.executeUpdate(); // Returns number of affected rows
+                    System.out.println("Customers Deleted: " + rowsAffectedCustomer); // Debug line
+                    // Commit transaction
+                    ConnectDB.conn.commit();
+                    // Remove customer from list
+                    allCustomers.remove(selectedCustomer);
+
+                    // Also, remove this customer's appointments from the allAppointments list
+                    allAppointments.removeIf(appointment -> appointment.getCustomerID() == selectedCustomer.getCustomerId());
+                    tvAppointments.refresh();
+
+                } catch (SQLException ex) {
+                    // If there was an error then rollback the changes
+                    if (ConnectDB.conn != null) {
+                        try {
+                            System.err.println("Transaction is being rolled back due to: " + ex.getMessage()); // Debug line
+                            ConnectDB.conn.rollback();
+                        } catch (SQLException e) {
+                            // Handle exception
+                            System.err.println("Error during rollback: " + e.getMessage()); // Debug line
+                        }
+                    }
+                } finally {
+                    try {
+                        ConnectDB.conn.setAutoCommit(true);
+                    } catch (SQLException e) {
+                        // Handle exception
+                        System.err.println("Error setting auto commit: " + e.getMessage()); // Debug line
+                    }
+                }
+            }
+        } else {
+            // Inform the user that no customer was selected
+        }
     }
 
 
 
+
+
     //get all customers from database and add to observable list for tableview
-    public static ObservableList<Customer> getAllCustomers() {
+    public void getAllCustomers() {
         System.out.println("Retrieving Customer Records");
         allCustomers.clear();
 
@@ -178,17 +257,13 @@ public class HomeController implements Initializable {
             }
 
             statement.close();
-            return allCustomers;
         } catch (SQLException var4) {
             System.out.println("Cannot retrieve Customers: " + var4.getMessage());
-            return null;
         }
+    }
 
 
-
-        }
-
-    public static ObservableList<Appointment> getAllAppointments() {
+    public ObservableList<Appointment> getAllAppointments() {
         System.out.println("Retrieving Appointment Records");
         allAppointments.clear();
 
@@ -228,21 +303,4 @@ public class HomeController implements Initializable {
 
     }
 
-
-
-
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
+}
