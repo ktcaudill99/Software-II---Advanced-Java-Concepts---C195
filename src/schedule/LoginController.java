@@ -24,7 +24,6 @@ import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 
-
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -55,11 +54,6 @@ public class LoginController implements Initializable {
     @FXML
     private Label lblZone;
 
-    // Date and time formatter object
-  //    private final DateTimeFormatter localDTF = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT);
-  //  private final ZoneId localTZ = ZoneId.systemDefault();
-  //  private final ZoneId newzid = ZoneId.systemDefault();
-  //  private final DateTimeFormatter timeDTF = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT);
     @FXML
     private Label zoneLabel;
 
@@ -67,11 +61,8 @@ public class LoginController implements Initializable {
     public static Locale getCurrentLocale() {
         return Locale.getDefault();
     }
- //   ZoneId zone = ZoneId.systemDefault();
 
-    //removed
-    //loginScreenLocationField.setText(Locale.getDefault().getDisplayCountry());
-    //          loginScreenLocationField.setText(String.valueOf(zone));
+    // Set labels for the login form
     public void setLoginLabels(ResourceBundle rb) {
         Locale locale =  getCurrentLocale();
         rb = ResourceBundle.getBundle("schedule/language", Locale.getDefault());
@@ -80,16 +71,11 @@ public class LoginController implements Initializable {
         lblPassword.setText(rb.getString("password"));
         btnLogIn.setText(rb.getString("button.Login"));
         lblZone.setText(rb.getString("label.zoneId"));
-        //         cancelButtonField.setText(rb.getString("Exit"));
-        //        locationText.setText(rb.getString("Location"));
-
     }
     // Initial setup method when the class is instantiated
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Gets the default locale of the system running the application
-       // Locale locale = Locale.getDefault();
-
         try {
             Locale locale = getCurrentLocale();
             rb = ResourceBundle.getBundle("schedule/language", locale);
@@ -103,13 +89,14 @@ public class LoginController implements Initializable {
         }
 
     }
+
+    // Set the system's timezone label
     private void setZoneLabel() {
         ZoneId zoneId = ZoneId.systemDefault();
         lblZone.setText(zoneId.getId());
     }
 
     // Method to handle login operations
-    // When the login button is pressed
     @FXML
     private void login(ActionEvent event)throws SQLException, IOException {
 
@@ -217,8 +204,4 @@ public class LoginController implements Initializable {
         }
     }
 
-    // Method to set the properties of the scene (like timezone)
-//    public void setProperties() {
-//        lblZone.setText(newzid.getId());
-//    }
 }

@@ -1,98 +1,47 @@
-///*
-// * To change this license header, choose License Headers in Project Properties.
-// * To change this template file, choose Tools | Templates
-// * and open the template in the editor.
-// */
-//package schedule;
-//
-//import java.sql.Connection;
-//import java.sql.DriverManager;
-//import java.sql.SQLException;
-//
-//
-///**
-// *
-// * @author Katie-BAMF
-// */
-//public class ConnectDB {
-//
-//      //variables used to connect to database
-//    private static final String databaseName = "wgu";
-//  //  private static final String DB_URL = "jdbc:mysql://52.206.157.109:3306/" + databaseName;
-//   private static final String DB_URL = "jdbc:mysql://localhost/" + databaseName;
-//   private static final String username = "root";
-//    private static final String password = "";
-//    private static final String driver = "com.mysql.cj.jdbc.Driver";  // New driver class for MySQL Connector/J 8.0 and later
-//   static Connection conn;
-//
-//    //establishes connection to the database
-////    public static Connection makeConnection() throws ClassNotFoundException, SQLException, Exception{
-////        Class.forName(driver);
-////        conn = DriverManager.getConnection(DB_URL);
-////        System.out.println("Connection successful.");
-////        return conn;
-////    }
-////
-//
-//    public static Connection makeConnection() {
-//        try {
-//            Class.forName(driver);
-//            conn = DriverManager.getConnection(DB_URL, username, password);
-//            System.out.println("Connected to MySQL Database");
-//            return conn;  // Return the connection object
-//        } catch (ClassNotFoundException e) {
-//            System.out.println("Class Not Found " + e.getMessage());
-//        } catch (SQLException e) {
-//            System.out.println("SQLException: " + e.getMessage());
-//            System.out.println("SQLState: " + e.getSQLState());
-//            System.out.println("VendorError: " + e.getErrorCode());
-//        }
-//        return null;
-//    }
-//
-//
-//    //closes database connection
-//    public static void closeConnection() throws SQLException{
-//        conn.close();
-//        System.out.println("Connection closed.");
-//    }
-//}
+
 package schedule;
 
+// import java.sql package to establish and manage connections with the database
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+// This class is responsible for connecting with the database
 public class ConnectDB {
 
-    private static final String databaseName = "mysql";
+    // These are the properties required to establish the connection with the database
+    private static final String databaseName = "mysql"; // Name of the database
     private static final String DB_URL = "jdbc:mysql://localhost:3306/" + databaseName
             + "?verifyServerCertificate=false"
             + "&useSSL=true"
-            + "&requireSSL=true";
-    private static final String username = "root";
-    private static final String password = "";
-    private static final String driver = "com.mysql.cj.jdbc.Driver";
-    static Connection conn;
+            + "&requireSSL=true"; // URL of the database server
+    private static final String username = "root"; // Username for the database
+    private static final String password = ""; // Password for the database
+    private static final String driver = "com.mysql.cj.jdbc.Driver";  // JDBC driver name
+    static Connection conn; // Connection object to manage the connection
 
+    //This function establishes the connection with the database and returns the connection object
     public static Connection makeConnection() {
+        // Load and register the JDBC driver
         try {
             Class.forName(driver);
-            conn = DriverManager.getConnection(DB_URL, username, password);
+            conn = DriverManager.getConnection(DB_URL, username, password); // Connect to the database
             System.out.println("Connected to MySQL Database");
-            return conn;
+            return conn; // Return the connection object
         } catch (ClassNotFoundException e) {
-            System.out.println("Class Not Found " + e.getMessage());
+            System.out.println("Class Not Found " + e.getMessage()); // Exception handling if the driver class not found
         } catch (SQLException e) {
-            System.out.println("SQLException: " + e.getMessage());
+            System.out.println("SQLException: " + e.getMessage()); // Handle exceptions related to the database connectivity
             System.out.println("SQLState: " + e.getSQLState());
             System.out.println("VendorError: " + e.getErrorCode());
         }
-        return null;
+        return null; // If connection fails, return null
     }
 
+    // This function closes the connection to the database
     public static void closeConnection() throws SQLException{
-        conn.close();
-        System.out.println("Connection closed.");
+        conn.close(); // Close the connection
+        System.out.println("Connection closed."); // Notify that the connection has been closed
     }
 }
+

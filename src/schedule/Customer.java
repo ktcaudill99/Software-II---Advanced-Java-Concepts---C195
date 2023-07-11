@@ -5,6 +5,8 @@
  */
 package schedule;
 
+// Importing JavaFX's properties to provide features for our class
+// such as being observable, having the ability to bind and unbind, etc.
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
@@ -14,6 +16,8 @@ import javafx.beans.property.SimpleStringProperty;
  */
 public class Customer {
 
+    // These are the properties of the class Customer.
+    // They are all defined as private for encapsulation purposes and are made observable to allow listeners to be notified of changes
     private final SimpleIntegerProperty customerId = new SimpleIntegerProperty();
     private final SimpleStringProperty customerName = new SimpleStringProperty();
     private final SimpleStringProperty customerAddress = new SimpleStringProperty();
@@ -21,9 +25,11 @@ public class Customer {
     private final SimpleStringProperty customerZip = new SimpleStringProperty();
     private final SimpleStringProperty customerPhone = new SimpleStringProperty();
 
+    // Default constructor for the Customer class
     public Customer() {
     }
 
+    // Overloaded constructor for the Customer class which allows the caller to specify the customer's details at object creation
     public Customer(int id, String name, String address, String city, String phone, String zip) {
         this.setCustomerId(id);
         this.setCustomerName(name);
@@ -33,8 +39,7 @@ public class Customer {
         this.setCustomerZip(zip);
     }
 
-    //getters
-
+    // Getter methods - these methods provide read access to the object's properties
     public int getCustomerId() {
         return this.customerId.get();
     }
@@ -59,7 +64,7 @@ public class Customer {
         return this.customerPhone.get();
     }
 
-    //setters
+    // Setter methods - these methods provide write access to the object's properties
     public void setCustomerId(int id) {
         this.customerId.set(id);
     }
