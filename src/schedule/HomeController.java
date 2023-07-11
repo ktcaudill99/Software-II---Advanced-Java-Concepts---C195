@@ -91,6 +91,8 @@ public class HomeController implements Initializable {
 
     private Customer selectedCustomer;
 
+    private Appointment selectedAppointment;
+
 
     private ObservableList<Customer> allCustomers = FXCollections.observableArrayList();
 
@@ -143,6 +145,15 @@ public class HomeController implements Initializable {
                 }
         );
 
+
+        this.tvAppointments.getSelectionModel().selectedItemProperty().addListener(
+                (obs, oldSelection, newSelection) -> {
+                    if (newSelection != null) {
+                        this.selectedAppointment = newSelection;
+                    }
+                }
+        );
+
     }    
 
     @FXML
@@ -154,7 +165,61 @@ public class HomeController implements Initializable {
     }
 
     @FXML
-    private void deleteAppAction(ActionEvent event) {
+    private void deleteAppAction(ActionEvent event) throws SQLException {
+        if (selectedAppointment != null) {
+        System.out.println("Selected Appointment: " + selectedAppointment.getAppointmentID()); // Debug line
+
+        // Confirm deletion
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation Dialog");
+        alert.setHeaderText("Delete Appointment");
+        alert.setContentText("Are you sure you want to delete this appointment?");
+
+        // Show alert and wait for user to close it
+        ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
+
+        // Only proceed with deletion if OK was clicked
+        if (result == ButtonType.OK) {
+            String sqlDeleteAppointments = "DELETE FROM client_schedule.appointments WHERE appointment_ID = ?";
+            try (PreparedStatement pstmtAppointments = ConnectDB.conn.prepareStatement(sqlDeleteAppointments))
+                {
+                // Start a transaction
+                ConnectDB.conn.setAutoCommit(false);
+                // Delete appointments
+                pstmtAppointments.setInt(1, selectedAppointment.getAppointmentID());
+                int rowsAffectedAppointments = pstmtAppointments.executeUpdate(); // Returns number of affected rows
+                System.out.println("Appointments Deleted: " + rowsAffectedAppointments); // Debug line
+                // Commit transaction
+                ConnectDB.conn.commit();
+                // Remove appointment from list
+                allAppointments.remove(selectedAppointment);
+
+                // Also, remove this customer's appointments from the allAppointments list
+                tvAppointments.refresh();
+
+            } catch (SQLException ex) {
+                // If there was an error then rollback the changes
+                if (ConnectDB.conn != null) {
+                    try {
+                        System.err.println("Transaction is being rolled back due to: " + ex.getMessage()); // Debug line
+                        ConnectDB.conn.rollback();
+                    } catch (SQLException e) {
+                        // Handle exception
+                        System.err.println("Error during rollback: " + e.getMessage()); // Debug line
+                    }
+                }
+            } finally {
+                try {
+                    ConnectDB.conn.setAutoCommit(true);
+                } catch (SQLException e) {
+                    // Handle exception
+                    System.err.println("Error setting auto commit: " + e.getMessage()); // Debug line
+                }
+            }
+        }
+    } else {
+        // Inform the user that no customer was selected
+    }
     }
 
     @FXML
