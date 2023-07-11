@@ -1,6 +1,7 @@
 
 package schedule;
 
+// These are the necessary imports for the date/time functionality in this class
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -10,27 +11,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+// This class represents an Appointment object with all the necessary fields
 public class Appointment {
-    private int appointmentID;
-    private String appointmentTitle;
-    private String appointmentDescription;
-    private String appointmentLocation;
-    private String appointmentType;
-    private LocalDateTime start;
-    private LocalDateTime end;
-    private int customerID;
-    private int userID;
-    private int contactID;
-    private LocalDateTime createDate;
-    private String createdBy;
-    private LocalDateTime lastUpdate;
-    private String lastUpdatedBy;
+    // These are the instance variables for the Appointment class
+    private int appointmentID; // Unique identifier for an appointment
+    private String appointmentTitle; // Title of the appointment
+    private String appointmentDescription; // Description of the appointment
+    private String appointmentLocation; // Location of the appointment
+    private String appointmentType; // Type of the appointment
+    private LocalDateTime start; // Start time of the appointment
+    private LocalDateTime end; // End time of the appointment
+    private int customerID; // Unique identifier for the customer
+    private int userID; // Unique identifier for the user
+    private int contactID; // Unique identifier for the contact
+    private LocalDateTime createDate; // Creation date of the appointment
+    private String createdBy; // Creator of the appointment
+    private LocalDateTime lastUpdate; // Last update date of the appointment
+    private String lastUpdatedBy; // Last updater of the appointment
 
-
+    // This is the constructor for the Appointment class
     public Appointment(int appointmentID, int contactId, LocalDateTime createDate, String createdBy,
                        int customerId, String appointmentDescription, LocalDateTime end, LocalDateTime lastUpdate,
                        String lastUpdatedBy, String appointmentLocation, LocalDateTime start, String appointmentTitle,
                        String appointmentType, int userId) {
+        // Initialize instance variables
         this.appointmentID = appointmentID;
         this.contactID = contactId;
         this.createDate = createDate;
@@ -47,6 +51,7 @@ public class Appointment {
         this.userID = userId;
     }
 
+    // Below are the getter methods for all instance variables
     public int getAppointmentID() {
             return appointmentID;
         }
