@@ -102,7 +102,7 @@ public class HomeController implements Initializable {
 
     // private static ObservableList<Appointment> allAppointmentsByMonth = FXCollections.observableArrayList();
   //  private static ObservableList<Appointment> allAppointmentsByWeek = FXCollections.observableArrayList();
-
+    private ScheduleService service;
 
     /**
      * Initializes the controller class.
@@ -113,7 +113,7 @@ public class HomeController implements Initializable {
         this.getAllCustomers();
         this.tvCustomers.setItems(allCustomers);
 
-        this.customerID.setCellValueFactory(new PropertyValueFactory<>("customerId"));
+        this.customerID.setCellValueFactory(new PropertyValueFactory<>("customerID"));
         this.name.setCellValueFactory(new PropertyValueFactory<>("customerName"));
         this.address.setCellValueFactory(new PropertyValueFactory<>("customerAddress"));
        // this.state.setCellValueFactory(new PropertyValueFactory<>("customerDivision"));
@@ -123,7 +123,7 @@ public class HomeController implements Initializable {
 
 
         this.getAllAppointments();
-        this.tvAppointments.setItems(allAppointments);
+        this.tvAppointments.setItems(getAllAppointments());
 
         this.colAppID.setCellValueFactory(new PropertyValueFactory<>("appointmentID"));
         this.colContact.setCellValueFactory(new PropertyValueFactory<>("contactID"));
@@ -136,6 +136,8 @@ public class HomeController implements Initializable {
         this.colLocation.setCellValueFactory(new PropertyValueFactory<>("appointmentLocation"));
         this.colUserID.setCellValueFactory(new PropertyValueFactory<>("userID"));
 
+
+        this.service = new ScheduleService(allAppointments, allCustomers);
 
         this.tvCustomers.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldSelection, newSelection) -> {
@@ -262,7 +264,7 @@ public class HomeController implements Initializable {
     @FXML
     private void modifyCustomerAction(ActionEvent event) {
         if (selectedCustomer != null) {
-            System.out.println("Selected Customer: " + selectedCustomer.getCustomerId()); // Debug line
+            System.out.println("Selected Customer: " + selectedCustomer.getCustomerID()); // Debug line
             // Load the modify customer screen
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("ModifyCustomer.fxml"));
@@ -286,7 +288,8 @@ public class HomeController implements Initializable {
     @FXML
     private void deleteCustomerAction(ActionEvent event) throws SQLException {
         if (selectedCustomer != null) {
-            System.out.println("Selected Customer: " + selectedCustomer.getCustomerId()); // Debug line
+            int customerID = selectedCustomer.getCustomerID(); // store customer ID for debugging
+            System.out.println("Selected Customer: " + customerID); // Debug line
 
             // Confirm deletion
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -303,23 +306,34 @@ public class HomeController implements Initializable {
                 String sqlDeleteCustomer = "DELETE FROM client_schedule.customers WHERE customer_ID = ?";
                 try (PreparedStatement pstmtAppointments = ConnectDB.conn.prepareStatement(sqlDeleteAppointments);
                      PreparedStatement pstmtCustomer = ConnectDB.conn.prepareStatement(sqlDeleteCustomer)) {
+
                     // Start a transaction
                     ConnectDB.conn.setAutoCommit(false);
+
                     // Delete appointments
-                    pstmtAppointments.setInt(1, selectedCustomer.getCustomerId());
+                    pstmtAppointments.setInt(1, customerID);
                     int rowsAffectedAppointments = pstmtAppointments.executeUpdate(); // Returns number of affected rows
                     System.out.println("Appointments Deleted: " + rowsAffectedAppointments); // Debug line
+
                     // Delete customer
-                    pstmtCustomer.setInt(1, selectedCustomer.getCustomerId());
+                    pstmtCustomer.setInt(1, customerID);
                     int rowsAffectedCustomer = pstmtCustomer.executeUpdate(); // Returns number of affected rows
                     System.out.println("Customers Deleted: " + rowsAffectedCustomer); // Debug line
+
                     // Commit transaction
                     ConnectDB.conn.commit();
+
                     // Remove customer from list
                     allCustomers.remove(selectedCustomer);
 
                     // Also, remove this customer's appointments from the allAppointments list
-                    allAppointments.removeIf(appointment -> appointment.getCustomerID() == selectedCustomer.getCustomerId());
+                    allAppointments.removeIf(appointment -> {
+                        boolean isRemoved = appointment.getCustomerID() == customerID;
+                        if (isRemoved) {
+                            System.out.println("Removing appointment with ID: " + appointment.getAppointmentID());
+                        }
+                        return isRemoved;
+                    });
                     tvAppointments.refresh();
 
                 } catch (SQLException ex) {
@@ -351,6 +365,7 @@ public class HomeController implements Initializable {
 
 
 
+
     //get all customers from database and add to observable list for tableview
     public void getAllCustomers() {
         System.out.println("Retrieving Customer Records");
@@ -374,7 +389,7 @@ public class HomeController implements Initializable {
     }
 
 
-    public void getAllAppointments() {
+    public ObservableList<Appointment> getAllAppointments() {
         System.out.println("Retrieving Appointment Records");
         allAppointments.clear();
 
@@ -406,10 +421,10 @@ public class HomeController implements Initializable {
             }
 
             statement.close();
-       //     return allAppointments;
+            return allAppointments;
         } catch (SQLException var4) {
             System.out.println("Cannot retrieve Appointments: " + var4.getMessage());
-         //   return null;
+            return null;
         }
 
     }

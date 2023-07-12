@@ -18,7 +18,7 @@ public class Customer {
 
     // These are the properties of the class Customer.
     // They are all defined as private for encapsulation purposes and are made observable to allow listeners to be notified of changes
-    private final SimpleIntegerProperty customerId = new SimpleIntegerProperty();
+    private final SimpleIntegerProperty customerID = new SimpleIntegerProperty();
     private final SimpleStringProperty customerName = new SimpleStringProperty();
     private final SimpleStringProperty customerAddress = new SimpleStringProperty();
     private final SimpleStringProperty customerCity = new SimpleStringProperty();
@@ -31,7 +31,7 @@ public class Customer {
 
     // Overloaded constructor for the Customer class which allows the caller to specify the customer's details at object creation
     public Customer(int id, String name, String address, String city, String phone, String zip) {
-        this.setCustomerId(id);
+        this.setCustomerID(id);
         this.setCustomerName(name);
         this.setCustomerAddress(address);
         this.setCustomerCity(city);
@@ -40,8 +40,8 @@ public class Customer {
     }
 
     // Getter methods - these methods provide read access to the object's properties
-    public int getCustomerId() {
-        return this.customerId.get();
+    public int getCustomerID() {
+        return this.customerID.get();
     }
 
     public String getCustomerName() {
@@ -65,8 +65,8 @@ public class Customer {
     }
 
     // Setter methods - these methods provide write access to the object's properties
-    public void setCustomerId(int id) {
-        this.customerId.set(id);
+    public void setCustomerID(int id) {
+        this.customerID.set(id);
     }
 
     public void setCustomerName(String name) {
