@@ -9,17 +9,13 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
 import javafx.fxml.Initializable;
 import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 
-/**
- * FXML Controller class
- *
- * @author Katie-BAMF
- */
 public class AddCustomerController implements Initializable {
 
     @FXML
@@ -35,32 +31,39 @@ public class AddCustomerController implements Initializable {
     private TextField phoneField;
 
     @FXML
-    private ComboBox<String> divisionBox;
+    private ComboBox<FirstLevelDivisions> divisionBox;
 
     @FXML
-    private ComboBox<String> countryBox;
+    private ComboBox<Country> countryBox;
 
     private ConnectDB ConnectDB = new ConnectDB();
 
-    /**
-     * Initializes the controller class.
-     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         loadCountries();
+        countryBox.setOnAction(this::loadDivisions);
     }
+
     private void loadCountries() {
         try {
             List<Country> countries = ConnectDB.getAllCountries();
-
-            for (Country country : countries) {
-                countryBox.getItems().add(country.getCountry());
-            }
+            countryBox.setItems(FXCollections.observableArrayList(countries));
         } catch (SQLException ex) {
             System.err.println("Error while loading countries: " + ex.getMessage());
         }
     }
 
+    private void loadDivisions(ActionEvent event) {
+        Country selectedCountry = countryBox.getSelectionModel().getSelectedItem();
+        if (selectedCountry != null) {
+            try {
+                List<FirstLevelDivisions> divisions = ConnectDB.getAllDivisionsByCountryId(selectedCountry.getCountryId());
+                divisionBox.setItems(FXCollections.observableArrayList(divisions));
+            } catch (SQLException ex) {
+                System.err.println("Error while loading divisions: " + ex.getMessage());
+            }
+        }
+    }
 
     @FXML
     public void saveCustomer(ActionEvent event) {
@@ -68,19 +71,20 @@ public class AddCustomerController implements Initializable {
         String address = addressField.getText();
         String postalCode = postalCodeField.getText();
         String phone = phoneField.getText();
-        String division = divisionBox.getSelectionModel().getSelectedItem();
-        String country = countryBox.getSelectionModel().getSelectedItem();
+        FirstLevelDivisions division = divisionBox.getSelectionModel().getSelectedItem();
+        Country country = countryBox.getSelectionModel().getSelectedItem();
 
-        // Create a new Customer object with the data
-        Customer newCustomer = new Customer(0, name, address, division, phone, postalCode);
+        if (division != null && country != null) {
+            // Create a new Customer object with the data
+            Customer newCustomer = new Customer(0, name, address, division.getDivision(), phone, postalCode);
 
-        // Here, we just pass the data to a database service
-        // In real life, you would want to do some data validation before this
-        try {
-            ConnectDB.saveCustomer(newCustomer);
-        } catch (SQLException ex) {
-            System.err.println("Error while saving appointment: " + ex.getMessage());
+            // Here, we just pass the data to a database service
+            // In real life, you would want to do some data validation before this
+            try {
+                ConnectDB.saveCustomer(newCustomer);
+            } catch (SQLException ex) {
+                System.err.println("Error while saving customer: " + ex.getMessage());
+            }
         }
-
     }
 }

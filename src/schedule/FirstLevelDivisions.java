@@ -1,13 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package schedule;
 
 /**
  * FirstLevelDivisions
- * @author
  * Definitions to be used by the system for the First_Level_Divisions table
  */
 public class FirstLevelDivisions {
@@ -19,9 +13,8 @@ public class FirstLevelDivisions {
     private String lastUpdated;
     private String lastUpdatedBy;
     private int countryId;
-    
-    
-    public FirstLevelDivisions(){
+
+    public FirstLevelDivisions() {
     }
 
     public FirstLevelDivisions(int divisionId, String division, int countryId) {
@@ -29,8 +22,8 @@ public class FirstLevelDivisions {
         this.division = division;
         this.countryId = countryId;
     }
-    
-    public FirstLevelDivisions(int divisionId, String division, String createDate, String createdBy, String lastUpdated, 
+
+    public FirstLevelDivisions(int divisionId, String division, String createDate, String createdBy, String lastUpdated,
                                String lastUpdatedBy, int countryId) {
         this.divisionId = divisionId;
         this.division = division;
@@ -41,11 +34,11 @@ public class FirstLevelDivisions {
         this.countryId = countryId;
     }
 
-    public FirstLevelDivisions(int divisionId, String division){
+    public FirstLevelDivisions(int divisionId, String division) {
         this.divisionId = divisionId;
         this.division = division;
     }
-    
+
     public int getDivisionId() {
         return divisionId;
     }
@@ -61,7 +54,7 @@ public class FirstLevelDivisions {
     public void setDivision(String division) {
         this.division = division;
     }
-    
+
     public String getCreateDate() {
         return createDate;
     }
@@ -69,7 +62,7 @@ public class FirstLevelDivisions {
     public void setCreateDate(String createDate) {
         this.createDate = createDate;
     }
-    
+
     public String getCreatedBy() {
         return createdBy;
     }
@@ -94,11 +87,11 @@ public class FirstLevelDivisions {
         this.lastUpdatedBy = lastUpdatedBy;
     }
 
-    public int getDivisionID(){
+    public int getDivisionID() {
         return divisionId;
     }
-    
-    public void setDivisionID(int divisionId){
+
+    public void setDivisionID(int divisionId) {
         this.divisionId = divisionId;
     }
 
@@ -114,5 +107,4 @@ public class FirstLevelDivisions {
     public void setCountryId(int countryId) {
         this.countryId = countryId;
     }
-    
 }

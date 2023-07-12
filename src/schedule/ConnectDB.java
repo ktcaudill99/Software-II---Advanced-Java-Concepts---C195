@@ -79,6 +79,30 @@ public class ConnectDB {
         }
     }
 
+    public static List<FirstLevelDivisions> getAllDivisionsByCountryId(int countryId) throws SQLException {
+        String query = "SELECT * FROM client_schedule.first_level_divisions WHERE COUNTRY_ID = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, countryId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                List<FirstLevelDivisions> divisions = new ArrayList<>();
+                while (rs.next()) {
+                    FirstLevelDivisions division = new FirstLevelDivisions(
+                            rs.getInt("Division_ID"),
+                            rs.getString("Division"),
+                            rs.getTimestamp("Create_Date").toString(),
+                            rs.getString("Created_By"),
+                            rs.getTimestamp("Last_Update").toString(),
+                            rs.getString("Last_Updated_By"),
+                            rs.getInt("COUNTRY_ID"));
+                    divisions.add(division);
+                }
+                return divisions;
+            }
+        }
+    }
+
+
     // This function closes the connection to the database
     public static void closeConnection() throws SQLException{
         conn.close(); // Close the connection
