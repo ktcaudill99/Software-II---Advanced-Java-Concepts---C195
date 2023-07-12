@@ -89,5 +89,4 @@ public class Customer {
         this.customerPhone.set(phone);
     }
 
-
 }

@@ -2,9 +2,10 @@
 package schedule;
 
 // import java.sql package to establish and manage connections with the database
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 
 // This class is responsible for connecting with the database
 public class ConnectDB {
@@ -18,6 +19,7 @@ public class ConnectDB {
     private static final String username = "root"; // Username for the database
     private static final String password = ""; // Password for the database
     private static final String driver = "com.mysql.cj.jdbc.Driver";  // JDBC driver name
+
     static Connection conn; // Connection object to manage the connection
 
     //This function establishes the connection with the database and returns the connection object
@@ -36,6 +38,45 @@ public class ConnectDB {
             System.out.println("VendorError: " + e.getErrorCode());
         }
         return null; // If connection fails, return null
+    }
+
+    public static void saveCustomer(Customer customer) throws SQLException {
+        String sqlInsertCustomer = "INSERT INTO client_schedule.customers(Customer_Name, Address, Division_ID, Phone, Postal_Code) VALUES(?, ?, ?, ?, ?)";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sqlInsertCustomer)) {
+            pstmt.setString(1, customer.getCustomerName());
+            pstmt.setString(2, customer.getCustomerAddress());
+            pstmt.setString(3, customer.getCustomerCity());
+            pstmt.setString(4, customer.getCustomerPhone());
+            pstmt.setString(5, customer.getCustomerZip());
+            pstmt.executeUpdate();
+            System.out.println("Customer " + customer.getCustomerName() + " has been added to the database.");
+        } catch (SQLException ex) {
+            System.err.println("Error while saving customer: " + ex.getMessage());
+        }
+    }
+
+    public static List<Country> getAllCountries() throws SQLException {
+        String query = "SELECT * FROM client_schedule.countries";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, username, password);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            List<Country> countries = new ArrayList<>();
+            while (rs.next()) {
+                Country country = new Country(
+                        rs.getInt("Country_ID"),
+                        rs.getString("Country"),
+                        rs.getTimestamp("Create_Date").toLocalDateTime(),
+                        rs.getString("Created_By"),
+                        rs.getTimestamp("Last_Update"),
+                        rs.getString("Last_Updated_By"));
+                countries.add(country);
+            }
+
+            return countries;
+        }
     }
 
     // This function closes the connection to the database
