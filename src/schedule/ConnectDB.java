@@ -46,7 +46,7 @@ public class ConnectDB {
         try (PreparedStatement pstmt = conn.prepareStatement(sqlInsertCustomer)) {
             pstmt.setString(1, customer.getCustomerName());
             pstmt.setString(2, customer.getCustomerAddress());
-            pstmt.setString(3, customer.getCustomerCity());
+            pstmt.setInt(3, customer.getCustomerDivision());  // Assuming Customer class has getDivisionId method that returns an integer
             pstmt.setString(4, customer.getCustomerPhone());
             pstmt.setString(5, customer.getCustomerZip());
             pstmt.executeUpdate();

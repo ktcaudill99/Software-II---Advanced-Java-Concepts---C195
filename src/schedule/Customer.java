@@ -21,8 +21,7 @@ public class Customer {
     private final SimpleIntegerProperty customerID = new SimpleIntegerProperty();
     private final SimpleStringProperty customerName = new SimpleStringProperty();
     private final SimpleStringProperty customerAddress = new SimpleStringProperty();
-    private final SimpleStringProperty customerCity = new SimpleStringProperty();
-    private final SimpleStringProperty customerZip = new SimpleStringProperty();
+    private final SimpleIntegerProperty customerDivision = new SimpleIntegerProperty();    private final SimpleStringProperty customerZip = new SimpleStringProperty();
     private final SimpleStringProperty customerPhone = new SimpleStringProperty();
 
     // Default constructor for the Customer class
@@ -30,11 +29,10 @@ public class Customer {
     }
 
     // Overloaded constructor for the Customer class which allows the caller to specify the customer's details at object creation
-    public Customer(int id, String name, String address, String city, String phone, String zip) {
-        this.setCustomerID(id);
+    public Customer(int id, String name, String address, int division, String phone, String zip) {        this.setCustomerID(id);
         this.setCustomerName(name);
         this.setCustomerAddress(address);
-        this.setCustomerCity(city);
+        this.setCustomerDivision(division);
         this.setCustomerPhone(phone);
         this.setCustomerZip(zip);
     }
@@ -52,8 +50,8 @@ public class Customer {
         return this.customerAddress.get();
     }
 
-    public String getCustomerCity() {
-        return this.customerCity.get();
+    public int getCustomerDivision() {
+        return this.customerDivision.get();
     }
 
     public String getCustomerZip() {
@@ -77,8 +75,8 @@ public class Customer {
         this.customerAddress.set(address);
     }
 
-    public void setCustomerCity(String city) {
-        this.customerCity.set(city);
+    public void setCustomerDivision(int division) {
+        this.customerDivision.set(division);
     }
 
     public void setCustomerZip(String zip) {

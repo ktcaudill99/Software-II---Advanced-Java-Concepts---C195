@@ -5,6 +5,7 @@
  */
 package schedule;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
@@ -15,6 +16,16 @@ import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.scene.Node;
+
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Alert.AlertType;
 
 public class AddCustomerController implements Initializable {
 
@@ -66,7 +77,7 @@ public class AddCustomerController implements Initializable {
     }
 
     @FXML
-    public void saveCustomer(ActionEvent event) {
+    public void saveCustomer(ActionEvent event) throws IOException {
         String name = nameField.getText();
         String address = addressField.getText();
         String postalCode = postalCodeField.getText();
@@ -76,15 +87,35 @@ public class AddCustomerController implements Initializable {
 
         if (division != null && country != null) {
             // Create a new Customer object with the data
-            Customer newCustomer = new Customer(0, name, address, division.getDivision(), phone, postalCode);
+            Customer newCustomer = new Customer(0, name, address, division.getDivisionId(), phone, postalCode);
 
             // Here, we just pass the data to a database service
             // In real life, you would want to do some data validation before this
             try {
                 ConnectDB.saveCustomer(newCustomer);
+                // Now we navigate to the home screen
+                Parent homeParent = FXMLLoader.load(getClass().getResource("/schedule/home.fxml"));
+                Scene homeScene = new Scene(homeParent);
+                // This line gets the Stage information
+                Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                window.setScene(homeScene);
+                window.show();
             } catch (SQLException ex) {
                 System.err.println("Error while saving customer: " + ex.getMessage());
             }
+        }
+    }
+    @FXML
+    public void cancelCreation(ActionEvent event) throws IOException {
+        Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to cancel creating customer?", ButtonType.YES, ButtonType.NO);
+        alert.showAndWait();
+
+        if (alert.getResult() == ButtonType.YES) {
+            Parent homeParent = FXMLLoader.load(getClass().getResource("/schedule/home.fxml"));
+            Scene homeScene = new Scene(homeParent);
+            Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            window.setScene(homeScene);
+            window.show();
         }
     }
 }

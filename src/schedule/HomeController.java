@@ -377,7 +377,7 @@ public class HomeController implements Initializable {
             ResultSet results = statement.executeQuery(query);
 
             while(results.next()) {
-                Customer customer = new Customer(results.getInt("Customer_ID"), results.getString("Customer_Name"), results.getString("Address"), results.getString("Division_ID"), results.getString("Phone"), results.getString("Postal_Code"));
+                Customer customer = new Customer(results.getInt("Customer_ID"), results.getString("Customer_Name"), results.getString("Address"), results.getInt("Division_ID"), results.getString("Phone"), results.getString("Postal_Code"));
                 allCustomers.add(customer);
                 System.out.println("Customer ID: " + results.getInt("Customer_ID"));
             }
