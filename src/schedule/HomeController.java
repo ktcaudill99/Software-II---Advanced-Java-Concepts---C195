@@ -12,6 +12,9 @@ import java.util.ResourceBundle;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -27,6 +30,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.util.Callback;
 
 
 /**
@@ -116,7 +120,15 @@ public class HomeController implements Initializable {
         this.customerID.setCellValueFactory(new PropertyValueFactory<>("customerID"));
         this.name.setCellValueFactory(new PropertyValueFactory<>("customerName"));
         this.address.setCellValueFactory(new PropertyValueFactory<>("customerAddress"));
-       // this.state.setCellValueFactory(new PropertyValueFactory<>("customerDivision"));
+        // this.state.setCellValueFactory(new PropertyValueFactory<>("customerDivision"));
+        // here we use a callback to display the division name instead of its id
+        this.state.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Customer, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Customer, String> param) {
+                return new SimpleStringProperty(param.getValue().getCustomerDivision().getDivision());
+            }
+        });
+
         this.phoneNumber.setCellValueFactory(new PropertyValueFactory<>("customerPhone"));
         this.postal.setCellValueFactory(new PropertyValueFactory<>("customerZip"));
       //  this.tvCustomers.setItems(getAllCustomers());
@@ -364,6 +376,26 @@ public class HomeController implements Initializable {
 
 
 
+    public FirstLevelDivisions getFirstLevelDivisionById(int divisionId) {
+        FirstLevelDivisions division = null;
+
+        try {
+            String query = "SELECT * FROM client_schedule.first_level_divisions WHERE Division_ID = ?";
+            PreparedStatement preparedStatement = ConnectDB.conn.prepareStatement(query);
+            preparedStatement.setInt(1, divisionId);
+            ResultSet results = preparedStatement.executeQuery();
+
+            if (results.next()) {
+                division = new FirstLevelDivisions(results.getInt("Division_ID"), results.getString("Division"), results.getInt("Country_ID"));
+            }
+
+            preparedStatement.close();
+        } catch (SQLException e) {
+            System.out.println("Cannot retrieve Division: " + e.getMessage());
+        }
+
+        return division;
+    }
 
 
     //get all customers from database and add to observable list for tableview
@@ -377,9 +409,16 @@ public class HomeController implements Initializable {
             ResultSet results = statement.executeQuery(query);
 
             while(results.next()) {
-                Customer customer = new Customer(results.getInt("Customer_ID"), results.getString("Customer_Name"), results.getString("Address"), results.getInt("Division_ID"), results.getString("Phone"), results.getString("Postal_Code"));
-                allCustomers.add(customer);
-                System.out.println("Customer ID: " + results.getInt("Customer_ID"));
+                int divisionId = results.getInt("Division_ID");
+                FirstLevelDivisions division = getFirstLevelDivisionById(divisionId);
+
+                if (division != null) {
+                    Customer customer = new Customer(results.getInt("Customer_ID"), results.getString("Customer_Name"), results.getString("Address"), division, results.getString("Phone"), results.getString("Postal_Code"));
+                    allCustomers.add(customer);
+                    System.out.println("Customer ID: " + results.getInt("Customer_ID"));
+                } else {
+                    System.out.println("Cannot create customer because division is null for division id: " + divisionId);
+                }
             }
 
             statement.close();
@@ -387,6 +426,7 @@ public class HomeController implements Initializable {
             System.out.println("Cannot retrieve Customers: " + var4.getMessage());
         }
     }
+
 
 
     public ObservableList<Appointment> getAllAppointments() {

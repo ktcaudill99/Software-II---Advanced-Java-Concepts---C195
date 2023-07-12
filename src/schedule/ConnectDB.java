@@ -46,8 +46,15 @@ public class ConnectDB {
         try (PreparedStatement pstmt = conn.prepareStatement(sqlInsertCustomer)) {
             pstmt.setString(1, customer.getCustomerName());
             pstmt.setString(2, customer.getCustomerAddress());
-            pstmt.setInt(3, customer.getCustomerDivision());  // Assuming Customer class has getDivisionId method that returns an integer
-            pstmt.setString(4, customer.getCustomerPhone());
+            FirstLevelDivisions division = customer.getCustomerDivision();
+            if (division != null) {
+                pstmt.setInt(3, division.getDivisionId());
+
+            } else {
+                // Handle the case where the division is null.
+                // Maybe you want to set the division ID to a default value, or throw an exception.
+                throw new SQLException("Customer " + customer.getCustomerName() + " has null division");
+            }            pstmt.setString(4, customer.getCustomerPhone());
             pstmt.setString(5, customer.getCustomerZip());
             pstmt.executeUpdate();
             System.out.println("Customer " + customer.getCustomerName() + " has been added to the database.");
@@ -78,6 +85,7 @@ public class ConnectDB {
             return countries;
         }
     }
+
 
     public static List<FirstLevelDivisions> getAllDivisionsByCountryId(int countryId) throws SQLException {
         String query = "SELECT * FROM client_schedule.first_level_divisions WHERE COUNTRY_ID = ?";

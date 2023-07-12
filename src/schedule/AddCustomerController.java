@@ -84,27 +84,32 @@ public class AddCustomerController implements Initializable {
         String phone = phoneField.getText();
         FirstLevelDivisions division = divisionBox.getSelectionModel().getSelectedItem();
         Country country = countryBox.getSelectionModel().getSelectedItem();
+        // Debugging: check if division is null
+        if (division == null) {
+            System.out.println("No division selected");
+            return;
+        }
 
-        if (division != null && country != null) {
-            // Create a new Customer object with the data
-            Customer newCustomer = new Customer(0, name, address, division.getDivisionId(), phone, postalCode);
+        // Create a new Customer object with the data
+        Customer newCustomer = new Customer(0, name, address, division, phone, postalCode);
 
-            // Here, we just pass the data to a database service
-            // In real life, you would want to do some data validation before this
-            try {
-                ConnectDB.saveCustomer(newCustomer);
-                // Now we navigate to the home screen
-                Parent homeParent = FXMLLoader.load(getClass().getResource("/schedule/home.fxml"));
-                Scene homeScene = new Scene(homeParent);
-                // This line gets the Stage information
-                Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                window.setScene(homeScene);
-                window.show();
-            } catch (SQLException ex) {
-                System.err.println("Error while saving customer: " + ex.getMessage());
-            }
+        // Here, we just pass the data to a database service
+        // In real life, you would want to do some data validation before this
+        try {
+            ConnectDB.saveCustomer(newCustomer);
+            // Now we navigate to the home screen
+            Parent homeParent = FXMLLoader.load(getClass().getResource("/schedule/home.fxml"));
+            Scene homeScene = new Scene(homeParent);
+            // This line gets the Stage information
+            Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            window.setScene(homeScene);
+            window.show();
+        } catch (SQLException ex) {
+            System.err.println("Error while saving customer: " + ex.getMessage());
         }
     }
+
+
     @FXML
     public void cancelCreation(ActionEvent event) throws IOException {
         Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to cancel creating customer?", ButtonType.YES, ButtonType.NO);
