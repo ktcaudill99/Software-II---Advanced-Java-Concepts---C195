@@ -1,5 +1,7 @@
 package schedule;
 
+import java.time.LocalDateTime;
+
 /**
  * FirstLevelDivisions
  * Definitions to be used by the system for the First_Level_Divisions table
@@ -14,7 +16,7 @@ public class FirstLevelDivisions {
     private String lastUpdatedBy;
     private int countryId;
 
-    public FirstLevelDivisions() {
+    public FirstLevelDivisions(int divisionId, String division, LocalDateTime createDate, String createdBy, LocalDateTime lastUpdate, String lastUpdatedBy, int countryId) {
     }
 
     public FirstLevelDivisions(int divisionId, String division, int countryId) {

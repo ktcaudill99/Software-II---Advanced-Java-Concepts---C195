@@ -63,6 +63,27 @@ public class ConnectDB {
         }
     }
 
+    public Country getCountryById(int countryId) throws SQLException {
+        // Placeholder for your actual SQL query to fetch country by ID
+        String query = "SELECT * FROM client_schedule.countries WHERE country_id = ?";
+
+        PreparedStatement statement = conn.prepareStatement(query);
+        statement.setInt(1, countryId);
+
+        ResultSet rs = statement.executeQuery();
+
+        if (rs.next()) {
+            // Assume Country class has a constructor that takes all fields from the countries table
+            Country country = new Country(rs.getInt("country_id"), rs.getString("Country"));
+
+            return country;
+        }
+
+        return null; // Return null if no country found
+    }
+
+
+
     public static List<Country> getAllCountries() throws SQLException {
         String query = "SELECT * FROM client_schedule.countries";
 
@@ -86,6 +107,31 @@ public class ConnectDB {
         }
     }
 
+    public static List<FirstLevelDivisions> getAllDivisions() throws SQLException {
+        String query = "SELECT * FROM client_schedule.first_level_divisions";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, username, password);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            List<FirstLevelDivisions> divisions = new ArrayList<>();
+            while (rs.next()) {
+                FirstLevelDivisions division = new FirstLevelDivisions(
+                        rs.getInt("Division_ID"),
+                        rs.getString("Division"),
+                        rs.getTimestamp("Create_Date").toLocalDateTime(),
+                        rs.getString("Created_By"),
+                        rs.getTimestamp("Last_Update").toLocalDateTime(),
+                        rs.getString("Last_Updated_By"),
+                        rs.getInt("COUNTRY_ID"));
+                divisions.add(division);
+            }
+
+            return divisions;
+        }
+    }
+
+
 
     public static List<FirstLevelDivisions> getAllDivisionsByCountryId(int countryId) throws SQLException {
         String query = "SELECT * FROM client_schedule.first_level_divisions WHERE COUNTRY_ID = ?";
@@ -107,6 +153,28 @@ public class ConnectDB {
                 }
                 return divisions;
             }
+        }
+    }
+
+    public static void updateCustomer(Customer customer) throws SQLException {
+        String sqlUpdateCustomer = "UPDATE client_schedule.customers SET Customer_Name = ?, Address = ?, Division_ID = ?, Phone = ?, Postal_Code = ? WHERE Customer_ID = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sqlUpdateCustomer)) {
+            pstmt.setString(1, customer.getCustomerName());
+            pstmt.setString(2, customer.getCustomerAddress());
+            FirstLevelDivisions division = customer.getCustomerDivision();
+            if (division != null) {
+                pstmt.setInt(3, division.getDivisionId());
+            } else {
+                throw new SQLException("Customer " + customer.getCustomerName() + " has null division");
+            }
+            pstmt.setString(4, customer.getCustomerPhone());
+            pstmt.setString(5, customer.getCustomerZip());
+            pstmt.setInt(6, customer.getCustomerID());  // assuming a method getCustomerId() exists in the Customer class
+            pstmt.executeUpdate();
+            System.out.println("Customer " + customer.getCustomerName() + " has been updated in the database.");
+        } catch (SQLException ex) {
+            System.err.println("Error while updating customer: " + ex.getMessage());
         }
     }
 

@@ -11,6 +11,8 @@ public class Country {
     private Timestamp lastUpdated;
     private String lastUpdatedBy;
 
+
+
     public Country(int countryId, String country, LocalDateTime createdDate, String createdBy, Timestamp lastUpdated, String lastUpdatedBy) {
         this.countryId = countryId;
         this.country = country;
@@ -18,6 +20,9 @@ public class Country {
         this.createdBy = createdBy;
         this.lastUpdated = lastUpdated;
         this.lastUpdatedBy = lastUpdatedBy;
+    }
+
+    public Country(int countryId, String countryName) {
     }
 
     // getters and setters

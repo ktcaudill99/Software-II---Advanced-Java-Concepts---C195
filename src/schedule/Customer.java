@@ -50,6 +50,8 @@ public class Customer {
         this.customerDivision.set(division);
     }
 
+
+
     // A new method to get a FirstLevelDivisions object by its ID
     private FirstLevelDivisions getDivisionById(int divisionId) throws SQLException {
         ConnectDB connDB = new ConnectDB(); // Create ConnectDB object to interact with the database
