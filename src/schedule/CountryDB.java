@@ -34,18 +34,18 @@ import  schedule.FXMain;
  * @author Katie-BAMF
  */
 public class CountryDB {
-    
-    
+
+
     private Stage stage;
     private Parent scene;
-    
-    
+
+
 private final Connection conn = FXMain.conn;
     private final String selectAllCountries = "SELECT * FROM countries";
     private PreparedStatement preparedStatement;
     private ResultSet resultSet;
-    
-   
+
+
     private ObservableList<Country> countries = FXCollections.observableArrayList();
 
     public CountryDB() throws SQLException {
@@ -54,8 +54,8 @@ private final Connection conn = FXMain.conn;
         resultSet = preparedStatement.executeQuery();
 
     }
-  
-    
+
+
     public ObservableList<Country> getAllCountries() throws IOException {
         try {
             while (resultSet.next()) {
@@ -70,10 +70,43 @@ private final Connection conn = FXMain.conn;
             }
         } catch (SQLException e) {
          System.out.println("Error");
-        
+
         }
         return countries;
     }
+
+
+    public String getContactName(int contactId) throws SQLException {
+        String contactName = null;
+        String selectContact = "SELECT * FROM contacts WHERE Contact_ID=" + contactId;
+        QueryDatabase.setPreparedStatement(conn, selectContact);
+        preparedStatement = QueryDatabase.getPreparedStatement();
+        resultSet = preparedStatement.executeQuery();
+
+        while (resultSet.next()) {
+            contactName = resultSet.getString("Contact_Name");
+        }
+        return contactName;
+    }
+
+//
+//    public static void saveAppointment(Appointment appointment) throws SQLException {
+//        String sql = "INSERT INTO appointments (title, description, location, contact_name, type, start_date, end_date, customer_id, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+//
+//        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+//            pstmt.setString(1, appointment.getAppointmentTitle());
+//            pstmt.setString(2, appointment.getAppointmentDescription());
+//            pstmt.setString(3, appointment.getAppointmentLocation());
+//            pstmt.setString(4, appointment.getContactName());
+//            pstmt.setString(5, appointment.getAppointmentType());
+//            pstmt.setTimestamp(6, appointment.getStart());
+//            pstmt.setTimestamp(7, appointment.getEnd());
+//            pstmt.setInt(8, appointment.getCustomerID());
+//            pstmt.setInt(9, appointment.getUserID());
+//
+//            pstmt.executeUpdate();
+//        }
+//    }
 
 
     public Country getCountry(int countryId) throws SQLException {
@@ -99,5 +132,5 @@ private final Connection conn = FXMain.conn;
         public getAllCountries() {
         }
     }
-    
+
 }
