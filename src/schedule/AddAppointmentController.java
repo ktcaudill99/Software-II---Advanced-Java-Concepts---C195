@@ -1,5 +1,6 @@
 package schedule;
 
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,11 +14,14 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.*;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.ResourceBundle;
 
-public class AddAppointmentController  implements Initializable {
+public class AddAppointmentController implements Initializable {
 
     @FXML
     private TextField titleField;
@@ -49,43 +53,22 @@ public class AddAppointmentController  implements Initializable {
     @FXML
     private Text actionStatus;
 
-    // Assuming Appointment object
-    private Appointment selectedAppointment;
-
-    private AddAppointmentController ConnectDB;
-    // Assuming ConnectDB class has a static Connection object
-    //private Connection conn = ConnectDB.conn;
-    //private Connection conn;
-    private ConnectDB Conn = new ConnectDB();
-    @FXML
+    @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Get the connection
-     //   this.conn = ConnectDB.makeConnection();
+        loadContacts();
+    }
 
-        // Populate ComboBox with contact names
-        populateContacts();
-
-        // If we are updating, populate the fields with the selected appointment details
-        if (selectedAppointment != null) {
-            populateFields(selectedAppointment);
+    private void loadContacts() {
+        try {
+            List<String> contacts = ConnectDB.getAllContacts();
+            contactBox.setItems(FXCollections.observableArrayList(contacts));
+        } catch (SQLException ex) {
+            System.err.println("Error while loading contacts: " + ex.getMessage());
         }
     }
 
-    private void populateContacts() {
-        // Sample code. Replace with actual contact fetching logic
-        contactBox.getItems().addAll("Contact 1", "Contact 2", "Contact 3");
-    }
-
-    private void saveAppointment(Appointment appointment) {
-        // Call the method to save the appointment in the database.
-        // This method should be implemented in the ConnectDB class.
-        ConnectDB.saveAppointment(appointment);
-        actionStatus.setText("Appointment " + appointment.getAppointmentID() + " of type " + appointment.getAppointmentType() + " saved.");
-    }
-
-
     @FXML
-    private void handleSaveButtonAction() {
+    public void handleSaveButtonAction(ActionEvent event) throws IOException {
         String title = titleField.getText();
         String description = descriptionField.getText();
         String location = locationField.getText();
@@ -93,65 +76,62 @@ public class AddAppointmentController  implements Initializable {
         String type = typeField.getText();
         LocalDate startDate = startDatePicker.getValue();
         LocalDate endDate = endDatePicker.getValue();
-        String customerId = customerIdField.getText();
-        String userId = userIdField.getText();
+        String customerIdStr = customerIdField.getText();
+        String userIdStr = userIdField.getText();
 
-        // Data validation. You might want to add more checks here.
         if (title.isEmpty() || description.isEmpty() || location.isEmpty() ||
-                contactName.isEmpty() || type.isEmpty() || startDate == null ||
-                endDate == null || customerId.isEmpty() || userId.isEmpty()) {
-
-            actionStatus.setText("Please fill all fields.");
+                contactName == null || contactName.isEmpty() || type.isEmpty() ||
+                startDate == null || endDate == null || customerIdStr.isEmpty() ||
+                userIdStr.isEmpty()) {
+            actionStatus.setText("Please fill all the fields.");
             return;
         }
 
-        // Create new appointment and set the attributes
-        Appointment appointment = new Appointment(Integer.parseInt(customerId), description,
+        int contactId;
+        try {
+            contactId = ConnectDB.getContactIdByName(contactName);
+        } catch (SQLException ex) {
+            actionStatus.setText("Error while getting contact ID: " + ex.getMessage());
+            return;
+        }
+
+        int customerId, userId;
+        try {
+            customerId = Integer.parseInt(customerIdStr);
+            userId = Integer.parseInt(userIdStr);
+        } catch (NumberFormatException ex) {
+            actionStatus.setText("Customer ID and User ID should be valid numbers.");
+            return;
+        }
+
+        // Create a new Appointment object with the data
+        Appointment newAppointment = new Appointment(customerId, description,
                 Timestamp.valueOf(endDate.atStartOfDay()).toLocalDateTime(), location,
                 Timestamp.valueOf(startDate.atStartOfDay()).toLocalDateTime(), title,
-                type, Integer.parseInt(userId));
-        appointment.setAppointmentTitle(title);
-        appointment.setAppointmentDescription(description);
-        appointment.setAppointmentLocation(location);
-        // Assume setContactName() sets the contact name
-        appointment.setContactName(contactName);
-        appointment.setAppointmentType(type);
-        appointment.setStart(Timestamp.valueOf(startDate.atStartOfDay()).toLocalDateTime());
-        appointment.setEnd(Timestamp.valueOf(endDate.atStartOfDay()).toLocalDateTime());
-        appointment.setCustomerID(Integer.parseInt(customerId));
-        appointment.setUserID(Integer.parseInt(userId));
-
-        saveAppointment(appointment);
+                type, userId);
+        newAppointment.setContactId(contactId);
+        // Here, we just pass the data to a database service
+        // In real life, you would want to do some data validation before this
+        try {
+            ConnectDB.saveAppointment(newAppointment, contactId);  // pass in contactId as well
+            // Now we navigate to the home screen
+            Parent homeParent = FXMLLoader.load(getClass().getResource("/schedule/home.fxml"));
+            Scene homeScene = new Scene(homeParent);
+            // This line gets the Stage information
+            Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            window.setScene(homeScene);
+            window.show();
+        } catch (SQLException ex) {
+            System.err.println("Error while saving appointment: " + ex.getMessage());
+        }
     }
 
 
-    private void populateFields(Appointment appointment) {
-//        ContactDB contactDB;
-//        try {
-//            contactDB = new ContactDB();
-//            Contact contact = contactDB.getContact(appointment.getContactID());
-//            if (contact != null) {
-//                contactBox.setValue(contact.getContactName());
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-
-        // Fill the form fields with appointment data
-        titleField.setText(appointment.getAppointmentTitle());
-        descriptionField.setText(appointment.getAppointmentDescription());
-        locationField.setText(appointment.getAppointmentLocation());
-        // Assume getContactName() returns contact name
-        contactBox.setValue(appointment.getContactName());
-        typeField.setText(appointment.getAppointmentType());
-        startDatePicker.setValue(appointment.getStart().toLocalDate());
-        endDatePicker.setValue(appointment.getEnd().toLocalDate());
-        customerIdField.setText(Integer.toString(appointment.getCustomerID()));
-        userIdField.setText(Integer.toString(appointment.getUserID()));
-    }
     @FXML
     public void cancelCreation(ActionEvent event) throws IOException {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to cancel creating this appointment?", ButtonType.YES, ButtonType.NO);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                "Are you sure you want to cancel creating this appointment?",
+                ButtonType.YES, ButtonType.NO);
         alert.showAndWait();
 
         if (alert.getResult() == ButtonType.YES) {
@@ -162,5 +142,4 @@ public class AddAppointmentController  implements Initializable {
             window.show();
         }
     }
-
 }

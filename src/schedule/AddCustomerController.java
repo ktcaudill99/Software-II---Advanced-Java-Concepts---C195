@@ -47,7 +47,7 @@ public class AddCustomerController implements Initializable {
     @FXML
     private ComboBox<Country> countryBox;
 
-    private ConnectDB ConnectDB = new ConnectDB();
+
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {

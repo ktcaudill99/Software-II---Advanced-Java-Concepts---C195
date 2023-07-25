@@ -42,7 +42,7 @@ public class ConnectDB {
         }
         return null; // If connection fails, return null
     }
-    public static void saveAppointment(Appointment appointment) throws SQLException {
+    public static void saveAppointment(Appointment appointment, int contactId) throws SQLException {
         String sqlInsertAppointment = "INSERT INTO client_schedule.appointments(Title, Description, Location, Type, Start, End, Customer_ID, User_ID, Contact_ID, Created_By, Last_Updated_By) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sqlInsertAppointment)) {
@@ -64,6 +64,30 @@ public class ConnectDB {
             System.err.println("Error while saving appointment: " + ex.getMessage());
         }
     }
+
+    public static void saveAppointment(Appointment appointment) throws SQLException {
+        String sqlInsertAppointment = "INSERT INTO client_schedule.appointments(Title, Description, Location, Type, Start, End, Customer_ID, User_ID, Contact_ID, Created_By, Last_Updated_By) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sqlInsertAppointment)) {
+            pstmt.setString(1, appointment.getAppointmentTitle());
+            pstmt.setString(2, appointment.getAppointmentDescription());
+            pstmt.setString(3, appointment.getAppointmentLocation());
+            pstmt.setString(4, appointment.getAppointmentType());
+            pstmt.setTimestamp(5, Timestamp.valueOf(appointment.getStart()));
+            pstmt.setTimestamp(6, Timestamp.valueOf(appointment.getEnd()));
+            pstmt.setInt(7, appointment.getCustomerID());
+            pstmt.setInt(8, appointment.getUserID());
+            pstmt.setInt(9, appointment.getContactId());  // get the contactId from the Appointment object
+            pstmt.setString(10, appointment.getCreatedBy());
+            pstmt.setString(11, appointment.getLastUpdatedBy());
+
+            pstmt.executeUpdate();
+            System.out.println("Appointment " + appointment.getAppointmentTitle() + " has been added to the database.");
+        } catch (SQLException ex) {
+            System.err.println("Error while saving appointment: " + ex.getMessage());
+        }
+    }
+
 
     public class AddAppointmentController {
         // Assuming this method is where you are creating and saving the appointment
@@ -129,6 +153,37 @@ public class ConnectDB {
     }
 
 
+    public static List<String> getAllContacts() throws SQLException {
+        String query = "SELECT Contact_Name FROM client_schedule.contacts"; // Adjust this query to match your actual database
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, username, password);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            List<String> contacts = new ArrayList<>();
+            while (rs.next()) {
+                contacts.add(rs.getString("Contact_Name")); // Adjust this to match your actual database
+            }
+
+            return contacts;
+        }
+    }
+
+    // Add a new method to get a contact ID by contact name
+    public static int getContactIdByName(String contactName) throws SQLException {
+        String query = "SELECT Contact_ID FROM client_schedule.contacts WHERE Contact_Name = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, contactName);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("Contact_ID");
+                } else {
+                    throw new SQLException("No contact found with name: " + contactName);
+                }
+            }
+        }
+    }
 
     public static List<Country> getAllCountries() throws SQLException {
         String query = "SELECT * FROM client_schedule.countries";

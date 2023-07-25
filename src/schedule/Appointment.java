@@ -30,6 +30,16 @@ public class Appointment {
     private LocalDateTime lastUpdate; // Last update date of the appointment
     private String lastUpdatedBy; // Last updater of the appointment
 
+    private int contactId;
+
+    public int getContactId() {
+        return contactId;
+    }
+
+    public void setContactId(int contactId) {
+        this.contactId = contactId;
+    }
+
     // This is the constructor for the Appointment class
     public Appointment(int appointmentID, int contactId, LocalDateTime createDate, String createdBy,
                        int customerId, String appointmentDescription, LocalDateTime end, LocalDateTime lastUpdate,
