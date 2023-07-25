@@ -62,6 +62,17 @@ public class AddAppointmentController implements Initializable {
         try {
             List<String> contacts = ConnectDB.getAllContacts();
             contactBox.setItems(FXCollections.observableArrayList(contacts));
+            contactBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                // When a new contact is selected, get the corresponding customer ID
+                if (newValue != null) {
+                    try {
+                        int customerId = ConnectDB.getCustomerIdByContactName(newValue);
+                        customerIdField.setText(String.valueOf(customerId));
+                    } catch (SQLException ex) {
+                        System.err.println("Error while getting customer ID: " + ex.getMessage());
+                    }
+                }
+            });
         } catch (SQLException ex) {
             System.err.println("Error while loading contacts: " + ex.getMessage());
         }
@@ -95,12 +106,19 @@ public class AddAppointmentController implements Initializable {
             return;
         }
 
-        int customerId, userId;
+        int userId;
         try {
-            customerId = Integer.parseInt(customerIdStr);
             userId = Integer.parseInt(userIdStr);
         } catch (NumberFormatException ex) {
             actionStatus.setText("Customer ID and User ID should be valid numbers.");
+            return;
+        }
+
+        int customerId;
+        try {
+            customerId = ConnectDB.getCustomerIdByContactName(contactName);
+        } catch (SQLException ex) {
+            actionStatus.setText("Error while getting customer ID: " + ex.getMessage());
             return;
         }
 

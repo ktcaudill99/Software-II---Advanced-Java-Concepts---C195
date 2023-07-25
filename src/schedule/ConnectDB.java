@@ -88,6 +88,22 @@ public class ConnectDB {
         }
     }
 
+    public static int getCustomerIdByContactName(String contactName) throws SQLException {
+        // Your SQL query here. This is just an example and may not work for your database
+        String query = "SELECT Contact_ID FROM client_schedule.contacts WHERE Contact_Name = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, contactName);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("Contact_ID");
+                } else {
+                    throw new SQLException("No customer found for contact: " + contactName);
+                }
+            }
+        }
+    }
+
 
     public class AddAppointmentController {
         // Assuming this method is where you are creating and saving the appointment
