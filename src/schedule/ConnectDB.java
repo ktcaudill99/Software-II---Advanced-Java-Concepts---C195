@@ -88,8 +88,23 @@ public class ConnectDB {
         }
     }
 
-    public static int getCustomerIdByContactName(String contactName) throws SQLException {
-        // Your SQL query here. This is just an example and may not work for your database
+    public static boolean checkContactIdExists(int contactId) throws SQLException {
+        String query = "SELECT COUNT(*) FROM client_schedule.contacts WHERE Contact_ID = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, contactId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1);
+                    return count > 0;
+                } else {
+                    return false;
+                }
+            }
+        }
+    }
+
+    public static int getContactIdByContactName(String contactName) throws SQLException {
         String query = "SELECT Contact_ID FROM client_schedule.contacts WHERE Contact_Name = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -98,7 +113,7 @@ public class ConnectDB {
                 if (rs.next()) {
                     return rs.getInt("Contact_ID");
                 } else {
-                    throw new SQLException("No customer found for contact: " + contactName);
+                    throw new SQLException("No contact found with name: " + contactName);
                 }
             }
         }

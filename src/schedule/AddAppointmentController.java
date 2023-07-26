@@ -45,7 +45,7 @@ public class AddAppointmentController implements Initializable {
     private DatePicker endDatePicker;
 
     @FXML
-    private TextField customerIdField;
+    private TextField contactIdField;
 
     @FXML
     private TextField userIdField;
@@ -66,10 +66,10 @@ public class AddAppointmentController implements Initializable {
                 // When a new contact is selected, get the corresponding customer ID
                 if (newValue != null) {
                     try {
-                        int customerId = ConnectDB.getCustomerIdByContactName(newValue);
-                        customerIdField.setText(String.valueOf(customerId));
+                        int contactId = ConnectDB.getContactIdByContactName(newValue);
+                        contactIdField.setText(String.valueOf(contactId));
                     } catch (SQLException ex) {
-                        System.err.println("Error while getting customer ID: " + ex.getMessage());
+                        System.err.println("Error while getting contact ID: " + ex.getMessage());
                     }
                 }
             });
@@ -87,7 +87,7 @@ public class AddAppointmentController implements Initializable {
         String type = typeField.getText();
         LocalDate startDate = startDatePicker.getValue();
         LocalDate endDate = endDatePicker.getValue();
-        String customerIdStr = customerIdField.getText();
+        String customerIdStr = contactIdField.getText();
         String userIdStr = userIdField.getText();
 
         if (title.isEmpty() || description.isEmpty() || location.isEmpty() ||
@@ -98,13 +98,27 @@ public class AddAppointmentController implements Initializable {
             return;
         }
 
+
         int contactId;
         try {
-            contactId = ConnectDB.getContactIdByName(contactName);
+            contactId = ConnectDB.getContactIdByContactName(contactName);
         } catch (SQLException ex) {
             actionStatus.setText("Error while getting contact ID: " + ex.getMessage());
             return;
         }
+
+        try {
+            if (!ConnectDB.checkContactIdExists(contactId)) {
+                // Show an error message that the contactId does not exist
+                actionStatus.setText("Error: The contact does not exist.");
+                return;
+            }
+        } catch (SQLException ex) {
+            // Handle the SQLException
+            actionStatus.setText("Error while checking contact ID: " + ex.getMessage());
+            return;
+        }
+
 
         int userId;
         try {
@@ -114,16 +128,9 @@ public class AddAppointmentController implements Initializable {
             return;
         }
 
-        int customerId;
-        try {
-            customerId = ConnectDB.getCustomerIdByContactName(contactName);
-        } catch (SQLException ex) {
-            actionStatus.setText("Error while getting customer ID: " + ex.getMessage());
-            return;
-        }
 
         // Create a new Appointment object with the data
-        Appointment newAppointment = new Appointment(customerId, description,
+        Appointment newAppointment = new Appointment(contactId, description,
                 Timestamp.valueOf(endDate.atStartOfDay()).toLocalDateTime(), location,
                 Timestamp.valueOf(startDate.atStartOfDay()).toLocalDateTime(), title,
                 type, userId);

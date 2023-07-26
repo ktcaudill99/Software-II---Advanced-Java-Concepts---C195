@@ -18,7 +18,7 @@
                 <TextField fx:id="typeField" promptText="Type" />
                 <DatePicker fx:id="startDatePicker" promptText="Start Date and Time" />
                 <DatePicker fx:id="endDatePicker" promptText="End Date and Time" />
-                <TextField fx:id="customerIdField" promptText="Customer ID" />
+                <TextField fx:id="contactIdField" promptText="Customer ID" />
                 <TextField fx:id="userIdField" promptText="User ID" />
                 <Text fx:id="actionStatus" />
                 <Button fx:id="saveButton" onAction="#handleSaveButtonAction" text="Save" />
