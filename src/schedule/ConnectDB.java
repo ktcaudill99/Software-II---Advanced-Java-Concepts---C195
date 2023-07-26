@@ -52,36 +52,14 @@ public class ConnectDB {
         return dateTime;
     }
 
-    public static void saveAppointment(Appointment appointment, int contactId) throws SQLException {
-
-        if (!checkContactIdExists(appointment.getContactId())) {
-            System.err.println("Cannot save appointment: Contact with id " + appointment.getContactId() + " does not exist.");
-            return;
-        }
-
-        String sqlInsertAppointment = "INSERT INTO client_schedule.appointments(Title, Description, Location, Type, Start, End, Customer_ID, User_ID, Contact_ID, Created_By, Last_Updated_By) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-        try (PreparedStatement pstmt = conn.prepareStatement(sqlInsertAppointment)) {
-            pstmt.setString(1, appointment.getAppointmentTitle());
-            pstmt.setString(2, appointment.getAppointmentDescription());
-            pstmt.setString(3, appointment.getAppointmentLocation());
-            pstmt.setString(4, appointment.getAppointmentType());
-            pstmt.setTimestamp(5, Timestamp.valueOf(appointment.getStart()));
-            pstmt.setTimestamp(6, Timestamp.valueOf(appointment.getEnd()));
-            pstmt.setInt(7, appointment.getCustomerID());
-            pstmt.setInt(8, appointment.getUserID());
-            pstmt.setInt(9, appointment.getContactID());
-            pstmt.setString(10, appointment.getCreatedBy());
-            pstmt.setString(11, appointment.getLastUpdatedBy());
-
-            pstmt.executeUpdate();
-            System.out.println("Appointment " + appointment.getAppointmentTitle() + " has been added to the database.");
-        } catch (SQLException ex) {
-            System.err.println("Error while saving appointment: " + ex.getMessage());
-        }
-    }
 
     public static void saveAppointment(Appointment appointment) throws SQLException {
+
+//        if (!checkContactIdExists(appointment.getContactId())) {
+//            System.err.println("Cannot save appointment: Contact with id " + appointment.getContactId() + " does not exist.");
+//            return;
+//        }
+
 
         String sqlInsertAppointment = "INSERT INTO client_schedule.appointments(Title, Description, Location, Type, Start, End, Customer_ID, User_ID, Contact_ID, Created_By, Last_Updated_By) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -200,6 +178,45 @@ public class ConnectDB {
         return null; // Return null if no country found
     }
 
+
+    // Method to get all customers
+    public static List<String> getAllCustomers() throws SQLException {
+        String query = "SELECT Customer_Name FROM client_schedule.customers";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, username, password);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            List<String> customers = new ArrayList<>();
+            while (rs.next()) {
+                customers.add(rs.getString("Customer_Name"));
+            }
+
+            return customers;
+        }
+    }
+
+    // Method to get the current user ID
+    public static int getCurrentUserId() {
+        // manage the current user in the User class, so you can return the current user ID from there.
+        return User.getUserID();
+    }
+
+    // Method to get a customer ID by customer name
+    public static int getCustomerIdByCustomerName(String customerName) throws SQLException {
+        String query = "SELECT Customer_ID FROM client_schedule.customers WHERE Customer_Name = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, customerName);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("Customer_ID");
+                } else {
+                    return -1; // return -1 if no customer found
+                }
+            }
+        }
+    }
 
     public static List<String> getAllContacts() throws SQLException {
         String query = "SELECT Contact_Name FROM client_schedule.contacts"; // Adjust this query to match your actual database

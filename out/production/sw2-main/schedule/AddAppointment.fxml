@@ -20,7 +20,7 @@
                 <ComboBox fx:id="startTimeBox" promptText="Start Time" />
                 <DatePicker fx:id="endDatePicker" promptText="End Date" />
                 <ComboBox fx:id="endTimeBox" promptText="End Time" />
-                <TextField fx:id="contactIdField" promptText="Customer ID" />
+                <ComboBox fx:id="customerBox" promptText="Customer" />  <!-- New ComboBox for customers -->
                 <TextField fx:id="userIdField" promptText="User ID" />
                 <Text fx:id="actionStatus" />
                 <Button fx:id="saveButton" onAction="#handleSaveButtonAction" text="Save" />

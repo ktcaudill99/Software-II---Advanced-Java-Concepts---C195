@@ -50,8 +50,6 @@ public class AddAppointmentController implements Initializable {
     @FXML
     private DatePicker endDatePicker;
 
-    @FXML
-    private TextField contactIdField;
 
     @FXML
     private TextField userIdField;
@@ -59,30 +57,42 @@ public class AddAppointmentController implements Initializable {
     @FXML
     private Text actionStatus;
 
+    @FXML
+    private ComboBox<String> customerBox;
+
+    @FXML
+    private TextField appointmentIdField;
+
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadContacts();
         loadAppointmentTimes();
-    }
+        loadCustomers();
+        // Disable the User ID field
+        userIdField.setDisable(true);
 
+        // Set the User ID field with the ID of the current logged in user
+        userIdField.setText(String.valueOf(ConnectDB.getCurrentUserId()));
+
+    }
 
     private void loadContacts() {
         try {
             List<String> contacts = ConnectDB.getAllContacts();
             contactBox.setItems(FXCollections.observableArrayList(contacts));
-            contactBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                // When a new contact is selected, get the corresponding customer ID
-                if (newValue != null) {
-                    try {
-                        int contactId = ConnectDB.getContactIdByContactName(newValue);
-                        contactIdField.setText(String.valueOf(contactId));
-                    } catch (SQLException ex) {
-                        System.err.println("Error while getting contact ID: " + ex.getMessage());
-                    }
-                }
-            });
+
         } catch (SQLException ex) {
             System.err.println("Error while loading contacts: " + ex.getMessage());
+        }
+    }
+
+    private void loadCustomers() {
+        try {
+            List<String> customers = ConnectDB.getAllCustomers();
+            customerBox.setItems(FXCollections.observableArrayList(customers));
+        } catch (SQLException ex) {
+            System.err.println("Error while loading customers: " + ex.getMessage());
         }
     }
 
@@ -109,13 +119,14 @@ public class AddAppointmentController implements Initializable {
         LocalDate endDate = endDatePicker.getValue();
         String startTime = startTimeBox.getValue();
         String endTime = endTimeBox.getValue();
-        String customerIdStr = contactIdField.getText();
         String userIdStr = userIdField.getText();
+        String customerName = customerBox.getValue();
+
 
 
         if (title.isEmpty() || description.isEmpty() || location.isEmpty() ||
                 contactName == null || contactName.isEmpty() || type.isEmpty() ||
-                startDate == null || endDate == null || customerIdStr.isEmpty() ||
+                startDate == null || endDate == null ||
                 userIdStr.isEmpty()) {
             actionStatus.setText("Please fill all the fields.");
             return;
@@ -138,6 +149,17 @@ public class AddAppointmentController implements Initializable {
             actionStatus.setText("Error while getting contact ID: " + ex.getMessage());
             return;
         }
+        int customerId;
+        try {
+            customerId = ConnectDB.getCustomerIdByCustomerName(customerName);
+            if (customerId == -1) {
+                actionStatus.setText("Invalid customer name: " + customerName);
+                return;
+            }
+        } catch (SQLException ex) {
+            actionStatus.setText("Error while getting customer ID: " + ex.getMessage());
+            return;
+        }
 
 
         int userId;
@@ -150,12 +172,11 @@ public class AddAppointmentController implements Initializable {
 
 
         // Create a new Appointment object with the data
-        Appointment newAppointment = new Appointment(contactId, description, endDateTime, location, startDateTime, title, type, userId);
-       // newAppointment.setContactId(contactId);
+        Appointment newAppointment = new Appointment(customerId, description, endDateTime, location, startDateTime, title, type, userId);       // newAppointment.setContactId(contactId);
         // Here, we just pass the data to a database service
         // In real life, you would want to do some data validation before this
         try {
-            ConnectDB.saveAppointment(newAppointment, contactId);  // pass in contactId as well
+            ConnectDB.saveAppointment(newAppointment);  // pass in contactId as well
             // Now we navigate to the home screen
             Parent homeParent = FXMLLoader.load(getClass().getResource("/schedule/home.fxml"));
             Scene homeScene = new Scene(homeParent);
