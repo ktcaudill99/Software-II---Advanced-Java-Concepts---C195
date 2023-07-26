@@ -16,8 +16,10 @@
                 <TextField fx:id="locationField" promptText="Location" />
                 <ComboBox fx:id="contactBox" promptText="Contact" />
                 <TextField fx:id="typeField" promptText="Type" />
-                <DatePicker fx:id="startDatePicker" promptText="Start Date and Time" />
-                <DatePicker fx:id="endDatePicker" promptText="End Date and Time" />
+                <DatePicker fx:id="startDatePicker" promptText="Start Date" />
+                <ComboBox fx:id="startTimeBox" promptText="Start Time" />
+                <DatePicker fx:id="endDatePicker" promptText="End Date" />
+                <ComboBox fx:id="endTimeBox" promptText="End Time" />
                 <TextField fx:id="contactIdField" promptText="Customer ID" />
                 <TextField fx:id="userIdField" promptText="User ID" />
                 <Text fx:id="actionStatus" />

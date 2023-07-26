@@ -4,6 +4,7 @@ package schedule;
 // import java.sql package to establish and manage connections with the database
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +43,22 @@ public class ConnectDB {
         }
         return null; // If connection fails, return null
     }
+
+    public static LocalDateTime convertTimeDateUTC(String dateTimeStr) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.parse(dateTimeStr, formatter);
+        // Implement your UTC conversion here
+        // ...
+        return dateTime;
+    }
+
     public static void saveAppointment(Appointment appointment, int contactId) throws SQLException {
+
+        if (!checkContactIdExists(appointment.getContactId())) {
+            System.err.println("Cannot save appointment: Contact with id " + appointment.getContactId() + " does not exist.");
+            return;
+        }
+
         String sqlInsertAppointment = "INSERT INTO client_schedule.appointments(Title, Description, Location, Type, Start, End, Customer_ID, User_ID, Contact_ID, Created_By, Last_Updated_By) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sqlInsertAppointment)) {
@@ -66,6 +82,7 @@ public class ConnectDB {
     }
 
     public static void saveAppointment(Appointment appointment) throws SQLException {
+
         String sqlInsertAppointment = "INSERT INTO client_schedule.appointments(Title, Description, Location, Type, Start, End, Customer_ID, User_ID, Contact_ID, Created_By, Last_Updated_By) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sqlInsertAppointment)) {
@@ -113,7 +130,7 @@ public class ConnectDB {
                 if (rs.next()) {
                     return rs.getInt("Contact_ID");
                 } else {
-                    throw new SQLException("No contact found with name: " + contactName);
+                    return -1; // return -1 if no contact found
                 }
             }
         }

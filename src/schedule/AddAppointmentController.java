@@ -1,6 +1,7 @@
 package schedule;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,6 +19,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -42,6 +45,9 @@ public class AddAppointmentController implements Initializable {
     private DatePicker startDatePicker;
 
     @FXML
+    private ComboBox<String> startTimeBox, endTimeBox;
+
+    @FXML
     private DatePicker endDatePicker;
 
     @FXML
@@ -56,7 +62,9 @@ public class AddAppointmentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadContacts();
+        loadAppointmentTimes();
     }
+
 
     private void loadContacts() {
         try {
@@ -78,6 +86,18 @@ public class AddAppointmentController implements Initializable {
         }
     }
 
+    private void loadAppointmentTimes() {
+        ObservableList<String> appointmentTimes = FXCollections.observableArrayList();
+        LocalTime firstAppointment = LocalTime.MIN.plusHours(8);
+        LocalTime lastAppointment = LocalTime.MAX.minusHours(1).minusMinutes(45);
+        while (firstAppointment.isBefore(lastAppointment)) {
+            appointmentTimes.add(String.valueOf(firstAppointment));
+            firstAppointment = firstAppointment.plusMinutes(15);
+        }
+        startTimeBox.setItems(appointmentTimes);
+        endTimeBox.setItems(appointmentTimes);
+    }
+
     @FXML
     public void handleSaveButtonAction(ActionEvent event) throws IOException {
         String title = titleField.getText();
@@ -87,8 +107,11 @@ public class AddAppointmentController implements Initializable {
         String type = typeField.getText();
         LocalDate startDate = startDatePicker.getValue();
         LocalDate endDate = endDatePicker.getValue();
+        String startTime = startTimeBox.getValue();
+        String endTime = endTimeBox.getValue();
         String customerIdStr = contactIdField.getText();
         String userIdStr = userIdField.getText();
+
 
         if (title.isEmpty() || description.isEmpty() || location.isEmpty() ||
                 contactName == null || contactName.isEmpty() || type.isEmpty() ||
@@ -98,24 +121,21 @@ public class AddAppointmentController implements Initializable {
             return;
         }
 
+        String startDateTimeStr = startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " " + startTime + ":00";
+        String endDateTimeStr = endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " " + endTime + ":00";
+        LocalDateTime startDateTime = ConnectDB.convertTimeDateUTC(startDateTimeStr);
+        LocalDateTime endDateTime = ConnectDB.convertTimeDateUTC(endDateTimeStr);
+
 
         int contactId;
         try {
             contactId = ConnectDB.getContactIdByContactName(contactName);
-        } catch (SQLException ex) {
-            actionStatus.setText("Error while getting contact ID: " + ex.getMessage());
-            return;
-        }
-
-        try {
-            if (!ConnectDB.checkContactIdExists(contactId)) {
-                // Show an error message that the contactId does not exist
-                actionStatus.setText("Error: The contact does not exist.");
+            if (contactId == -1) {
+                actionStatus.setText("Invalid contact name: " + contactName);
                 return;
             }
         } catch (SQLException ex) {
-            // Handle the SQLException
-            actionStatus.setText("Error while checking contact ID: " + ex.getMessage());
+            actionStatus.setText("Error while getting contact ID: " + ex.getMessage());
             return;
         }
 
@@ -130,11 +150,8 @@ public class AddAppointmentController implements Initializable {
 
 
         // Create a new Appointment object with the data
-        Appointment newAppointment = new Appointment(contactId, description,
-                Timestamp.valueOf(endDate.atStartOfDay()).toLocalDateTime(), location,
-                Timestamp.valueOf(startDate.atStartOfDay()).toLocalDateTime(), title,
-                type, userId);
-        newAppointment.setContactId(contactId);
+        Appointment newAppointment = new Appointment(contactId, description, endDateTime, location, startDateTime, title, type, userId);
+       // newAppointment.setContactId(contactId);
         // Here, we just pass the data to a database service
         // In real life, you would want to do some data validation before this
         try {
