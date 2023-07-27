@@ -92,21 +92,6 @@ public class ConnectDB {
         }
     }
 
-    public static boolean checkContactIdExists(int contactId) throws SQLException {
-        String query = "SELECT COUNT(*) FROM client_schedule.contacts WHERE Contact_ID = ?";
-
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, contactId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    int count = rs.getInt(1);
-                    return count > 0;
-                } else {
-                    return false;
-                }
-            }
-        }
-    }
 
     public static int getContactIdByContactName(String contactName) throws SQLException {
         String query = "SELECT Contact_ID FROM client_schedule.contacts WHERE Contact_Name = ?";
@@ -123,33 +108,6 @@ public class ConnectDB {
         }
     }
 
-
-    public void createAndSaveAppointment(String contactName) {
-        int contactId = -1;
-        try {
-            contactId = getContactIdByContactName(contactName);
-        } catch (SQLException e) {
-            System.out.println("Error while getting contact ID: " + e.getMessage());
-        }
-
-        if (contactId == -1) {
-            System.out.println("No contact found with name: " + contactName);
-            return;
-        }
-
-        // Initialize your appointment details here
-        Appointment appointment = new Appointment(contactId, 1, LocalDateTime.now(), "createdBy",
-                1, "description", LocalDateTime.now(), LocalDateTime.now(),
-                "lastUpdatedBy", "location", LocalDateTime.now(), "title",
-                "type", 1);
-
-        // Save the appointment to the database
-        try {
-            saveAppointment(appointment);
-        } catch (SQLException e) {
-            System.out.println("Error while saving the appointment: " + e.getMessage());
-        }
-    }
 
 
     public static void saveCustomer(Customer customer) throws SQLException {
@@ -173,25 +131,6 @@ public class ConnectDB {
         } catch (SQLException ex) {
             System.err.println("Error while saving customer: " + ex.getMessage());
         }
-    }
-
-    public Country getCountryById(int countryId) throws SQLException {
-        // Placeholder for your actual SQL query to fetch country by ID
-        String query = "SELECT * FROM client_schedule.countries WHERE country_id = ?";
-
-        PreparedStatement statement = conn.prepareStatement(query);
-        statement.setInt(1, countryId);
-
-        ResultSet rs = statement.executeQuery();
-
-        if (rs.next()) {
-            // Assume Country class has a constructor that takes all fields from the countries table
-            Country country = new Country(rs.getInt("country_id"), rs.getString("Country"));
-
-            return country;
-        }
-
-        return null; // Return null if no country found
     }
 
 
@@ -247,22 +186,6 @@ public class ConnectDB {
             }
 
             return contacts;
-        }
-    }
-
-    // Add a new method to get a contact ID by contact name
-    public static int getContactIdByName(String contactName) throws SQLException {
-        String query = "SELECT Contact_ID FROM client_schedule.contacts WHERE Contact_Name = ?";
-
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, contactName);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("Contact_ID");
-                } else {
-                    throw new SQLException("No contact found with name: " + contactName);
-                }
-            }
         }
     }
 
@@ -359,34 +282,6 @@ public class ConnectDB {
             System.err.println("Error while updating customer: " + ex.getMessage());
         }
     }
-
-    public FirstLevelDivisions getDivisionById(int divisionId) throws SQLException {
-        // Placeholder for your actual SQL query to fetch division by ID
-        String query = "SELECT * FROM client_schedule.first_level_divisions WHERE Division_ID = ?";
-
-        PreparedStatement statement = conn.prepareStatement(query);
-        statement.setInt(1, divisionId);
-
-        ResultSet rs = statement.executeQuery();
-
-        if (rs.next()) {
-            // Assume FirstLevelDivisions class has a constructor that takes all fields from the first_level_divisions table
-            FirstLevelDivisions division = new FirstLevelDivisions(
-                    rs.getInt("Division_ID"),
-                    rs.getString("Division"),
-                    rs.getTimestamp("Create_Date").toLocalDateTime(),
-                    rs.getString("Created_By"),
-                    rs.getTimestamp("Last_Update").toLocalDateTime(),
-                    rs.getString("Last_Updated_By"),
-                    rs.getInt("COUNTRY_ID"));
-
-            return division;
-        }
-
-        return null; // Return null if no division found
-    }
-
-
 
     // This function closes the connection to the database
     public static void closeConnection() throws SQLException{
