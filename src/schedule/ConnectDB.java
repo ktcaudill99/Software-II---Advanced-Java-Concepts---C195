@@ -52,14 +52,23 @@ public class ConnectDB {
         return dateTime;
     }
 
+    public static String getUserNameById(int userId) throws SQLException {
+        String query = "SELECT User_Name FROM client_schedule.users WHERE User_ID = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("User_Name");
+                } else {
+                    return null; // return null if no user found
+                }
+            }
+        }
+    }
+
 
     public static void saveAppointment(Appointment appointment) throws SQLException {
-
-//        if (!checkContactIdExists(appointment.getContactId())) {
-//            System.err.println("Cannot save appointment: Contact with id " + appointment.getContactId() + " does not exist.");
-//            return;
-//        }
-
 
         String sqlInsertAppointment = "INSERT INTO client_schedule.appointments(Title, Description, Location, Type, Start, End, Customer_ID, User_ID, Contact_ID, Created_By, Last_Updated_By) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -72,7 +81,7 @@ public class ConnectDB {
             pstmt.setTimestamp(6, Timestamp.valueOf(appointment.getEnd()));
             pstmt.setInt(7, appointment.getCustomerID());
             pstmt.setInt(8, appointment.getUserID());
-            pstmt.setInt(9, appointment.getContactId());  // get the contactId from the Appointment object
+            pstmt.setInt(9, appointment.getContactID()); // get the contactId from the Appointment object
             pstmt.setString(10, appointment.getCreatedBy());
             pstmt.setString(11, appointment.getLastUpdatedBy());
 
@@ -115,25 +124,32 @@ public class ConnectDB {
     }
 
 
-    public class AddAppointmentController {
-        // Assuming this method is where you are creating and saving the appointment
-        public void createAndSaveAppointment() {
-            // Initialize your appointment details here
-            // Just as an example, using a constructor that takes these arguments
-            Appointment appointment = new Appointment(1, 1, LocalDateTime.now(), "createdBy",
-                    1, "description", LocalDateTime.now(), LocalDateTime.now(),
-                    "lastUpdatedBy", "location", LocalDateTime.now(), "title",
-                    "type", 1);
+    public void createAndSaveAppointment(String contactName) {
+        int contactId = -1;
+        try {
+            contactId = getContactIdByContactName(contactName);
+        } catch (SQLException e) {
+            System.out.println("Error while getting contact ID: " + e.getMessage());
+        }
 
-            // Save the appointment to the database
-            try {
-                ConnectDB.saveAppointment(appointment);
-            } catch (SQLException e) {
-                System.out.println("Error while saving the appointment: " + e.getMessage());
-            }
+        if (contactId == -1) {
+            System.out.println("No contact found with name: " + contactName);
+            return;
+        }
+
+        // Initialize your appointment details here
+        Appointment appointment = new Appointment(contactId, 1, LocalDateTime.now(), "createdBy",
+                1, "description", LocalDateTime.now(), LocalDateTime.now(),
+                "lastUpdatedBy", "location", LocalDateTime.now(), "title",
+                "type", 1);
+
+        // Save the appointment to the database
+        try {
+            saveAppointment(appointment);
+        } catch (SQLException e) {
+            System.out.println("Error while saving the appointment: " + e.getMessage());
         }
     }
-
 
 
     public static void saveCustomer(Customer customer) throws SQLException {

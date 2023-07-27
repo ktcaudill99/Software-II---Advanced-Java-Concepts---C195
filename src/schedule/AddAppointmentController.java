@@ -121,8 +121,8 @@ public class AddAppointmentController implements Initializable {
         String endTime = endTimeBox.getValue();
         String userIdStr = userIdField.getText();
         String customerName = customerBox.getValue();
-
-
+        LocalDateTime now = LocalDateTime.now();
+      //  String currentUser = ConnectDB.getUserNameById(int userId);
 
         if (title.isEmpty() || description.isEmpty() || location.isEmpty() ||
                 contactName == null || contactName.isEmpty() || type.isEmpty() ||
@@ -136,7 +136,6 @@ public class AddAppointmentController implements Initializable {
         String endDateTimeStr = endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " " + endTime + ":00";
         LocalDateTime startDateTime = ConnectDB.convertTimeDateUTC(startDateTimeStr);
         LocalDateTime endDateTime = ConnectDB.convertTimeDateUTC(endDateTimeStr);
-
 
         int contactId;
         try {
@@ -161,7 +160,6 @@ public class AddAppointmentController implements Initializable {
             return;
         }
 
-
         int userId;
         try {
             userId = Integer.parseInt(userIdStr);
@@ -170,11 +168,21 @@ public class AddAppointmentController implements Initializable {
             return;
         }
 
-
+        String currentUser;
+        try {
+            currentUser = ConnectDB.getUserNameById(userId);
+            if (currentUser == null) {
+                actionStatus.setText("Invalid user ID: " + userId);
+                return;
+            }
+        } catch (SQLException ex) {
+            actionStatus.setText("Error while getting user name: " + ex.getMessage());
+            return;
+        }
         // Create a new Appointment object with the data
-        Appointment newAppointment = new Appointment(customerId, description, endDateTime, location, startDateTime, title, type, userId);       // newAppointment.setContactId(contactId);
-        // Here, we just pass the data to a database service
-        // In real life, you would want to do some data validation before this
+        Appointment newAppointment = new Appointment(0, contactId, now, currentUser, customerId,
+                description, endDateTime, now, currentUser, location, startDateTime, title, type, userId);
+
         try {
             ConnectDB.saveAppointment(newAppointment);  // pass in contactId as well
             // Now we navigate to the home screen
@@ -188,6 +196,7 @@ public class AddAppointmentController implements Initializable {
             System.err.println("Error while saving appointment: " + ex.getMessage());
         }
     }
+
 
 
     @FXML

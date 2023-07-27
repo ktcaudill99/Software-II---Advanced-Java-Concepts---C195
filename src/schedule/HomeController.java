@@ -7,11 +7,9 @@ package schedule;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.PreparedStatement;
+import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ResourceBundle;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -444,18 +442,28 @@ public class HomeController implements Initializable {
 
 
             while (results.next()) {
+                Timestamp createDate = results.getTimestamp("Create_Date");
+                Timestamp endDate = results.getTimestamp("End");
+                Timestamp lastUpdate = results.getTimestamp("Last_Update");
+                Timestamp startDate = results.getTimestamp("Start");
+
+                LocalDateTime createDateTime = createDate != null ? createDate.toLocalDateTime() : null;
+                LocalDateTime endDateTime = endDate != null ? endDate.toLocalDateTime() : null;
+                LocalDateTime lastUpdateDateTime = lastUpdate != null ? lastUpdate.toLocalDateTime() : null;
+                LocalDateTime startDateTime = startDate != null ? startDate.toLocalDateTime() : null;
+
                 Appointment appointment = new Appointment(
                         results.getInt("Appointment_ID"),
                         results.getInt("Contact_ID"),
-                        results.getTimestamp("Create_Date").toLocalDateTime(), // Convert Timestamp to LocalDateTime
+                        createDateTime, // Use LocalDateTime or null
                         results.getString("Created_By"),
                         results.getInt("Customer_ID"),
                         results.getString("Description"),
-                        results.getTimestamp("End").toLocalDateTime(), // Convert Timestamp to LocalDateTime
-                        results.getTimestamp("Last_Update").toLocalDateTime(), // Convert Timestamp to LocalDateTime
+                        endDateTime, // Use LocalDateTime or null
+                        lastUpdateDateTime, // Use LocalDateTime or null
                         results.getString("Last_Updated_By"),
                         results.getString("Location"),
-                        results.getTimestamp("Start").toLocalDateTime(), // Convert Timestamp to LocalDateTime
+                        startDateTime, // Use LocalDateTime or null
                         results.getString("Title"),
                         results.getString("Type"),
                         results.getInt("User_ID")
