@@ -183,23 +183,27 @@ public class HomeController implements Initializable {
     @FXML
     private void modifyAppAction(ActionEvent event) throws IOException {
         if (selectedAppointment != null) {
-            System.out.println("Selected Customer: " + selectedAppointment.getAppointmentID()); // Debug line
-            // Load the modify customer screen
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("ModifyAppointment.fxml"));
-                Parent root = loader.load();
-                Scene scene = new Scene(root);
-                Stage stage = new Stage();
-                stage.setScene(scene);
-                stage.show();
-                // Pass the selected customer to the modify customer controller
-                ModifyAppointmentController controller = loader.getController();
-                controller.setAppointment(selectedAppointment);
-            } catch (IOException ex) {
-                System.err.println("Error loading modify customer screen: " + ex.getMessage()); // Debug line
-            }
+            System.out.println("Selected Appointment: " + selectedAppointment.getAppointmentID()); // Debug line
+
+            // Load the modify appointment screen
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ModifyAppointment.fxml"));
+            Parent root = loader.load();
+
+            // Pass the selected appointment to the modify appointment controller
+            ModifyAppointmentController controller = loader.getController();
+            controller.setAppointment(selectedAppointment);
+
+            // Set the scene and stage
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.show();
+
+            // Close the current window
+            ((Node)(event.getSource())).getScene().getWindow().hide();
         } else {
-            // Inform the user that no customer was selected
+            // Inform the user that no appointment was selected
+            System.out.println("No appointment selected."); // Debug line
         }
     }
 

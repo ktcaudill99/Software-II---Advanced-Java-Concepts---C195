@@ -44,7 +44,7 @@
     <ComboBox fx:id="customerBox" layoutX="254.0" layoutY="249.0" />
 
     <Label layoutX="119.0" layoutY="84.0" text="Appointment ID:" />
-    <TextField fx:id="appointmentIdField" layoutX="254.0" layoutY="80.0" />
+    <TextField fx:id="appointmentIdField" layoutX="254.0" layoutY="80.0" disable="true" />
 
     <Button layoutX="255.0" layoutY="563.0" onAction="#updateAppointment" text="Update" />
     <Button layoutX="353.0" layoutY="563.0" onAction="#cancelUpdate" text="Cancel" />

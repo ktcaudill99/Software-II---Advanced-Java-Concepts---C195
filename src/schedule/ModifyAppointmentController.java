@@ -12,11 +12,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.css.converter.StringConverter;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -130,7 +132,34 @@ public class ModifyAppointmentController implements Initializable {
 
         // Set the User ID field with the ID of the current logged in user
         userIdField.setText(String.valueOf(ConnectDB.getCurrentUserId()));
+
+        javafx.util.StringConverter<LocalDate> converter = new javafx.util.StringConverter<LocalDate>() {
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+            @Override
+            public String toString(LocalDate date) {
+                if (date != null) {
+                    return dateFormatter.format(date);
+                } else {
+                    return "";
+                }
+            }
+
+            @Override
+            public LocalDate fromString(String string) {
+                try {
+                    return LocalDate.parse(string);
+                } catch (DateTimeParseException e) {
+                    actionStatus.setText("Error: Please enter a valid date.");
+                    return null;
+                }
+            }
+        };
+
+        startDatePicker.setConverter(converter);
+        endDatePicker.setConverter(converter);
     }
+
 
     private void loadContacts() {
         try {
