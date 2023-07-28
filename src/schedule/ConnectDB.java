@@ -282,11 +282,69 @@ public class ConnectDB {
             System.err.println("Error while updating customer: " + ex.getMessage());
         }
     }
+    public static String getContactNameById(int contactId) throws SQLException {
+        String query = "SELECT Contact_Name FROM client_schedule.contacts WHERE Contact_ID = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, contactId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("Contact_Name");
+                } else {
+                    return null; // return null if no contact found
+                }
+            }
+        }
+    }
+
+    public static String getCustomerNameById(int customerId) throws SQLException {
+        String query = "SELECT Customer_Name FROM client_schedule.customers WHERE Customer_ID = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, customerId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("Customer_Name");
+                } else {
+                    return null; // return null if no customer found
+                }
+            }
+        }
+    }
+
+
+    public static void updateAppointment(Appointment updatedAppointment) throws SQLException {
+        String sqlUpdateAppointment = "UPDATE client_schedule.appointments SET Title = ?, Description = ?, Location = ?, Type = ?, Start = ?, End = ?, Customer_ID = ?, User_ID = ?, Contact_ID = ?, Last_Updated_By = ? WHERE Appointment_ID = ?";
+
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sqlUpdateAppointment)) {
+            pstmt.setString(1, updatedAppointment.getAppointmentTitle());
+            pstmt.setString(2, updatedAppointment.getAppointmentDescription());
+            pstmt.setString(3, updatedAppointment.getAppointmentLocation());
+            pstmt.setString(4, updatedAppointment.getAppointmentType());
+            pstmt.setTimestamp(5, Timestamp.valueOf(updatedAppointment.getStart()));
+            pstmt.setTimestamp(6, Timestamp.valueOf(updatedAppointment.getEnd()));
+            pstmt.setInt(7, updatedAppointment.getCustomerID());
+            pstmt.setInt(8, updatedAppointment.getUserID());
+            pstmt.setInt(9, updatedAppointment.getContactID()); // get the contactId from the Appointment object
+            pstmt.setString(10, updatedAppointment.getLastUpdatedBy());
+            pstmt.setInt(11, updatedAppointment.getAppointmentID());
+
+            pstmt.executeUpdate();
+            System.out.println("Appointment " + updatedAppointment.getAppointmentTitle() + " has been updated in the database.");
+        } catch (SQLException ex) {
+            System.err.println("Error while updating appointment: " + ex.getMessage());
+        }
+    }
+
+
 
     // This function closes the connection to the database
     public static void closeConnection() throws SQLException{
         conn.close(); // Close the connection
         System.out.println("Connection closed."); // Notify that the connection has been closed
     }
+
+
 }
 

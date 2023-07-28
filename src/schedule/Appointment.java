@@ -57,7 +57,18 @@ import java.util.List;
             this(0, 0, LocalDateTime.now(), "", customerID, appointmentDescription, end, LocalDateTime.now(),
                     "", appointmentLocation, start, appointmentTitle, appointmentType, userID);
         }
-    // Below are the getter methods for all instance variables
+
+        public Appointment(int appointmentID, String appointmentTitle, String appointmentDescription, String appointmentLocation) {
+            this.appointmentID = appointmentID;
+            this.appointmentTitle = appointmentTitle;
+            this.appointmentDescription = appointmentDescription;
+            this.appointmentLocation = appointmentLocation;
+        }
+
+      //  Appointment updatedAppointment = new Appointment(appointmentToModify.getAppointmentID(), appointmentTitle, appointmentDescription, appointmentLocation);
+
+
+        // Below are the getter methods for all instance variables
     public int getAppointmentID() {
         return appointmentID;
     }
