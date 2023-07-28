@@ -91,25 +91,12 @@ public class HomeController implements Initializable {
     private Button report;
     @FXML
     private Button logout;
-
     private Customer selectedCustomer;
-
     private Appointment selectedAppointment;
-
-
     private ObservableList<Customer> allCustomers = FXCollections.observableArrayList();
-
     private ObservableList<Appointment> allAppointments = FXCollections.observableArrayList();
-
-   // private static ObservableList<Appointment> allAppointments = FXCollections.observableArrayList();
-
-    // private static ObservableList<Appointment> allAppointmentsByMonth = FXCollections.observableArrayList();
-  //  private static ObservableList<Appointment> allAppointmentsByWeek = FXCollections.observableArrayList();
     private ScheduleService service;
 
-    /**
-     * Initializes the controller class.
-     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
@@ -262,6 +249,7 @@ public class HomeController implements Initializable {
         }
     } else {
         // Inform the user that no customer was selected
+            System.out.println("No customer selected."); // Debug line
     }
     }
 
@@ -299,6 +287,7 @@ public class HomeController implements Initializable {
             }
         } else {
             // Inform the user that no customer was selected
+            System.out.println("No customer selected."); // Debug line
         }
     }
 

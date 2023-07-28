@@ -179,6 +179,22 @@ public class AddAppointmentController implements Initializable {
             actionStatus.setText("Error while getting user name: " + ex.getMessage());
             return;
         }
+        // Check if the appointment is within business hours
+        if (startDateTime.toLocalTime().isBefore(LocalTime.of(8, 0)) || endDateTime.toLocalTime().isAfter(LocalTime.of(22, 0))) {
+            actionStatus.setText("Appointment times must be within business hours (8:00 a.m. to 10:00 p.m. ET).");
+            return;
+        }
+
+        // Check if the appointment overlaps with any existing appointments for the same customer
+        try {
+            if (ConnectDB.doesAppointmentOverlap(customerId, startDateTime, endDateTime)) {
+                actionStatus.setText("Cannot schedule overlapping appointments for the same customer.");
+                return;
+            }
+        } catch (SQLException ex) {
+            actionStatus.setText("Error while checking for overlapping appointments: " + ex.getMessage());
+            return;
+        }
         // Create a new Appointment object with the data
         Appointment newAppointment = new Appointment(0, contactId, now, currentUser, customerId,
                 description, endDateTime, now, currentUser, location, startDateTime, title, type, userId);

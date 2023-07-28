@@ -312,6 +312,23 @@ public class ConnectDB {
         }
     }
 
+    public static boolean doesAppointmentOverlap(int customerId, LocalDateTime startDateTime, LocalDateTime endDateTime) throws SQLException {
+        String query = "SELECT * FROM client_schedule.appointments WHERE Customer_ID = ? AND ((Start <= ? AND End > ?) OR (Start < ? AND End >= ?) OR (Start >= ? AND End <= ?))";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, customerId);
+            stmt.setTimestamp(2, Timestamp.valueOf(startDateTime));
+            stmt.setTimestamp(3, Timestamp.valueOf(startDateTime));
+            stmt.setTimestamp(4, Timestamp.valueOf(endDateTime));
+            stmt.setTimestamp(5, Timestamp.valueOf(endDateTime));
+            stmt.setTimestamp(6, Timestamp.valueOf(startDateTime));
+            stmt.setTimestamp(7, Timestamp.valueOf(endDateTime));
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next(); // Return true if an overlapping appointment is found, false otherwise
+            }
+        }
+    }
+
 
     public static void updateAppointment(Appointment updatedAppointment) throws SQLException {
         String sqlUpdateAppointment = "UPDATE client_schedule.appointments SET Title = ?, Description = ?, Location = ?, Type = ?, Start = ?, End = ?, Customer_ID = ?, User_ID = ?, Contact_ID = ?, Last_Updated_By = ? WHERE Appointment_ID = ?";
