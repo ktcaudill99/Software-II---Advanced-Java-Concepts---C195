@@ -158,13 +158,11 @@ public class HomeController implements Initializable {
 
     @FXML
     private void addAppAction(ActionEvent event) throws IOException {
-            Stage stage;
-            Parent root;
-            stage = (Stage) btnAppAdd.getScene().getWindow();
-            root = FXMLLoader.load(getClass().getResource("AddAppointment.fxml"));
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
+        Parent addAppointmentParent = FXMLLoader.load(getClass().getResource("AddAppointment.fxml"));
+        Scene addAppointmentScene = new Scene(addAppointmentParent);
+        Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        window.setScene(addAppointmentScene);
+        window.show();
     }
 
     @FXML
@@ -472,6 +470,16 @@ public class HomeController implements Initializable {
             return null;
         }
 
+    }
+
+
+    @FXML
+    private void reportAction(ActionEvent event) throws IOException {
+        Parent reportParent = FXMLLoader.load(getClass().getResource("Report.fxml"));
+        Scene reportScene = new Scene(reportParent);
+        Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        window.setScene(reportScene);
+        window.show();
     }
 
 }

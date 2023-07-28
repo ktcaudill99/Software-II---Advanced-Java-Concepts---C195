@@ -17,9 +17,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -180,8 +178,19 @@ public class AddAppointmentController implements Initializable {
             return;
         }
         // Check if the appointment is within business hours
-        if (startDateTime.toLocalTime().isBefore(LocalTime.of(8, 0)) || endDateTime.toLocalTime().isAfter(LocalTime.of(22, 0))) {
+        // Check if the appointment is within business hours
+        ZonedDateTime startDateTimeET = startDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("America/New_York"));
+        ZonedDateTime endDateTimeET = endDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("America/New_York"));
+        if (startDateTimeET.toLocalTime().isBefore(LocalTime.of(8, 0)) || endDateTimeET.toLocalTime().isAfter(LocalTime.of(22, 0))) {
             actionStatus.setText("Appointment times must be within business hours (8:00 a.m. to 10:00 p.m. ET).");
+            return;
+        }
+
+
+        // Check if the appointment is scheduled for a weekend
+        if (startDateTime.getDayOfWeek() == DayOfWeek.SATURDAY || startDateTime.getDayOfWeek() == DayOfWeek.SUNDAY ||
+                endDateTime.getDayOfWeek() == DayOfWeek.SATURDAY || endDateTime.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            actionStatus.setText("Appointments cannot be scheduled on weekends.");
             return;
         }
 
@@ -195,6 +204,13 @@ public class AddAppointmentController implements Initializable {
             actionStatus.setText("Error while checking for overlapping appointments: " + ex.getMessage());
             return;
         }
+
+        // Check if the appointment is within business hours
+        if (startDateTime.toLocalTime().isBefore(LocalTime.of(8, 0)) || endDateTime.toLocalTime().isAfter(LocalTime.of(22, 0))) {
+            actionStatus.setText("Appointment times must be within business hours (8:00 a.m. to 10:00 p.m. ET).");
+            return;
+        }
+
         // Create a new Appointment object with the data
         Appointment newAppointment = new Appointment(0, contactId, now, currentUser, customerId,
                 description, endDateTime, now, currentUser, location, startDateTime, title, type, userId);

@@ -8,9 +8,7 @@ package schedule;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -222,6 +220,33 @@ public class ModifyAppointmentController implements Initializable {
                 type,
                 userId
         );
+
+        // Check if the appointment is within business hours
+        ZonedDateTime startDateTimeET = startDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("America/New_York"));
+        ZonedDateTime endDateTimeET = endDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("America/New_York"));
+        if (startDateTimeET.toLocalTime().isBefore(LocalTime.of(8, 0)) || endDateTimeET.toLocalTime().isAfter(LocalTime.of(22, 0))) {
+            actionStatus.setText("Appointment times must be within business hours (8:00 a.m. to 10:00 p.m. ET).");
+            return;
+        }
+
+
+        // Check if the appointment is scheduled for a weekend
+        if (startDateTime.getDayOfWeek() == DayOfWeek.SATURDAY || startDateTime.getDayOfWeek() == DayOfWeek.SUNDAY ||
+                endDateTime.getDayOfWeek() == DayOfWeek.SATURDAY || endDateTime.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            actionStatus.setText("Appointments cannot be scheduled on weekends.");
+            return;
+        }
+
+        // Check if the appointment overlaps with any existing appointments for the same customer
+        try {
+            if (ConnectDB.doesAppointmentOverlap(customerId, startDateTime, endDateTime)) {
+                actionStatus.setText("Cannot schedule overlapping appointments for the same customer.");
+                return;
+            }
+        } catch (SQLException ex) {
+            actionStatus.setText("Error while checking for overlapping appointments: " + ex.getMessage());
+            return;
+        }
         try {
             ConnectDB.updateAppointment(updatedAppointment);
             Parent homeParent = FXMLLoader.load(getClass().getResource("/schedule/home.fxml"));

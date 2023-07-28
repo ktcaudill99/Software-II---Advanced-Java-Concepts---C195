@@ -71,7 +71,7 @@
       </Pane>
       <Pane layoutX="920.0" layoutY="418.0" prefHeight="285.0" prefWidth="216.0">
          <children>
-            <Button fx:id="report" layoutX="82.0" layoutY="45.0" mnemonicParsing="false" text="Reports" />
+             <Button fx:id="report" layoutX="82.0" layoutY="45.0" mnemonicParsing="false" onAction="#reportAction" text="Reports" />
             <Button fx:id="logout" layoutX="82.0" layoutY="118.0" mnemonicParsing="false" text="Logout" />
          </children>
       </Pane>
