@@ -31,23 +31,16 @@ public class AddCustomerController implements Initializable {
 
     @FXML
     private TextField nameField;
-
     @FXML
     private TextField addressField;
-
     @FXML
     private TextField postalCodeField;
-
     @FXML
     private TextField phoneField;
-
     @FXML
     private ComboBox<FirstLevelDivisions> divisionBox;
-
     @FXML
     private ComboBox<Country> countryBox;
-
-
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -93,14 +86,10 @@ public class AddCustomerController implements Initializable {
         // Create a new Customer object with the data
         Customer newCustomer = new Customer(0, name, address, division, phone, postalCode);
 
-        // Here, we just pass the data to a database service
-        // In real life, you would want to do some data validation before this
         try {
             ConnectDB.saveCustomer(newCustomer);
-            // Now we navigate to the home screen
             Parent homeParent = FXMLLoader.load(getClass().getResource("/schedule/home.fxml"));
             Scene homeScene = new Scene(homeParent);
-            // This line gets the Stage information
             Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
             window.setScene(homeScene);
             window.show();
@@ -108,7 +97,6 @@ public class AddCustomerController implements Initializable {
             System.err.println("Error while saving customer: " + ex.getMessage());
         }
     }
-
 
     @FXML
     public void cancelCreation(ActionEvent event) throws IOException {

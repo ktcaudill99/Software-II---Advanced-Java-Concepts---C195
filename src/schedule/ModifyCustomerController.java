@@ -89,8 +89,6 @@ public class ModifyCustomerController implements Initializable {
         loadCustomerData();
     }
 
-    // Add a method to load the customer data here
-
     private void loadCountries() {
         try {
             List<Country> countries = ConnectDB.getAllCountries();
@@ -108,7 +106,6 @@ public class ModifyCustomerController implements Initializable {
             System.err.println("Error while loading divisions: " + ex.getMessage());
         }
     }
-
 
     private void loadDivisions(ActionEvent event) {
         Country selectedCountry = countryBox.getSelectionModel().getSelectedItem();

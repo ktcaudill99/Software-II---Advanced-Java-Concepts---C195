@@ -127,8 +127,7 @@ public class HomeController implements Initializable {
         this.customerID.setCellValueFactory(new PropertyValueFactory<>("customerID"));
         this.name.setCellValueFactory(new PropertyValueFactory<>("customerName"));
         this.address.setCellValueFactory(new PropertyValueFactory<>("customerAddress"));
-        // this.state.setCellValueFactory(new PropertyValueFactory<>("customerDivision"));
-        // here we use a callback to display the division name instead of its id
+
         this.state.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Customer, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<Customer, String> param) {
@@ -138,8 +137,6 @@ public class HomeController implements Initializable {
 
         this.phoneNumber.setCellValueFactory(new PropertyValueFactory<>("customerPhone"));
         this.postal.setCellValueFactory(new PropertyValueFactory<>("customerZip"));
-      //  this.tvCustomers.setItems(getAllCustomers());
-
 
         this.getAllAppointments();
         this.tvAppointments.setItems(getAllAppointments());
@@ -155,7 +152,6 @@ public class HomeController implements Initializable {
         this.colLocation.setCellValueFactory(new PropertyValueFactory<>("appointmentLocation"));
         this.colUserID.setCellValueFactory(new PropertyValueFactory<>("userID"));
 
-
         this.service = new ScheduleService(allAppointments, allCustomers);
 
         this.tvCustomers.getSelectionModel().selectedItemProperty().addListener(
@@ -165,7 +161,6 @@ public class HomeController implements Initializable {
                     }
                 }
         );
-
 
         this.tvAppointments.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldSelection, newSelection) -> {
@@ -207,7 +202,7 @@ public class HomeController implements Initializable {
 
         } else {
             // Inform the user that no appointment was selected
-            System.out.println("No appointment selected."); // Debug line
+            System.out.println("No appointment selected.");
         }
     }
     @FXML
@@ -488,8 +483,6 @@ public class HomeController implements Initializable {
         }
     }
 
-
-
     public ObservableList<Appointment> getAllAppointments() {
         System.out.println("Retrieving Appointment Records");
         allAppointments.clear();
@@ -539,7 +532,6 @@ public class HomeController implements Initializable {
         }
 
     }
-
 
     @FXML
     private void reportAction(ActionEvent event) throws IOException {

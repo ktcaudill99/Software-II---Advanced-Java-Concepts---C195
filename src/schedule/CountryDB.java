@@ -89,26 +89,6 @@ private final Connection conn = FXMain.conn;
         return contactName;
     }
 
-//
-//    public static void saveAppointment(Appointment appointment) throws SQLException {
-//        String sql = "INSERT INTO appointments (title, description, location, contact_name, type, start_date, end_date, customer_id, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-//
-//        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-//            pstmt.setString(1, appointment.getAppointmentTitle());
-//            pstmt.setString(2, appointment.getAppointmentDescription());
-//            pstmt.setString(3, appointment.getAppointmentLocation());
-//            pstmt.setString(4, appointment.getContactName());
-//            pstmt.setString(5, appointment.getAppointmentType());
-//            pstmt.setTimestamp(6, appointment.getStart());
-//            pstmt.setTimestamp(7, appointment.getEnd());
-//            pstmt.setInt(8, appointment.getCustomerID());
-//            pstmt.setInt(9, appointment.getUserID());
-//
-//            pstmt.executeUpdate();
-//        }
-//    }
-
-
     public Country getCountry(int countryId) throws SQLException {
         Country country = null;
         String selectCountry = "SELECT * FROM countries WHERE Country ID=" + countryId;

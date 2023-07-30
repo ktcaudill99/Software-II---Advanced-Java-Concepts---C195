@@ -26,41 +26,28 @@ public class AddAppointmentController implements Initializable {
 
     @FXML
     private TextField titleField;
-
     @FXML
     private TextArea descriptionField;
-
     @FXML
     private TextField locationField;
-
     @FXML
     private ComboBox<String> contactBox;
-
     @FXML
     private TextField typeField;
-
     @FXML
     private DatePicker startDatePicker;
-
     @FXML
     private ComboBox<String> startTimeBox, endTimeBox;
-
     @FXML
     private DatePicker endDatePicker;
-
-
     @FXML
     private TextField userIdField;
-
     @FXML
     private Text actionStatus;
-
     @FXML
     private ComboBox<String> customerBox;
-
     @FXML
     private TextField appointmentIdField;
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -72,7 +59,6 @@ public class AddAppointmentController implements Initializable {
 
         // Set the User ID field with the ID of the current logged in user
         userIdField.setText(String.valueOf(ConnectDB.getCurrentUserId()));
-
     }
 
     private void loadContacts() {
@@ -120,7 +106,6 @@ public class AddAppointmentController implements Initializable {
         String userIdStr = userIdField.getText();
         String customerName = customerBox.getValue();
         LocalDateTime now = LocalDateTime.now();
-      //  String currentUser = ConnectDB.getUserNameById(int userId);
 
         if (title.isEmpty() || description.isEmpty() || location.isEmpty() ||
                 contactName == null || contactName.isEmpty() || type.isEmpty() ||
@@ -157,7 +142,6 @@ public class AddAppointmentController implements Initializable {
             actionStatus.setText("Error while getting customer ID: " + ex.getMessage());
             return;
         }
-
         int userId;
         try {
             userId = Integer.parseInt(userIdStr);
@@ -177,7 +161,7 @@ public class AddAppointmentController implements Initializable {
             actionStatus.setText("Error while getting user name: " + ex.getMessage());
             return;
         }
-        // Check if the appointment is within business hours
+
         // Check if the appointment is within business hours
         ZonedDateTime startDateTimeET = startDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("America/New_York"));
         ZonedDateTime endDateTimeET = endDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("America/New_York"));
@@ -185,7 +169,6 @@ public class AddAppointmentController implements Initializable {
             actionStatus.setText("Appointment times must be within business hours (8:00 a.m. to 10:00 p.m. ET).");
             return;
         }
-
 
         // Check if the appointment is scheduled for a weekend
         if (startDateTime.getDayOfWeek() == DayOfWeek.SATURDAY || startDateTime.getDayOfWeek() == DayOfWeek.SUNDAY ||
@@ -216,11 +199,9 @@ public class AddAppointmentController implements Initializable {
                 description, endDateTime, now, currentUser, location, startDateTime, title, type, userId);
 
         try {
-            ConnectDB.saveAppointment(newAppointment);  // pass in contactId as well
-            // Now we navigate to the home screen
+            ConnectDB.saveAppointment(newAppointment);  // pass in contactId
             Parent homeParent = FXMLLoader.load(getClass().getResource("/schedule/home.fxml"));
             Scene homeScene = new Scene(homeParent);
-            // This line gets the Stage information
             Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
             window.setScene(homeScene);
             window.show();
@@ -228,8 +209,6 @@ public class AddAppointmentController implements Initializable {
             System.err.println("Error while saving appointment: " + ex.getMessage());
         }
     }
-
-
 
     @FXML
     public void cancelCreation(ActionEvent event) throws IOException {

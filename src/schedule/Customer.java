@@ -22,17 +22,12 @@ import java.util.List;
 public class Customer {
 
     // These are the properties of the class Customer.
-    // They are all defined as private for encapsulation purposes and are made observable to allow listeners to be notified of changes
     private final SimpleIntegerProperty customerID = new SimpleIntegerProperty();
     private final SimpleStringProperty customerName = new SimpleStringProperty();
     private final SimpleStringProperty customerAddress = new SimpleStringProperty();
     private final SimpleObjectProperty<FirstLevelDivisions> customerDivision = new SimpleObjectProperty<>();
     private final SimpleStringProperty customerZip = new SimpleStringProperty();
     private final SimpleStringProperty customerPhone = new SimpleStringProperty();
-
-    // Default constructor for the Customer class
-//    public Customer(int id, String name, String address, int divisionId, String phone, String postalCode) {
-//    }
 
     // Overloaded constructor for the Customer class which allows the caller to specify the customer's details at object creation
     // Now the constructor uses divisionId instead of a FirstLevelDivisions object
@@ -49,8 +44,6 @@ public class Customer {
     public void setCustomerDivision(FirstLevelDivisions division) {
         this.customerDivision.set(division);
     }
-
-
 
     // A new method to get a FirstLevelDivisions object by its ID
     private FirstLevelDivisions getDivisionById(int divisionId) throws SQLException {
@@ -110,9 +103,6 @@ public class Customer {
         this.customerAddress.set(address);
     }
 
-//    public void setCustomerDivision(FirstLevelDivisions division) {
-//        this.customerDivision.set(division);
-//    }
     public void setCustomerZip(String zip) {
         this.customerZip.set(zip);
     }

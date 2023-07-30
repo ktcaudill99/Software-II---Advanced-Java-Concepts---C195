@@ -25,17 +25,6 @@ public class DateAndTime {
         return now.format(formatter);
     }
 
-    /*
-    If you need to use this method that returns a java.sql.Timestamp in the future, you can uncomment it.
-
-    public static java.sql.Timestamp getTimeStamp() {
-        ZoneId zoneid = ZoneId.of("UTC");
-        LocalDateTime localDateTime = LocalDateTime.now(zoneid);
-        java.sql.Timestamp timeStamp = Timestamp.valueOf(localDateTime);
-        return timeStamp;
-    }
-    */
-
     public static java.sql.Date getDate() {
         java.sql.Date date = java.sql.Date.valueOf(LocalDate.now());
         return date;

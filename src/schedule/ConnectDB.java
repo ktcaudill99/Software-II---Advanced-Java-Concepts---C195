@@ -108,8 +108,6 @@ public class ConnectDB {
         }
     }
 
-
-
     public static void saveCustomer(Customer customer) throws SQLException {
         String sqlInsertCustomer = "INSERT INTO client_schedule.customers(Customer_Name, Address, Division_ID, Phone, Postal_Code) VALUES(?, ?, ?, ?, ?)";
 
@@ -132,7 +130,6 @@ public class ConnectDB {
             System.err.println("Error while saving customer: " + ex.getMessage());
         }
     }
-
 
     // Method to get all customers
     public static List<String> getAllCustomers() throws SQLException {
@@ -174,7 +171,7 @@ public class ConnectDB {
     }
 
     public static List<String> getAllContacts() throws SQLException {
-        String query = "SELECT Contact_Name FROM client_schedule.contacts"; // Adjust this query to match your actual database
+        String query = "SELECT Contact_Name FROM client_schedule.contacts";
 
         try (Connection conn = DriverManager.getConnection(DB_URL, username, password);
              Statement stmt = conn.createStatement();
@@ -182,7 +179,7 @@ public class ConnectDB {
 
             List<String> contacts = new ArrayList<>();
             while (rs.next()) {
-                contacts.add(rs.getString("Contact_Name")); // Adjust this to match your actual database
+                contacts.add(rs.getString("Contact_Name"));
             }
 
             return contacts;
@@ -236,8 +233,6 @@ public class ConnectDB {
         }
     }
 
-
-
     public static List<FirstLevelDivisions> getAllDivisionsByCountryId(int countryId) throws SQLException {
         String query = "SELECT * FROM client_schedule.first_level_divisions WHERE COUNTRY_ID = ?";
 
@@ -275,7 +270,7 @@ public class ConnectDB {
             }
             pstmt.setString(4, customer.getCustomerPhone());
             pstmt.setString(5, customer.getCustomerZip());
-            pstmt.setInt(6, customer.getCustomerID());  // assuming a method getCustomerId() exists in the Customer class
+            pstmt.setInt(6, customer.getCustomerID());
             pstmt.executeUpdate();
             System.out.println("Customer " + customer.getCustomerName() + " has been updated in the database.");
         } catch (SQLException ex) {
@@ -329,7 +324,6 @@ public class ConnectDB {
         }
     }
 
-
     public static void updateAppointment(Appointment updatedAppointment) throws SQLException {
         String sqlUpdateAppointment = "UPDATE client_schedule.appointments SET Title = ?, Description = ?, Location = ?, Type = ?, Start = ?, End = ?, Customer_ID = ?, User_ID = ?, Contact_ID = ?, Last_Updated_By = ? WHERE Appointment_ID = ?";
 
@@ -354,14 +348,10 @@ public class ConnectDB {
         }
     }
 
-
-
     // This function closes the connection to the database
     public static void closeConnection() throws SQLException{
         conn.close(); // Close the connection
         System.out.println("Connection closed."); // Notify that the connection has been closed
     }
-
-
 }
 

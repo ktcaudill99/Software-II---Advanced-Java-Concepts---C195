@@ -123,7 +123,6 @@ public class ModifyAppointmentController implements Initializable {
         loadContacts();
         loadAppointmentTimes();
         loadCustomers();
-        // Assuming you have a method to fetch and load the appointment data
         loadAppointmentData();
         // Disable the User ID field
         userIdField.setDisable(true);
@@ -208,12 +207,12 @@ public class ModifyAppointmentController implements Initializable {
                 appointmentId,
                 contactId,
                 startDateTime,
-                "", // createdBy - replace with the correct value
+                "", // createdBy
                 customerId,
                 description,
                 endDateTime,
-                startDateTime, // lastUpdate - replace with the correct value
-                "", // lastUpdatedBy - replace with the correct value
+                startDateTime, // lastUpdate
+                "", // lastUpdatedBy
                 location,
                 startDateTime,
                 title,
