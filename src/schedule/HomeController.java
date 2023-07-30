@@ -22,14 +22,18 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.util.Callback;
+
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.temporal.WeekFields;
+import java.util.stream.Collectors;
+import java.sql.Timestamp;
+
+
 
 
 /**
@@ -96,9 +100,26 @@ public class HomeController implements Initializable {
     private ObservableList<Customer> allCustomers = FXCollections.observableArrayList();
     private ObservableList<Appointment> allAppointments = FXCollections.observableArrayList();
     private ScheduleService service;
+    @FXML
+    private RadioButton rbCurrentMonth;
+    @FXML
+    private RadioButton rbCurrentWeek;
+    @FXML
+    private RadioButton rbAllAppointments;
+    @FXML
+    private ToggleGroup radioButtonToggleGroup;
+
+
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+        radioButtonToggleGroup = new ToggleGroup();
+
+        rbCurrentMonth.setToggleGroup(radioButtonToggleGroup);
+        rbCurrentWeek.setToggleGroup(radioButtonToggleGroup);
+        rbAllAppointments.setToggleGroup(radioButtonToggleGroup);
+        rbAllAppointments.setSelected(true);
 
         this.getAllCustomers();
         this.tvCustomers.setItems(allCustomers);
@@ -180,17 +201,65 @@ public class HomeController implements Initializable {
 
             // Set the scene and stage
             Scene scene = new Scene(root);
-            Stage stage = new Stage();
+            Stage stage = (Stage) btnAppMod.getScene().getWindow();
             stage.setScene(scene);
             stage.show();
 
-            // Close the current window
-            ((Node)(event.getSource())).getScene().getWindow().hide();
         } else {
             // Inform the user that no appointment was selected
             System.out.println("No appointment selected."); // Debug line
         }
     }
+    @FXML
+    private void currentMonthAction(ActionEvent event) {
+        if (rbCurrentMonth.isSelected()) {
+            filterAppointmentsByMonth();
+        } else {
+            tvAppointments.setItems(allAppointments);
+        }
+    }
+
+    @FXML
+    private void currentWeekAction(ActionEvent event) {
+        if (rbCurrentWeek.isSelected()) {
+            filterAppointmentsByWeek();
+        } else {
+            tvAppointments.setItems(allAppointments);
+        }
+    }
+
+    @FXML
+    private void allAppointmentsAction(ActionEvent event) {
+        if (rbAllAppointments.isSelected()) {
+            tvAppointments.setItems(allAppointments);
+        }
+    }
+    private void filterAppointmentsByMonth() {
+        // Get the current month
+        Month currentMonth = LocalDate.now().getMonth();
+
+        // Filter the appointments for the current month
+        ObservableList<Appointment> filteredAppointments = allAppointments.stream()
+                .filter(app -> app.getStart().getMonth() == currentMonth)
+                .collect(Collectors.toCollection(FXCollections::observableArrayList));
+
+        // Update the table view
+        tvAppointments.setItems(filteredAppointments);
+    }
+
+    private void filterAppointmentsByWeek() {
+        // Get the current week of the year
+        int currentWeek = LocalDate.now().get(WeekFields.ISO.weekOfWeekBasedYear());
+
+        // Filter the appointments for the current week
+        ObservableList<Appointment> filteredAppointments = allAppointments.stream()
+                .filter(app -> app.getStart().get(WeekFields.ISO.weekOfWeekBasedYear()) == currentWeek)
+                .collect(Collectors.toCollection(FXCollections::observableArrayList));
+
+        // Update the table view
+        tvAppointments.setItems(filteredAppointments);
+    }
+
 
     @FXML
     private void deleteAppAction(ActionEvent event) throws SQLException {
@@ -277,7 +346,7 @@ public class HomeController implements Initializable {
 
                 // Set the scene and stage
                 Scene scene = new Scene(root);
-                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                Stage stage = (Stage) btnCustomerMod.getScene().getWindow();
                 stage.setScene(scene);
                 stage.show();
             } catch (IOException ex) {
@@ -288,7 +357,6 @@ public class HomeController implements Initializable {
             System.out.println("No customer selected."); // Debug line
         }
     }
-
 
     @FXML
     private void deleteCustomerAction(ActionEvent event) throws SQLException {
