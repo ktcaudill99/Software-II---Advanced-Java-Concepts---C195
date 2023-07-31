@@ -21,11 +21,10 @@ public class ReportController {
         reportArea.clear();
         generateReport1();
         generateReport2();
-        generateReport3();
     }
 
     private void generateReport1() {
-        String query = "SELECT COUNT(*), Type, MONTH(Start) as Month FROM appointments GROUP BY Type, Month ORDER BY Month, Type";
+        String query = "SELECT COUNT(*), Type, MONTH(Start) as Month FROM client_schedule.appointments GROUP BY Type, Month ORDER BY Month, Type";
 
         try {
             Statement statement = ConnectDB.conn.createStatement();
@@ -43,7 +42,7 @@ public class ReportController {
     }
 
     private void generateReport2() {
-        String query = "SELECT Contact_ID FROM contacts";
+        String query = "SELECT Contact_ID FROM client_schedule.contacts";
         try {
             Statement statement = ConnectDB.conn.createStatement();
             ResultSet results = statement.executeQuery(query);
@@ -57,7 +56,7 @@ public class ReportController {
     }
 
     private void generateContactSchedule(int contactId) {
-        String query = "SELECT Appointment_ID, Title, Type, Description, Start, End, Customer_ID FROM appointments WHERE Contact_ID = ? ORDER BY Start";
+        String query = "SELECT Appointment_ID, Title, Type, Description, Start, End, Customer_ID FROM client_schedule.appointments WHERE Contact_ID = ? ORDER BY Start";
 
         try {
             PreparedStatement statement = ConnectDB.conn.prepareStatement(query);
@@ -77,23 +76,6 @@ public class ReportController {
             }
         } catch (SQLException e) {
             reportArea.appendText("Error generating schedule: " + e.getMessage() + "\n");
-        }
-    }
-
-    private void generateReport3() {
-        String query = "SELECT COUNT(*), Customer_ID FROM appointments GROUP BY Customer_ID ORDER BY COUNT(*) DESC";
-
-        try {
-            Statement statement = ConnectDB.conn.createStatement();
-            ResultSet results = statement.executeQuery(query);
-            while (results.next()) {
-                int count = results.getInt(1);
-                int customerId = results.getInt(2);
-
-                reportArea.appendText("Customer ID: " + customerId + ", Number of appointments: " + count + "\n");
-            }
-        } catch (SQLException e) {
-            reportArea.appendText("Error generating report: " + e.getMessage() + "\n");
         }
     }
 
