@@ -1,19 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.geometry.Insets?>
 
-<VBox alignment="CENTER" spacing="10.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="schedule.ReportController">
+<VBox alignment="CENTER" prefHeight="605.0" prefWidth="1150.0" spacing="10.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="schedule.ReportController">
     <children>
-        <Label text="Reports"/>
-        <Button text="Generate Reports" onAction="#generateReports"/>
-        <TextArea fx:id="reportArea" editable="false" prefHeight="400.0" prefWidth="600.0"/>
-        <Button text="Back to Home" onAction="#backToHome"/>
+        <Label text="Reports" />
+
+        <VBox alignment="CENTER" spacing="5.0">
+            <children>
+                <Button onAction="#generateReport1" text="Generate Report 1" />
+                <TextArea fx:id="reportArea1" editable="false" prefHeight="200.0" prefWidth="600.0" />
+            </children>
+        </VBox>
+
+        <VBox alignment="CENTER" spacing="5.0">
+            <children>
+                <Button onAction="#generateReport2" text="Generate Report 2" />
+                <TextArea fx:id="reportArea2" editable="false" prefHeight="200.0" prefWidth="600.0" />
+            </children>
+        </VBox>
+
+        <Button onAction="#backToHome" text="Back to Home" />
     </children>
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 </VBox>
