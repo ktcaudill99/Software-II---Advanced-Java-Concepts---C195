@@ -120,6 +120,12 @@ public class AddAppointmentController implements Initializable {
         LocalDateTime startDateTime = ConnectDB.convertTimeDateUTC(startDateTimeStr);
         LocalDateTime endDateTime = ConnectDB.convertTimeDateUTC(endDateTimeStr);
 
+        // Check if the end time is before the start time
+        if (endDateTime.isBefore(startDateTime)) {
+            actionStatus.setText("End time cannot be before start time.");
+            return;
+        }
+
         int contactId;
         try {
             contactId = ConnectDB.getContactIdByContactName(contactName);

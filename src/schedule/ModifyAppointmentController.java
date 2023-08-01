@@ -236,6 +236,12 @@ public class ModifyAppointmentController implements Initializable {
             return;
         }
 
+        // Check if the end time is before the start time
+        if (endDateTime.isBefore(startDateTime)) {
+            actionStatus.setText("End time cannot be before start time.");
+            return;
+        }
+
         // Check if the appointment overlaps with any existing appointments for the same customer
         try {
             if (ConnectDB.doesAppointmentOverlap(customerId, startDateTime, endDateTime)) {
