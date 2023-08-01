@@ -542,4 +542,16 @@ public class HomeController implements Initializable {
         window.show();
     }
 
+    @FXML
+    private void handleLogout(ActionEvent event) throws IOException {
+        // Load the login screen
+        Parent loginParent = FXMLLoader.load(getClass().getResource("login.fxml"));
+        Scene loginScene = new Scene(loginParent);
+
+        // Get the current stage and set the new scene
+        Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        window.setScene(loginScene);
+        window.show();
+    }
+
 }
