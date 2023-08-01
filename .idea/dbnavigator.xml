@@ -38,6 +38,7 @@
     <mapping file-url="file://$PROJECT_DIR$/Dump20230704/client_schedule_appointments.sql" connection-id="7764ca6a-8fca-414d-bdf3-2e13b4e7d769" session-id="MAIN" current-schema="mysql" />
     <mapping file-url="file://$PROJECT_DIR$/Dump20230704/client_schedule_users.sql" connection-id="7764ca6a-8fca-414d-bdf3-2e13b4e7d769" session-id="MAIN" current-schema="mysql" />
     <mapping file-url="file://$PROJECT_DIR$/Dump20230704/client_schedule_countries.sql" connection-id="7764ca6a-8fca-414d-bdf3-2e13b4e7d769" session-id="MAIN" current-schema="mysql" />
+    <mapping file-url="file://$PROJECT_DIR$/src/schedule" connection-id="7764ca6a-8fca-414d-bdf3-2e13b4e7d769" session-id="MAIN" current-schema="mysql" />
   </component>
   <component name="DBNavigator.Project.MethodExecutionManager">
     <method-browser />
