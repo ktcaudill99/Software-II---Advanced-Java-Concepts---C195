@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane id="AnchorPane" prefHeight="548.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.HomeController">    <children>
+        <Pane prefHeight="386.0" prefWidth="1136.0">
+            <children>
+                <TableView fx:id="tvAppointments" layoutX="25.0" layoutY="90.0" prefHeight="200.0" prefWidth="1086.0">
+                    <columns>
+                        <TableColumn fx:id="colAppID" prefWidth="124.0" text="Appointment ID" />
+                        <TableColumn fx:id="colTitle" prefWidth="112.0" text="Title" />
+                        <TableColumn fx:id="colDescription" prefWidth="127.0" text="Description" />
+                        <TableColumn fx:id="colLocation" prefWidth="79.0" text="Location" />
+                        <TableColumn fx:id="colContact" prefWidth="87.0" text="Contact" />
+                        <TableColumn fx:id="colType" prefWidth="68.0" text="Type" />
+                        <TableColumn fx:id="colStart" prefWidth="166.0" text="Start Date and Time" />
+                        <TableColumn fx:id="colEnd" prefWidth="154.0" text="End Date and Time" />
+                        <TableColumn fx:id="colCustomerID" prefWidth="101.0" text="Customer ID" />
+                        <TableColumn fx:id="colUserID" prefWidth="67.0" text="User ID" />
+                    </columns>
+                </TableView>
+                <HBox layoutX="859.0" layoutY="314.0" prefHeight="49.0" prefWidth="200.0" spacing="15.0">
+                    <padding>
+                        <Insets top="10.0" />
+                    </padding>
+                </HBox>
+                <Text layoutX="25.0" layoutY="65.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Appointments" />
+                <RadioButton fx:id="rbCurrentMonth" layoutX="970.0" layoutY="55.0" mnemonicParsing="false" onAction="#currentMonthAction" text="Current Month">
+               <toggleGroup>
+                  <ToggleGroup fx:id="radioButtonToggleGroup" />
+               </toggleGroup></RadioButton>
+                <RadioButton fx:id="rbCurrentWeek" layoutX="840.0" layoutY="55.0" mnemonicParsing="false" onAction="#currentWeekAction" text="Current Week" toggleGroup="$radioButtonToggleGroup" />
+                <RadioButton fx:id="rbAllAppointments" layoutX="690.0" layoutY="55.0" mnemonicParsing="false" onAction="#allAppointmentsAction" text="All Appointments" toggleGroup="$radioButtonToggleGroup" />
+                  <Button fx:id="btnAppAdd" layoutX="901.0" layoutY="314.0" mnemonicParsing="false" onAction="#addAppAction" text="Add" />
+                  <Button fx:id="btnAppMod" layoutX="960.0" layoutY="314.0" mnemonicParsing="false" onAction="#modifyAppAction" text="Modify" />
+                  <Button fx:id="btnAppDel" layoutX="1037.0" layoutY="314.0" mnemonicParsing="false" onAction="#deleteAppAction" text="Delete" />
+            </children>
+        </Pane>
+        <Pane layoutX="2.0" layoutY="385.0" prefHeight="317.0" prefWidth="925.0">
+            <children>
+                <TableView fx:id="tvCustomers" layoutX="25.0" layoutY="50.0" prefHeight="170.0" prefWidth="822.0">
+                    <columns>
+                        <TableColumn fx:id="customerID" prefWidth="99.0" text="Customer ID" />
+                        <TableColumn fx:id="name" minWidth="0.0" prefWidth="132.0" text="Name" />
+                        <TableColumn fx:id="phoneNumber" prefWidth="152.0" text="Phone Number" />
+                        <TableColumn fx:id="address" prefWidth="154.0" text="Address" />
+                        <TableColumn fx:id="state" prefWidth="165.0" text="State/Province" />
+                        <TableColumn fx:id="postal" minWidth="4.0" prefWidth="118.0" text="Postal Code" />
+                    </columns>
+                </TableView>
+                <HBox layoutX="647.0" layoutY="238.0" prefHeight="49.0" prefWidth="200.0" spacing="15.0">
+                    <padding>
+                        <Insets top="10.0" />
+                    </padding>
+               <children>
+                        <Button fx:id="btnCustomerAdd" mnemonicParsing="false" onAction="#addCustomerAction" text="Add" />
+                        <Button fx:id="btnCustomerMod" mnemonicParsing="false" onAction="#modifyCustomerAction" text="Modify" />
+                        <Button fx:id="btnCustomerDel" mnemonicParsing="false" onAction="#deleteCustomerAction" text="Delete" />
+               </children>
+                </HBox>
+                <Text layoutX="25.0" layoutY="25.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Customers" />
+            </children>
+        </Pane>
+        <Pane layoutX="920.0" layoutY="418.0" prefHeight="285.0" prefWidth="216.0">
+            <children>
+                <Button fx:id="report" layoutX="82.0" layoutY="45.0" mnemonicParsing="false" onAction="#reportAction" text="Reports" />
+                <Button fx:id="logout" layoutX="82.0" layoutY="118.0" mnemonicParsing="false" text="Logout" onAction="#handleLogout"/>
+            </children>
+        </Pane>
+    </children>
+</AnchorPane>

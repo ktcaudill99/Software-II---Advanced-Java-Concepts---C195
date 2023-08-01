@@ -190,7 +190,7 @@ Note: You do not need to save and print the reports to a file or provide a scree
 
 •  the total number of customer appointments by type and month
 
-•  a schedule for each contact in your organization that includes appointment ID, title, type and description, start date and time, end date and time, and customer ID
+•  a main for each contact in your organization that includes appointment ID, title, type and description, start date and time, end date and time, and customer ID
 
 •  an additional report of your choice that is different from the two other required reports in this prompt and from the user log-in date and time stamp that will be tracked in part C
 
