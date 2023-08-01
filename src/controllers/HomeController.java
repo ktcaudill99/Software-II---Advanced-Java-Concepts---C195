@@ -38,8 +38,24 @@ import java.sql.Timestamp;
 
 
 /**
- *
- *
+ * This class is the controller for the Home view.
+ * It handles the main screen of the application.
+ * It also handles the radio buttons for the appointment view.
+ * It also handles the logout button.
+ * It also handles the report button.
+ * It also handles the add, modify, and delete buttons for customers and appointments.
+ * It also handles the check for upcoming appointments.
+ * It also handles the filtering of appointments by month and week.
+ * It also handles the loading of all customers and appointments.
+ * It also handles the loading of the modify customer and modify appointment views.
+ * It also handles the loading of the add customer and add appointment views.
+ * It also handles the deletion of customers and appointments.
+ * It also handles the loading of the login view.
+ * It also handles the loading of the report view.
+ * It also handles the loading of the add customer view.
+ * It also handles the loading of the modify customer view.
+ * It also handles the loading of the add appointment view.
+ * It also handles the loading of the modify appointment view.
  *
  */
 public class HomeController implements Initializable {

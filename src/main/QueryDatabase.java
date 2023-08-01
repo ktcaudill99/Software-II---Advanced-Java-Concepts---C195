@@ -5,9 +5,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 
 /**
- *
- * @author ubuntu
+ * This class contains methods for getting the current date and time in the user's time zone.
  */
+
 class QueryDatabase {
 
     static void setPreparedStatement(Connection conn, String selectAllCountries) {

@@ -15,11 +15,11 @@ import javafx.stage.Stage;
 import java.sql.Connection;
 
 /**
- *
- *
+ * This class is the main class for the application.
+ * It handles the creation of the main window.
  */
 
-        public class MainRun extends Application {
+public class MainRun extends Application {
     
     // Set main window as FXML.fxml
 public static Connection conn;

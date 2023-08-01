@@ -31,45 +31,37 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import main.ConnectDB;
 
-
+/**
+ * This class is the controller for the Modify Appointment view.
+ * It handles the modification of an existing appointment.
+ *
+ */
 public class ModifyAppointmentController implements Initializable {
 
     @FXML
     private TextField titleField;
-
     @FXML
     private TextArea descriptionField;
-
     @FXML
     private TextField locationField;
-
     @FXML
     private ComboBox<String> contactBox;
-
     @FXML
     private TextField typeField;
-
     @FXML
     private DatePicker startDatePicker;
-
     @FXML
     private ComboBox<String> startTimeBox, endTimeBox;
-
     @FXML
     private DatePicker endDatePicker;
-
     @FXML
     private TextField userIdField;
-
     @FXML
     private Text actionStatus;
-
     @FXML
     private ComboBox<String> customerBox;
-
     @FXML
     private TextField appointmentIdField;
-
     private Appointment appointmentToModify;
 
     public void setAppointment(Appointment appointment) {

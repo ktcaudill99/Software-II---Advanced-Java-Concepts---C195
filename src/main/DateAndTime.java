@@ -7,8 +7,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- *
- *
+ * This class contains methods for getting the current date and time in the user's time zone.
  */
 public class DateAndTime {
 

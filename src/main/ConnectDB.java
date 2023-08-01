@@ -10,6 +10,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * ConnectDB
+ * This class is responsible for connecting with the database
+ */
 // This class is responsible for connecting with the database
 public class ConnectDB {
 

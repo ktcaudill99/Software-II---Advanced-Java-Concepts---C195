@@ -2,8 +2,12 @@
 package constructors;
 // These are the necessary imports for the date/time functionality in this class
 import java.time.LocalDateTime;
-// This class represents an Appointment object with all the necessary fields
-    // This is the constructor for the Appointment class
+
+/**
+ *  Constructor for the Appointment
+ *  This class represents an Appointment object with all the necessary fields
+ *
+ */
     public class Appointment {
         private int appointmentID;
         private String appointmentTitle;

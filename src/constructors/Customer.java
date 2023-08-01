@@ -13,8 +13,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- *
- *
+ * This class represents a customer.
  */
 public class Customer {
 

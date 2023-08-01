@@ -14,6 +14,11 @@ import javafx.event.ActionEvent;
 import main.ConnectDB;
 
 
+/**
+ * This class is the controller for the report view.
+ * It handles the generation of reports.
+ *
+ */
 public class ReportController {
     @FXML
     private TextArea reportArea1;

@@ -35,7 +35,11 @@ import java.time.ZoneId;
 import java.util.Optional;
 
 
-
+/**
+ * This class is the controller for the login view.
+ * It handles the login operations and logs the login of a user.
+ *
+ */
 // Class that serves as controller for login operations
 public class LoginController implements Initializable {
 

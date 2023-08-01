@@ -4,6 +4,11 @@ package constructors;
 import java.time.LocalDateTime;
 import java.sql.Timestamp;
 
+/**
+ * Country
+ * Definitions to be used by the system for the Countries table
+ */
+
 public class Country {
     private int countryId;
     private String country;

@@ -23,6 +23,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
 
+/**
+ * FXML Controller class
+ * This class is used to control the Add Appointment screen
+ * This class is used to add a new appointment to the database
+ * This class is used to validate the appointment data before saving it to the database
+ * This class is used to check if the appointment is within business hours
+ * This class is used to check if the appointment is scheduled for a weekend
+ * This class is used to check if the appointment overlaps with any existing appointments for the same customer
+ *
+ */
 public class AddAppointmentController implements Initializable {
 
     @FXML

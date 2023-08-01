@@ -28,6 +28,10 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
 import main.ConnectDB;
 
+/**
+ * This class is the controller for the Add Customer view.
+ * It handles the creation of a new customer.
+ */
 public class ModifyCustomerController implements Initializable {
 
     @FXML

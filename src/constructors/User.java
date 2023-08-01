@@ -2,7 +2,8 @@
 package constructors;
 
 /**
- *
+ * User
+ * This class represents a User object with all the necessary fields
  *
  */
 public class User {
