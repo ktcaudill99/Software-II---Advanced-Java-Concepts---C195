@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package controllers;
 
 import java.io.IOException;
@@ -53,6 +49,7 @@ public class AddCustomerController implements Initializable {
         countryBox.setOnAction(this::loadDivisions);
     }
 
+    // Load all countries into the countryBox
     private void loadCountries() {
         try {
             List<Country> countries = ConnectDB.getAllCountries();
@@ -62,6 +59,7 @@ public class AddCustomerController implements Initializable {
         }
     }
 
+    // Load all divisions into the divisionBox
     private void loadDivisions(ActionEvent event) {
         Country selectedCountry = countryBox.getSelectionModel().getSelectedItem();
         if (selectedCountry != null) {
@@ -74,6 +72,7 @@ public class AddCustomerController implements Initializable {
         }
     }
 
+    // Save the customer to the database
     @FXML
     public void saveCustomer(ActionEvent event) throws IOException {
         String name = nameField.getText();
@@ -103,6 +102,7 @@ public class AddCustomerController implements Initializable {
         }
     }
 
+    // Cancel the creation of a new customer
     @FXML
     public void cancelCreation(ActionEvent event) throws IOException {
         Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to cancel creating customer?", ButtonType.YES, ButtonType.NO);

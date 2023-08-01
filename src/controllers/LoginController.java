@@ -1,5 +1,5 @@
 
-// Import necessary libraries
+// Purpose: Controller for the login form. Handles login operations and logs the login of a user.
 package controllers;
 
 // Necessary import statements for file, database, GUI, and other operations
@@ -11,7 +11,6 @@ import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 
 import constructors.User;
-import controllers.HomeController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

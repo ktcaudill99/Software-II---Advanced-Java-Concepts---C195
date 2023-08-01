@@ -62,6 +62,7 @@ public class AddAppointmentController implements Initializable {
         userIdField.setText(String.valueOf(ConnectDB.getCurrentUserId()));
     }
 
+    // Load the contacts from the database and populate the contactBox
     private void loadContacts() {
         try {
             List<String> contacts = ConnectDB.getAllContacts();
@@ -72,6 +73,7 @@ public class AddAppointmentController implements Initializable {
         }
     }
 
+    // Load the customers from the database and populate the customerBox
     private void loadCustomers() {
         try {
             List<String> customers = ConnectDB.getAllCustomers();
@@ -81,6 +83,7 @@ public class AddAppointmentController implements Initializable {
         }
     }
 
+    // Load the appointment times and populate the startTimeBox and endTimeBox
     private void loadAppointmentTimes() {
         ObservableList<String> appointmentTimes = FXCollections.observableArrayList();
         LocalTime firstAppointment = LocalTime.MIN.plusHours(8);
@@ -93,6 +96,7 @@ public class AddAppointmentController implements Initializable {
         endTimeBox.setItems(appointmentTimes);
     }
 
+    // Handle the save button action
     @FXML
     public void handleSaveButtonAction(ActionEvent event) throws IOException {
         String title = titleField.getText();
@@ -108,6 +112,7 @@ public class AddAppointmentController implements Initializable {
         String customerName = customerBox.getValue();
         LocalDateTime now = LocalDateTime.now();
 
+        // Check if any fields are empty
         if (title.isEmpty() || description.isEmpty() || location.isEmpty() ||
                 contactName == null || contactName.isEmpty() || type.isEmpty() ||
                 startDate == null || endDate == null ||
@@ -156,7 +161,6 @@ public class AddAppointmentController implements Initializable {
             actionStatus.setText("Customer ID and User ID should be valid numbers.");
             return;
         }
-
         String currentUser;
         try {
             currentUser = ConnectDB.getUserNameById(userId);
@@ -217,6 +221,7 @@ public class AddAppointmentController implements Initializable {
         }
     }
 
+    // Handle the cancel button action
     @FXML
     public void cancelCreation(ActionEvent event) throws IOException {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION,

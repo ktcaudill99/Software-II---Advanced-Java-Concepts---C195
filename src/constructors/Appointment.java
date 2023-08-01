@@ -1,13 +1,8 @@
 
 package constructors;
-
 // These are the necessary imports for the date/time functionality in this class
 import java.time.LocalDateTime;
-
-
 // This class represents an Appointment object with all the necessary fields
-
-
     // This is the constructor for the Appointment class
     public class Appointment {
         private int appointmentID;
@@ -62,108 +57,43 @@ import java.time.LocalDateTime;
         public int getAppointmentID() {
         return appointmentID;
     }
-
         public String getAppointmentTitle() {
             return appointmentTitle;
         }
-
-        public void setAppointmentTitle(String appointmentTitle) {
-            this.appointmentTitle = appointmentTitle;
-        }
-
         public String getAppointmentDescription() {
             return appointmentDescription;
         }
-
-        public void setAppointmentDescription(String appointmentDescription) {
-            this.appointmentDescription = appointmentDescription;
-        }
-
         public String getAppointmentLocation() {
             return appointmentLocation;
         }
-
-        public void setAppointmentLocation(String appointmentLocation) {
-            this.appointmentLocation = appointmentLocation;
-        }
-
         public String getAppointmentType() {
             return appointmentType;
         }
-
-        public void setAppointmentType(String appointmentType) {
-            this.appointmentType = appointmentType;
-        }
-
         public LocalDateTime getStart() {
             return start;
         }
-
         public void setStart(LocalDateTime start) {
             this.start = start;
         }
-
         public LocalDateTime getEnd() {
             return end;
         }
-
         public void setEnd(LocalDateTime end) {
             this.end = end;
         }
-
         public int getCustomerID() {
             return customerID;
         }
-
-        public void setCustomerID(int customerID) {
-            this.customerID = customerID;
-        }
-
         public int getUserID() {
             return userID;
         }
-
-        public void setUserID(int userID) {
-            this.userID = userID;
-        }
-
         public int getContactID() {
             return contactID;
         }
-
-        public void setContactID(int contactID) {
-            this.contactID = contactID;
-        }
-
-        public LocalDateTime getCreateDate() {
-            return createDate;
-        }
-
-        public void setCreateDate(LocalDateTime createDate) {
-            this.createDate = createDate;
-        }
-
         public String getCreatedBy() {
             return createdBy;
         }
-
-        public void setCreatedBy(String createdBy) {
-            this.createdBy = createdBy;
-        }
-
-        public LocalDateTime getLastUpdate() {
-            return lastUpdate;
-        }
-
-        public void setLastUpdate(LocalDateTime lastUpdate) {
-            this.lastUpdate = lastUpdate;
-        }
-
         public String getLastUpdatedBy() {
             return lastUpdatedBy;
         }
-
-        public void setLastUpdatedBy(String lastUpdatedBy) {
-            this.lastUpdatedBy = lastUpdatedBy;
-        }
-    }
+ }

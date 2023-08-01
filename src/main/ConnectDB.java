@@ -10,9 +10,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-//import static constructors.User.userID;
-
-
 // This class is responsible for connecting with the database
 public class ConnectDB {
 
@@ -46,6 +43,7 @@ public class ConnectDB {
         return null; // If connection fails, return null
     }
 
+    //method to convert local time to UTC
     public static LocalDateTime convertTimeDateUTC(String dateTimeStr) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime dateTime = LocalDateTime.parse(dateTimeStr, formatter);
@@ -54,6 +52,7 @@ public class ConnectDB {
         return dateTime;
     }
 
+    // method to get user name by id
     public static String getUserNameById(int userId) throws SQLException {
         String query = "SELECT User_Name FROM client_schedule.users WHERE User_ID = ?";
 
@@ -69,7 +68,7 @@ public class ConnectDB {
         }
     }
 
-
+    // Method to save appointment
     public static void saveAppointment(Appointment appointment) throws SQLException {
 
         String sqlInsertAppointment = "INSERT INTO client_schedule.appointments(Title, Description, Location, Type, Start, End, Customer_ID, User_ID, Contact_ID, Created_By, Last_Updated_By) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -94,7 +93,7 @@ public class ConnectDB {
         }
     }
 
-
+    //method to get contact id by contact name
     public static int getContactIdByContactName(String contactName) throws SQLException {
         String query = "SELECT Contact_ID FROM client_schedule.contacts WHERE Contact_Name = ?";
 
@@ -110,6 +109,7 @@ public class ConnectDB {
         }
     }
 
+    //method to save customer
     public static void saveCustomer(Customer customer) throws SQLException {
         String sqlInsertCustomer = "INSERT INTO client_schedule.customers(Customer_Name, Address, Division_ID, Phone, Postal_Code) VALUES(?, ?, ?, ?, ?)";
 
@@ -172,6 +172,7 @@ public class ConnectDB {
         }
     }
 
+    //method to get all contacts
     public static List<String> getAllContacts() throws SQLException {
         String query = "SELECT Contact_Name FROM client_schedule.contacts";
 
@@ -188,6 +189,7 @@ public class ConnectDB {
         }
     }
 
+    //method to get all countries
     public static List<Country> getAllCountries() throws SQLException {
         String query = "SELECT * FROM client_schedule.countries";
 
@@ -211,6 +213,7 @@ public class ConnectDB {
         }
     }
 
+    //method to get all divisions
     public static List<FirstLevelDivisions> getAllDivisions() throws SQLException {
         String query = "SELECT * FROM client_schedule.first_level_divisions";
 
@@ -235,6 +238,7 @@ public class ConnectDB {
         }
     }
 
+    //method to get all division by country id
     public static List<FirstLevelDivisions> getAllDivisionsByCountryId(int countryId) throws SQLException {
         String query = "SELECT * FROM client_schedule.first_level_divisions WHERE COUNTRY_ID = ?";
 
@@ -258,6 +262,7 @@ public class ConnectDB {
         }
     }
 
+    //method to update customer
     public static void updateCustomer(Customer customer) throws SQLException {
         String sqlUpdateCustomer = "UPDATE client_schedule.customers SET Customer_Name = ?, Address = ?, Division_ID = ?, Phone = ?, Postal_Code = ? WHERE Customer_ID = ?";
 
@@ -279,6 +284,8 @@ public class ConnectDB {
             System.err.println("Error while updating customer: " + ex.getMessage());
         }
     }
+
+    //method to get contact name by id
     public static String getContactNameById(int contactId) throws SQLException {
         String query = "SELECT Contact_Name FROM client_schedule.contacts WHERE Contact_ID = ?";
 
@@ -294,6 +301,7 @@ public class ConnectDB {
         }
     }
 
+    //method to get customer name by id
     public static String getCustomerNameById(int customerId) throws SQLException {
         String query = "SELECT Customer_Name FROM client_schedule.customers WHERE Customer_ID = ?";
 
@@ -309,6 +317,7 @@ public class ConnectDB {
         }
     }
 
+    //appointment overlap check
     public static boolean doesAppointmentOverlap(int customerId, LocalDateTime startDateTime, LocalDateTime endDateTime) throws SQLException {
         String query = "SELECT * FROM client_schedule.appointments WHERE Customer_ID = ? AND ((Start <= ? AND End > ?) OR (Start < ? AND End >= ?) OR (Start >= ? AND End <= ?))";
 
@@ -326,6 +335,7 @@ public class ConnectDB {
         }
     }
 
+    //method to update appointment
     public static void updateAppointment(Appointment updatedAppointment) throws SQLException {
         String sqlUpdateAppointment = "UPDATE client_schedule.appointments SET Title = ?, Description = ?, Location = ?, Type = ?, Start = ?, End = ?, Customer_ID = ?, User_ID = ?, Contact_ID = ?, Last_Updated_By = ? WHERE Appointment_ID = ?";
 

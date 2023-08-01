@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package controllers;
 
 import java.io.IOException;
@@ -74,13 +70,14 @@ public class ModifyAppointmentController implements Initializable {
     @FXML
     private TextField appointmentIdField;
 
-    private Appointment appointmentToModify;  // Add this field at the class level
+    private Appointment appointmentToModify;
 
     public void setAppointment(Appointment appointment) {
         this.appointmentToModify = appointment;
         loadAppointmentData();
     }
 
+    // Load the appointment data into the form
     private void loadAppointmentData() {
         if (appointmentToModify != null) {
             titleField.setText(appointmentToModify.getAppointmentTitle());
@@ -118,7 +115,7 @@ public class ModifyAppointmentController implements Initializable {
         }
     }
 
-
+    // Handle the save button action
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadContacts();
@@ -158,7 +155,7 @@ public class ModifyAppointmentController implements Initializable {
         endDatePicker.setConverter(converter);
     }
 
-
+    // Load all contacts into the contactBox
     private void loadContacts() {
         try {
             List<String> contacts = ConnectDB.getAllContacts();
@@ -168,6 +165,7 @@ public class ModifyAppointmentController implements Initializable {
         }
     }
 
+    // Load all customers into the customerBox
     private void loadCustomers() {
         try {
             List<String> customers = ConnectDB.getAllCustomers();
@@ -177,6 +175,7 @@ public class ModifyAppointmentController implements Initializable {
         }
     }
 
+    // Load all appointment times into the startTimeBox and endTimeBox
     private void loadAppointmentTimes() {
         ObservableList<String> appointmentTimes = FXCollections.observableArrayList();
         LocalTime firstAppointment = LocalTime.MIN.plusHours(8);
@@ -189,6 +188,7 @@ public class ModifyAppointmentController implements Initializable {
         endTimeBox.setItems(appointmentTimes);
     }
 
+    // Handle the save button action
     @Deprecated
     public void updateAppointment(ActionEvent event) throws IOException, SQLException {
         String title = titleField.getText();
@@ -265,6 +265,7 @@ public class ModifyAppointmentController implements Initializable {
         }
     }
 
+    // Handle the cancel button action
     @Deprecated
     public void cancelUpdate(ActionEvent event) throws IOException {
         Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to cancel updating appointment?", ButtonType.YES, ButtonType.NO);

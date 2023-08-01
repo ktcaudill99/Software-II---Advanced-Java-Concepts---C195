@@ -22,6 +22,7 @@ public class ReportController {
     @FXML
     private TextArea contactsReportArea;
 
+    // Generate the report
     @FXML
     private void generateReport1() {
         reportArea1.clear();
@@ -39,6 +40,8 @@ public class ReportController {
             reportArea1.appendText("Error generating report: " + e.getMessage() + "\n");
         }
     }
+
+    // Generate the report
     @FXML
     private void generateReport2() {
         reportArea2.clear();
@@ -55,7 +58,7 @@ public class ReportController {
         }
     }
 
-
+    // Generate the report
     private void generateContactSchedule(int contactId) {
         String query = "SELECT Appointment_ID, Title, Type, Description, Start, End, Customer_ID FROM client_schedule.appointments WHERE Contact_ID = ? ORDER BY Start";
         try {
@@ -78,6 +81,8 @@ public class ReportController {
             reportArea2.appendText("Error generating main: " + e.getMessage() + "\n");
         }
     }
+
+    // Generate the report
     @FXML
     private void generateContactsReport() {
         contactsReportArea.clear();
@@ -96,7 +101,7 @@ public class ReportController {
         }
     }
 
-
+    // Back to home
     @FXML
     private void backToHome(ActionEvent event) throws IOException {
         Parent homeParent = FXMLLoader.load(getClass().getResource("../views/home.fxml"));

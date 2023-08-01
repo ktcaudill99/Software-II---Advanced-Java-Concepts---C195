@@ -1,3 +1,4 @@
+
 package constructors;
 
 import java.time.LocalDateTime;
@@ -7,7 +8,6 @@ import java.time.LocalDateTime;
  * Definitions to be used by the system for the First_Level_Divisions table
  */
 public class FirstLevelDivisions {
-
     private int divisionId;
     private String division;
     private String createDate;
@@ -15,7 +15,7 @@ public class FirstLevelDivisions {
     private String lastUpdated;
     private String lastUpdatedBy;
     private int countryId;
-
+// This is the constructor for the FirstLevelDivisions class
     public FirstLevelDivisions(int divisionId, String division, LocalDateTime createDate, String createdBy, LocalDateTime lastUpdate, String lastUpdatedBy, int countryId) {
     }
 
@@ -24,7 +24,6 @@ public class FirstLevelDivisions {
         this.division = division;
         this.countryId = countryId;
     }
-
     public FirstLevelDivisions(int divisionId, String division, String createDate, String createdBy, String lastUpdated,
                                String lastUpdatedBy, int countryId) {
         this.divisionId = divisionId;
@@ -35,78 +34,21 @@ public class FirstLevelDivisions {
         this.lastUpdatedBy = lastUpdatedBy;
         this.countryId = countryId;
     }
-
-    public FirstLevelDivisions(int divisionId, String division) {
-        this.divisionId = divisionId;
-        this.division = division;
-    }
-
+// getters and setters
     public int getDivisionId() {
         return divisionId;
     }
-
-    public void setDivisionId(int divisionId) {
-        this.divisionId = divisionId;
-    }
-
-    public String getDivision() {
+   public String getDivision() {
         return division;
     }
-
     public void setDivision(String division) {
         this.division = division;
     }
-
-    public String getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(String createDate) {
-        this.createDate = createDate;
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public String getLastUpdated() {
-        return lastUpdated;
-    }
-
-    public void setLastUpdated(String lastUpdated) {
-        this.lastUpdated = lastUpdated;
-    }
-
-    public String getLastUpdatedBy() {
-        return lastUpdatedBy;
-    }
-
-    public void setLastUpdatedBy(String lastUpdatedBy) {
-        this.lastUpdatedBy = lastUpdatedBy;
-    }
-
-    public int getDivisionID() {
-        return divisionId;
-    }
-
-    public void setDivisionID(int divisionId) {
-        this.divisionId = divisionId;
-    }
-
     @Override
     public String toString() {
         return division;
     }
-
     public int getCountryId() {
         return countryId;
-    }
-
-    public void setCountryId(int countryId) {
-        this.countryId = countryId;
     }
 }

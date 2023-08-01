@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+//purpose: controller for home screen
 package controllers;
 
 import java.io.IOException;
@@ -42,9 +38,9 @@ import java.sql.Timestamp;
 
 
 /**
- * FXML Controller class
  *
- * @author Katie-BAMF
+ *
+ *
  */
 public class HomeController implements Initializable {
 
@@ -114,11 +110,10 @@ public class HomeController implements Initializable {
     @FXML
     private ToggleGroup radioButtonToggleGroup;
 
-
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
+        // Set the toggle group for the radio buttons
         radioButtonToggleGroup = new ToggleGroup();
 
         rbCurrentMonth.setToggleGroup(radioButtonToggleGroup);
@@ -129,6 +124,7 @@ public class HomeController implements Initializable {
         this.getAllCustomers();
         this.tvCustomers.setItems(allCustomers);
 
+        // Set the cell value factories for the customer table
         this.customerID.setCellValueFactory(new PropertyValueFactory<>("customerID"));
         this.name.setCellValueFactory(new PropertyValueFactory<>("customerName"));
         this.address.setCellValueFactory(new PropertyValueFactory<>("customerAddress"));
@@ -177,6 +173,7 @@ public class HomeController implements Initializable {
 
     }
 
+    //check for appointments within 15 minutes of login
     public void checkUpcomingAppointments() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime threshold = now.plusMinutes(15);
@@ -205,6 +202,7 @@ public class HomeController implements Initializable {
         }
     }
 
+    //add appointment button
     @FXML
     private void addAppAction(ActionEvent event) throws IOException {
         Parent addAppointmentParent = FXMLLoader.load(getClass().getResource("../views/AddAppointment.fxml"));
@@ -214,6 +212,7 @@ public class HomeController implements Initializable {
         window.show();
     }
 
+    //modify appointment button
     @FXML
     private void modifyAppAction(ActionEvent event) throws IOException {
         if (selectedAppointment != null) {
@@ -238,6 +237,8 @@ public class HomeController implements Initializable {
             System.out.println("No appointment selected.");
         }
     }
+
+    //radio buttons for appointment view
     @FXML
     private void currentMonthAction(ActionEvent event) {
         if (rbCurrentMonth.isSelected()) {
@@ -288,7 +289,7 @@ public class HomeController implements Initializable {
         tvAppointments.setItems(filteredAppointments);
     }
 
-
+    //delete appointment button
     @FXML
     private void deleteAppAction(ActionEvent event) throws SQLException {
         if (selectedAppointment != null) {
@@ -318,7 +319,6 @@ public class HomeController implements Initializable {
                 ConnectDB.conn.commit();
                 // Remove appointment from list
                 allAppointments.remove(selectedAppointment);
-
                 // Also, remove this customer's appointments from the allAppointments list
                 tvAppointments.refresh();
 
@@ -348,6 +348,7 @@ public class HomeController implements Initializable {
     }
     }
 
+    //add customer button
     @FXML
     private void addCustomerAction(ActionEvent event) throws IOException {
         Stage stage;
@@ -359,6 +360,7 @@ public class HomeController implements Initializable {
         stage.show();
     }
 
+    //modify customer button
     @FXML
     private void modifyCustomerAction(ActionEvent event) {
         if (selectedCustomer != null) {
@@ -386,6 +388,7 @@ public class HomeController implements Initializable {
         }
     }
 
+    //delete customer button
     @FXML
     private void deleteCustomerAction(ActionEvent event) throws SQLException {
         if (selectedCustomer != null) {
@@ -462,9 +465,7 @@ public class HomeController implements Initializable {
         }
     }
 
-
-
-
+    //get division by id
     public FirstLevelDivisions getFirstLevelDivisionById(int divisionId) {
         FirstLevelDivisions division = null;
 
@@ -516,6 +517,7 @@ public class HomeController implements Initializable {
         }
     }
 
+    //get all appointments from database and add to observable list for tableview
     public ObservableList<Appointment> getAllAppointments() {
         System.out.println("Retrieving Appointment Records");
         allAppointments.clear();
@@ -566,6 +568,7 @@ public class HomeController implements Initializable {
 
     }
 
+    //report button
     @FXML
     private void reportAction(ActionEvent event) throws IOException {
         Parent reportParent = FXMLLoader.load(getClass().getResource("../views/Report.fxml"));
@@ -575,6 +578,7 @@ public class HomeController implements Initializable {
         window.show();
     }
 
+    //logout button
     @FXML
     private void handleLogout(ActionEvent event) throws IOException {
         // Load the login screen

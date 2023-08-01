@@ -1,3 +1,4 @@
+
 package controllers;
 
 import java.io.IOException;
@@ -51,12 +52,13 @@ public class ModifyCustomerController implements Initializable {
 
     private Customer customerToModify;  // Add this field at the class level
 
+    // Add this method to set the customer to modify
     public void setCustomer(Customer customer) {
         this.customerToModify = customer;
         loadCustomerData();
     }
 
-
+    // Load all countries into the countryBox
     private void loadCustomerData() {
         if (customerToModify != null) {
             nameField.setText(customerToModify.getCustomerName());
@@ -84,16 +86,16 @@ public class ModifyCustomerController implements Initializable {
         }
     }
 
-
+    // Load all countries into the countryBox
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         loadCountries();
         loadAllDivisions();
         countryBox.setOnAction(this::loadDivisions);
-        // Assuming you have a method to fetch and load the customer data
         loadCustomerData();
     }
 
+    // Load all countries into the countryBox
     private void loadCountries() {
         try {
             List<Country> countries = ConnectDB.getAllCountries();
@@ -103,6 +105,7 @@ public class ModifyCustomerController implements Initializable {
         }
     }
 
+    // Load all divisions into the divisionBox
     private void loadAllDivisions() {
         try {
             List<FirstLevelDivisions> divisions = ConnectDB.getAllDivisions();
@@ -112,6 +115,7 @@ public class ModifyCustomerController implements Initializable {
         }
     }
 
+    // Load divisions based on the selected country
     private void loadDivisions(ActionEvent event) {
         Country selectedCountry = countryBox.getSelectionModel().getSelectedItem();
         if (selectedCountry != null) {
@@ -124,6 +128,7 @@ public class ModifyCustomerController implements Initializable {
         }
     }
 
+    // Add a updated customer to the database
     @FXML
     public void updateCustomer(ActionEvent event) throws IOException {
         String name = nameField.getText();
@@ -151,6 +156,7 @@ public class ModifyCustomerController implements Initializable {
         }
     }
 
+    // Cancel updating customer and return to home screen
     @FXML
     public void cancelUpdate(ActionEvent event) throws IOException {
         Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to cancel updating customer?", ButtonType.YES, ButtonType.NO);
