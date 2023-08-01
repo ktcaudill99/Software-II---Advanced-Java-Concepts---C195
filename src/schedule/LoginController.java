@@ -122,11 +122,18 @@ public class LoginController implements Initializable {
             loginLog(user.getUsername());
 
             // Change the scene to home.fxml
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/schedule/home.fxml"));
+            root = loader.load();
+
+            // Get the HomeController instance and call the checkUpcomingAppointments method
+            HomeController homeController = loader.getController();
+            homeController.checkUpcomingAppointments();
+
             stage = (Stage) btnLogIn.getScene().getWindow();
-            root = FXMLLoader.load(getClass().getResource("/schedule/home.fxml"));
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
+
         } else {
             // Show an alert when the username or password is incorrect
             Alert alert = new Alert(Alert.AlertType.INFORMATION);

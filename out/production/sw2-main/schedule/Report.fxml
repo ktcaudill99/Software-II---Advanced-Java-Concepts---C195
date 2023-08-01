@@ -12,14 +12,14 @@
 
         <VBox alignment="CENTER" spacing="5.0">
             <children>
-                <Button onAction="#generateReport1" text="Generate Total Number of Customer Appointments by Type and Month" />
+                <Button onAction="#generateReport1" text="Generate Total Number of Customer Appointments by Type and Month Report" />
                 <TextArea fx:id="reportArea1" editable="false" prefHeight="200.0" prefWidth="600.0" />
             </children>
         </VBox>
 
         <VBox alignment="CENTER" spacing="5.0">
             <children>
-                <Button onAction="#generateReport2" text="Generate Schedule for Each Contact " />
+                <Button onAction="#generateReport2" text="Generate Schedule for Each Contact Report" />
                 <TextArea fx:id="reportArea2" editable="false" prefHeight="200.0" prefWidth="600.0" />
             </children>
         </VBox>

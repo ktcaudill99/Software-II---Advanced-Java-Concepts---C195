@@ -170,7 +170,35 @@ public class HomeController implements Initializable {
                 }
         );
 
-    }    
+    }
+
+    public void checkUpcomingAppointments() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime threshold = now.plusMinutes(15);
+        boolean hasUpcomingAppointment = false;
+
+        for (Appointment appointment : allAppointments) {
+            LocalDateTime appointmentStart = appointment.getStart();
+            if (appointmentStart.isAfter(now) && appointmentStart.isBefore(threshold)) {
+                hasUpcomingAppointment = true;
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Upcoming Appointment");
+                alert.setHeaderText("You have an upcoming appointment!");
+                alert.setContentText("Appointment ID: " + appointment.getAppointmentID()
+                        + "\nDate: " + appointmentStart.toLocalDate()
+                        + "\nTime: " + appointmentStart.toLocalTime());
+                alert.show();
+                break;
+            }
+        }
+
+        if (!hasUpcomingAppointment) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("No Upcoming Appointments");
+            alert.setHeaderText("You have no upcoming appointments in the next 15 minutes.");
+            alert.show();
+        }
+    }
 
     @FXML
     private void addAppAction(ActionEvent event) throws IOException {
