@@ -18,6 +18,8 @@ public class ReportController {
     private TextArea reportArea1;
     @FXML
     private TextArea reportArea2;
+    @FXML
+    private TextArea contactsReportArea;
 
     @FXML
     private void generateReport1() {
@@ -75,6 +77,24 @@ public class ReportController {
             reportArea2.appendText("Error generating schedule: " + e.getMessage() + "\n");
         }
     }
+    @FXML
+    private void generateContactsReport() {
+        contactsReportArea.clear();
+        String query = "SELECT Contact_ID, Contact_Name, Email FROM client_schedule.contacts";
+        try {
+            Statement statement = ConnectDB.conn.createStatement();
+            ResultSet results = statement.executeQuery(query);
+            while (results.next()) {
+                int contactId = results.getInt("Contact_ID");
+                String contactName = results.getString("Contact_Name");
+                String email = results.getString("Email");
+                contactsReportArea.appendText("Contact ID: " + contactId + ", Name: " + contactName + ", Email: " + email + "\n");
+            }
+        } catch (SQLException e) {
+            contactsReportArea.appendText("Error generating report: " + e.getMessage() + "\n");
+        }
+    }
+
 
     @FXML
     private void backToHome(ActionEvent event) throws IOException {
@@ -84,4 +104,5 @@ public class ReportController {
         window.setScene(homeScene);
         window.show();
     }
+
 }
