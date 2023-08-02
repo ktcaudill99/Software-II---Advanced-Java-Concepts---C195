@@ -231,20 +231,33 @@ public class AddAppointmentController implements Initializable {
         }
     }
 
-    // Handle the cancel button action
+    /**
+     * Handle the cancel button action
+     * A lambda expression is used to handle the alert dialog button click event.
+     * This provides a concise way to define the functionality directly within the method.
+     *
+     * @param event the action event
+     * @throws IOException if there's an issue loading the home view
+     */
     @FXML
     public void cancelCreation(ActionEvent event) throws IOException {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
                 "Are you sure you want to cancel creating this appointment?",
                 ButtonType.YES, ButtonType.NO);
-        alert.showAndWait();
 
-        if (alert.getResult() == ButtonType.YES) {
-            Parent homeParent = FXMLLoader.load(getClass().getResource("/views/home.fxml"));
-            Scene homeScene = new Scene(homeParent);
-            Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            window.setScene(homeScene);
-            window.show();
-        }
+        // Using lambda expression to handle the user's response to the alert dialog
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.YES) {
+                try {
+                    Parent homeParent = FXMLLoader.load(getClass().getResource("/views/home.fxml"));
+                    Scene homeScene = new Scene(homeParent);
+                    Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                    window.setScene(homeScene);
+                    window.show();
+                } catch (IOException ex) {
+                    System.err.println("Error while cancelling appointment creation: " + ex.getMessage());
+                }
+            }
+        });
     }
 }

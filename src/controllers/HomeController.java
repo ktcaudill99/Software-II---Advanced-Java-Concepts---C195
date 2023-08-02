@@ -126,6 +126,16 @@ public class HomeController implements Initializable {
     @FXML
     private ToggleGroup radioButtonToggleGroup;
 
+
+    /**
+     * This method initializes the controller for the Home view.
+     * It sets up the toggle group for the radio buttons, retrieves all customers,
+     * sets the cell value factories for the customer and appointment tables,
+     * and initializes the ScheduleService.
+     *
+     * @param url The location used to resolve relative paths for the root object, or null if the location is not known.
+     * @param rb The resources used to localize the root object, or null if the root object was not localized.
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
@@ -145,12 +155,9 @@ public class HomeController implements Initializable {
         this.name.setCellValueFactory(new PropertyValueFactory<>("customerName"));
         this.address.setCellValueFactory(new PropertyValueFactory<>("customerAddress"));
 
-        this.state.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Customer, String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<Customer, String> param) {
-                return new SimpleStringProperty(param.getValue().getCustomerDivision().getDivision());
-            }
-        });
+        // Replace the anonymous inner class with a lambda expression
+        // This lambda expression simplifies the code by replacing the anonymous inner class, making it more concise and readable
+        this.state.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getCustomerDivision().getDivision()));
 
         this.phoneNumber.setCellValueFactory(new PropertyValueFactory<>("customerPhone"));
         this.postal.setCellValueFactory(new PropertyValueFactory<>("customerZip"));
@@ -186,7 +193,6 @@ public class HomeController implements Initializable {
                     }
                 }
         );
-
     }
 
     //check for appointments within 15 minutes of login
