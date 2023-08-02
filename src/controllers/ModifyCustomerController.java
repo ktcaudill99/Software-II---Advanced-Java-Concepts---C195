@@ -29,8 +29,11 @@ import javafx.scene.control.Alert.AlertType;
 import main.ConnectDB;
 
 /**
- * This class is the controller for the Add Customer view.
- * It handles the creation of a new customer.
+ * Controller class for the Modify Customer view.
+ * This class is responsible for modifying existing customer information, loading country and division data,
+ * and handling user interactions to update or cancel the modification.
+ *
+ * @author Katherine Caudill
  */
 public class ModifyCustomerController implements Initializable {
 
@@ -56,13 +59,20 @@ public class ModifyCustomerController implements Initializable {
 
     private Customer customerToModify;  // Add this field at the class level
 
-    // Add this method to set the customer to modify
+
+    /**
+     * Sets the customer to modify and loads its data into the form.
+     *
+     * @param customer The customer to modify.
+     */
     public void setCustomer(Customer customer) {
         this.customerToModify = customer;
         loadCustomerData();
     }
 
-    // Load all countries into the countryBox
+    /**
+     * Loads the customer data into the form fields.
+     */
     private void loadCustomerData() {
         if (customerToModify != null) {
             nameField.setText(customerToModify.getCustomerName());
@@ -90,7 +100,12 @@ public class ModifyCustomerController implements Initializable {
         }
     }
 
-    // Load all countries into the countryBox
+    /**
+     * Initializes the controller class. Automatically called after the FXML file has been loaded.
+     *
+     * @param url The location to resolve relative paths for the root object, or null if unknown.
+     * @param rb The resources used to localize the root object, or null if the root object was not localized.
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         loadCountries();
@@ -99,7 +114,9 @@ public class ModifyCustomerController implements Initializable {
         loadCustomerData();
     }
 
-    // Load all countries into the countryBox
+    /**
+     * Loads all countries into the countryBox ComboBox.
+     */
     private void loadCountries() {
         try {
             List<Country> countries = ConnectDB.getAllCountries();
@@ -109,7 +126,9 @@ public class ModifyCustomerController implements Initializable {
         }
     }
 
-    // Load all divisions into the divisionBox
+    /**
+     * Loads all divisions into the divisionBox ComboBox.
+     */
     private void loadAllDivisions() {
         try {
             List<FirstLevelDivisions> divisions = ConnectDB.getAllDivisions();
@@ -119,7 +138,11 @@ public class ModifyCustomerController implements Initializable {
         }
     }
 
-    // Load divisions based on the selected country
+    /**
+     * Loads divisions into the divisionBox ComboBox based on the selected country.
+     *
+     * @param event The event triggered by the country selection.
+     */
     private void loadDivisions(ActionEvent event) {
         Country selectedCountry = countryBox.getSelectionModel().getSelectedItem();
         if (selectedCountry != null) {
@@ -132,7 +155,12 @@ public class ModifyCustomerController implements Initializable {
         }
     }
 
-    // Add a updated customer to the database
+    /**
+     * Handles the update customer button action. Adds the updated customer to the database.
+     *
+     * @param event The event triggered by the update button.
+     * @throws IOException If an I/O error occurs.
+     */
     @FXML
     public void updateCustomer(ActionEvent event) throws IOException {
         String name = nameField.getText();
@@ -160,7 +188,12 @@ public class ModifyCustomerController implements Initializable {
         }
     }
 
-    // Cancel updating customer and return to home screen
+    /**
+     * Handles the cancel button action. Cancels updating the customer and returns to the home screen.
+     *
+     * @param event The event triggered by the cancel button.
+     * @throws IOException If an I/O error occurs.
+     */
     @FXML
     public void cancelUpdate(ActionEvent event) throws IOException {
         Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to cancel updating customer?", ButtonType.YES, ButtonType.NO);

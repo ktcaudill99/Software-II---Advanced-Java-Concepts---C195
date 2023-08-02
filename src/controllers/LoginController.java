@@ -1,5 +1,4 @@
 
-// Purpose: Controller for the login form. Handles login operations and logs the login of a user.
 package controllers;
 
 // Necessary import statements for file, database, GUI, and other operations
@@ -35,12 +34,13 @@ import java.time.ZoneId;
 import java.util.Optional;
 
 
+
 /**
- * This class is the controller for the login view.
- * It handles the login operations and logs the login of a user.
+ * Controller class for managing the login form of the application.
+ * This class contains methods for handling user login and logging user activities.
  *
+ * @author Katherine Caudill
  */
-// Class that serves as controller for login operations
 public class LoginController implements Initializable {
 
     // FXML fields for interacting with the GUI
@@ -62,12 +62,20 @@ public class LoginController implements Initializable {
     @FXML
     private Label zoneLabel;
 
-    // Gets the default locale of the system running the application
+    /**
+     * Retrieves the default locale of the system running the application.
+     *
+     * @return The default locale.
+     */
     public static Locale getCurrentLocale() {
         return Locale.getDefault();
     }
 
-    // Set labels for the login form
+    /**
+     * Sets the labels for the login form based on the current locale.
+     *
+     * @param rb The resource bundle containing localized strings.
+     */
     public void setLoginLabels(ResourceBundle rb) {
         Locale locale =  getCurrentLocale();
         rb = ResourceBundle.getBundle("main/language", Locale.getDefault());
@@ -77,7 +85,13 @@ public class LoginController implements Initializable {
         btnLogIn.setText(rb.getString("button.Login"));
         lblZone.setText(rb.getString("label.zoneId"));
     }
-    // Initial setup method when the class is instantiated
+
+    /**
+     * Initializes the login controller. This method is called after the fxml file has been loaded.
+     *
+     * @param url The location to resolve relative paths for the root object, or null if unknown.
+     * @param rb  The resources used to localize the root object, or null if the root object was not localized.
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Gets the default locale of the system running the application
@@ -95,13 +109,21 @@ public class LoginController implements Initializable {
 
     }
 
-    // Set the system's timezone label
+    /**
+     * Sets the system's timezone label on the login form.
+     */
     private void setZoneLabel() {
         ZoneId zoneId = ZoneId.systemDefault();
         lblZone.setText(zoneId.getId());
     }
 
-    // Method to handle login operations
+    /**
+     * Handles login operations including user authentication and scene transition.
+     *
+     * @param event The event triggered by the login button.
+     * @throws SQLException If a database access error occurs.
+     * @throws IOException If an I/O error occurs.
+     */
     @FXML
     private void login(ActionEvent event)throws SQLException, IOException {
 
@@ -149,7 +171,13 @@ public class LoginController implements Initializable {
         }
     }
 
-    // Method to retrieve user ID from the database
+    /**
+     * Retrieves the user ID from the database for a given username.
+     *
+     * @param userName The username to search for.
+     * @return The user ID, or -1 if the user was not found.
+     * @throws SQLException If a database access error occurs.
+     */
     private int getUserID(String userName) throws SQLException {
         int userID = -1;
 
@@ -171,7 +199,14 @@ public class LoginController implements Initializable {
         return userID;
     }
 
-    // Method to verify the correctness of the password for a given user ID
+    /**
+     * Verifies the correctness of the password for a given user ID.
+     *
+     * @param userID The user ID to verify the password for.
+     * @param password The password to verify.
+     * @return true if the password is correct, false otherwise.
+     * @throws SQLException If a database access error occurs.
+     */
     private boolean correctPassword(int userID, String password) throws SQLException {
         // Create an SQL statement to communicate with the database
         Statement statement = ConnectDB.conn.createStatement();
@@ -194,7 +229,12 @@ public class LoginController implements Initializable {
         return false;
     }
 
-    // Method to log the successful login of a user
+
+    /**
+     * Logs the successful login of a user.
+     *
+     * @param user The username of the user who logged in.
+     */
     public void loginLog(String user) {
         try {
             // Specify the file name where the logs are to be written

@@ -27,7 +27,10 @@ public class ReportController {
     @FXML
     private TextArea contactsReportArea;
 
-    // Generate the report
+    /**
+     * Generates the first report, which groups appointments by type and month.
+     * The report displays the count, type, and month for each grouping.
+     */
     @FXML
     private void generateReport1() {
         reportArea1.clear();
@@ -46,7 +49,10 @@ public class ReportController {
         }
     }
 
-    // Generate the report
+    /**
+     * Generates the second report, which shows the schedule for each contact.
+     * The report includes details about appointments, such as ID, title, type, description, start time, end time, and customer ID.
+     */
     @FXML
     private void generateReport2() {
         reportArea2.clear();
@@ -63,7 +69,13 @@ public class ReportController {
         }
     }
 
-    // Generate the report
+
+    /**
+     * Generates the contact schedule for a specific contact.
+     * This is a helper method for the {@link #generateReport2()} method.
+     *
+     * @param contactId The ID of the contact for whom the schedule is generated.
+     */
     private void generateContactSchedule(int contactId) {
         String query = "SELECT Appointment_ID, Title, Type, Description, Start, End, Customer_ID FROM client_schedule.appointments WHERE Contact_ID = ? ORDER BY Start";
         try {
@@ -87,7 +99,9 @@ public class ReportController {
         }
     }
 
-    // Generate the report
+    /**
+     * Generates a report for contacts, listing their ID, name, and email.
+     */
     @FXML
     private void generateContactsReport() {
         contactsReportArea.clear();
@@ -106,7 +120,13 @@ public class ReportController {
         }
     }
 
-    // Back to home
+    /**
+     * Handles the action to return to the home view.
+     * This method is triggered by the "Back to Home" button.
+     *
+     * @param event The event triggered by the button click.
+     * @throws IOException If an I/O error occurs.
+     */
     @FXML
     private void backToHome(ActionEvent event) throws IOException {
         Parent homeParent = FXMLLoader.load(getClass().getResource("../views/home.fxml"));

@@ -32,9 +32,11 @@ import javafx.stage.Stage;
 import main.ConnectDB;
 
 /**
- * This class is the controller for the Modify Appointment view.
- * It handles the modification of an existing appointment.
+ * Controller class for the Modify Appointment view.
+ * This class handles the modification of existing appointments, including loading appointment data
+ * and handling user interactions to update or cancel the modification.
  *
+ * @author Katherine Caudill
  */
 public class ModifyAppointmentController implements Initializable {
 
@@ -64,12 +66,19 @@ public class ModifyAppointmentController implements Initializable {
     private TextField appointmentIdField;
     private Appointment appointmentToModify;
 
+    /**
+     * Sets the appointment to modify and loads its data into the form.
+     *
+     * @param appointment The appointment to modify.
+     */
     public void setAppointment(Appointment appointment) {
         this.appointmentToModify = appointment;
         loadAppointmentData();
     }
 
-    // Load the appointment data into the form
+    /**
+     * Loads the appointment data into the form fields.
+     */
     private void loadAppointmentData() {
         if (appointmentToModify != null) {
             titleField.setText(appointmentToModify.getAppointmentTitle());
@@ -107,7 +116,12 @@ public class ModifyAppointmentController implements Initializable {
         }
     }
 
-    // Handle the save button action
+    /**
+     * Initializes the controller class. This method is automatically called after the FXML file has been loaded.
+     *
+     * @param url The location to resolve relative paths for the root object, or null if unknown.
+     * @param resourceBundle The resources used to localize the root object, or null if the root object was not localized.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadContacts();
@@ -147,7 +161,9 @@ public class ModifyAppointmentController implements Initializable {
         endDatePicker.setConverter(converter);
     }
 
-    // Load all contacts into the contactBox
+    /**
+     * Loads all contacts into the contactBox ComboBox.
+     */
     private void loadContacts() {
         try {
             List<String> contacts = ConnectDB.getAllContacts();
@@ -157,7 +173,9 @@ public class ModifyAppointmentController implements Initializable {
         }
     }
 
-    // Load all customers into the customerBox
+    /**
+     * Loads all customers into the customerBox ComboBox.
+     */
     private void loadCustomers() {
         try {
             List<String> customers = ConnectDB.getAllCustomers();
@@ -167,7 +185,10 @@ public class ModifyAppointmentController implements Initializable {
         }
     }
 
-    // Load all appointment times into the startTimeBox and endTimeBox
+
+    /**
+     * Loads all appointment times into the startTimeBox and endTimeBox ComboBoxes.
+     */
     private void loadAppointmentTimes() {
         ObservableList<String> appointmentTimes = FXCollections.observableArrayList();
         LocalTime firstAppointment = LocalTime.MIN.plusHours(8);
@@ -180,7 +201,14 @@ public class ModifyAppointmentController implements Initializable {
         endTimeBox.setItems(appointmentTimes);
     }
 
-    // Handle the save button action
+    /**
+     * Handles the save button action for updating the appointment.
+     * This method is marked as deprecated, consider updating or replacing it.
+     *
+     * @param event The event triggered by the save button.
+     * @throws IOException If an I/O error occurs.
+     * @throws SQLException If a database access error occurs.
+     */
     @Deprecated
     public void updateAppointment(ActionEvent event) throws IOException, SQLException {
         String title = titleField.getText();
@@ -257,7 +285,13 @@ public class ModifyAppointmentController implements Initializable {
         }
     }
 
-    // Handle the cancel button action
+    /**
+     * Handles the cancel button action for canceling the appointment update.
+     * This method is marked as deprecated, consider updating or replacing it.
+     *
+     * @param event The event triggered by the cancel button.
+     * @throws IOException If an I/O error occurs.
+     */
     @Deprecated
     public void cancelUpdate(ActionEvent event) throws IOException {
         Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to cancel updating appointment?", ButtonType.YES, ButtonType.NO);

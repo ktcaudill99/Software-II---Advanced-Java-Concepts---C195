@@ -29,9 +29,10 @@ import javafx.scene.control.Alert.AlertType;
 import main.ConnectDB;
 
 /**
- * This class is the controller for the Add Customer view.
- * It handles the creation of a new customer.
- *
+ * Controller class for the Add Customer view.
+ * This class is responsible for handling user interactions for creating a new customer.
+ * It provides methods to load countries and divisions, save the new customer to the database,
+ * and cancel the customer creation.
  */
 public class AddCustomerController implements Initializable {
 
@@ -48,13 +49,22 @@ public class AddCustomerController implements Initializable {
     @FXML
     private ComboBox<Country> countryBox;
 
+    /**
+     * Initializes the controller class by loading all countries into the countryBox.
+     * Sets the countryBox's onAction event to load divisions based on the selected country.
+     *
+     * @param url            the location used to resolve relative paths for the root object
+     * @param rb             the resources used to localize the root object
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         loadCountries();
         countryBox.setOnAction(this::loadDivisions);
     }
 
-    // Load all countries into the countryBox
+    /**
+     * Retrieves all countries from the database and loads them into the countryBox ComboBox.
+     */
     private void loadCountries() {
         try {
             List<Country> countries = ConnectDB.getAllCountries();
@@ -64,7 +74,13 @@ public class AddCustomerController implements Initializable {
         }
     }
 
-    // Load all divisions into the divisionBox
+    /**
+     * Event handler for loading divisions.
+     * Retrieves all divisions associated with the selected country from the database
+     * and loads them into the divisionBox ComboBox.
+     *
+     * @param event the action event triggered by the countryBox ComboBox
+     */
     private void loadDivisions(ActionEvent event) {
         Country selectedCountry = countryBox.getSelectionModel().getSelectedItem();
         if (selectedCountry != null) {
@@ -77,7 +93,14 @@ public class AddCustomerController implements Initializable {
         }
     }
 
-    // Save the customer to the database
+    /**
+     * Event handler for the Save button.
+     * Retrieves customer details from the form, validates the input, and saves the new customer to the database.
+     * Navigates back to the home view upon successful saving.
+     *
+     * @param event the action event triggered by the Save button
+     * @throws IOException if there's an issue navigating to the home view
+     */
     @FXML
     public void saveCustomer(ActionEvent event) throws IOException {
         String name = nameField.getText();
@@ -107,7 +130,13 @@ public class AddCustomerController implements Initializable {
         }
     }
 
-    // Cancel the creation of a new customer
+    /**
+     * Event handler for the Cancel button.
+     * Displays a confirmation dialog to the user and navigates back to the home screen if the user confirms the cancellation.
+     *
+     * @param event the action event triggered by the Cancel button
+     * @throws IOException if there's an issue loading the home view
+     */
     @FXML
     public void cancelCreation(ActionEvent event) throws IOException {
         Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to cancel creating customer?", ButtonType.YES, ButtonType.NO);

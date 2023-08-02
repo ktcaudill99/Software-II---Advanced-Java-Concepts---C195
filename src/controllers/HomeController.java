@@ -35,28 +35,11 @@ import java.util.stream.Collectors;
 import java.sql.Timestamp;
 
 
-
-
 /**
- * This class is the controller for the Home view.
- * It handles the main screen of the application.
- * It also handles the radio buttons for the appointment view.
- * It also handles the logout button.
- * It also handles the report button.
- * It also handles the add, modify, and delete buttons for customers and appointments.
- * It also handles the check for upcoming appointments.
- * It also handles the filtering of appointments by month and week.
- * It also handles the loading of all customers and appointments.
- * It also handles the loading of the modify customer and modify appointment views.
- * It also handles the loading of the add customer and add appointment views.
- * It also handles the deletion of customers and appointments.
- * It also handles the loading of the login view.
- * It also handles the loading of the report view.
- * It also handles the loading of the add customer view.
- * It also handles the loading of the modify customer view.
- * It also handles the loading of the add appointment view.
- * It also handles the loading of the modify appointment view.
- *
+ * Controller class for the Home view, responsible for managing the main screen of the application.
+ * It includes functionalities for displaying customers and appointments, handling CRUD operations for customers and appointments,
+ * providing filtering options for appointments, displaying upcoming appointments, and managing navigation to other views such as
+ * add/modify customer, add/modify appointment, report, and login views.
  */
 public class HomeController implements Initializable {
 
@@ -128,13 +111,11 @@ public class HomeController implements Initializable {
 
 
     /**
-     * This method initializes the controller for the Home view.
-     * It sets up the toggle group for the radio buttons, retrieves all customers,
-     * sets the cell value factories for the customer and appointment tables,
-     * and initializes the ScheduleService.
+     * Initializes the controller for the Home view.
+     * Sets up radio buttons, retrieves all customers and appointments, sets cell value factories, and initializes ScheduleService.
      *
-     * @param url The location used to resolve relative paths for the root object, or null if the location is not known.
-     * @param rb The resources used to localize the root object, or null if the root object was not localized.
+     * @param url The location used to resolve relative paths for the root object.
+     * @param rb The resources used to localize the root object.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -195,7 +176,10 @@ public class HomeController implements Initializable {
         );
     }
 
-    //check for appointments within 15 minutes of login
+
+    /**
+     * Checks for upcoming appointments within 15 minutes of login and displays them to the user.
+     */
     public void checkUpcomingAppointments() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime threshold = now.plusMinutes(15);
@@ -224,7 +208,13 @@ public class HomeController implements Initializable {
         }
     }
 
-    //add appointment button
+    /**
+     * Handles the action for adding an appointment.
+     * Loads the add appointment view when the button is clicked.
+     *
+     * @param event The action event triggered by the button click.
+     * @throws IOException If there's an issue loading the view.
+     */
     @FXML
     private void addAppAction(ActionEvent event) throws IOException {
         Parent addAppointmentParent = FXMLLoader.load(getClass().getResource("../views/AddAppointment.fxml"));
@@ -234,7 +224,13 @@ public class HomeController implements Initializable {
         window.show();
     }
 
-    //modify appointment button
+    /**
+     * Handles the action for modifying an appointment.
+     * Loads the modify appointment view when the button is clicked.
+     *
+     * @param event The action event triggered by the button click.
+     * @throws IOException If there's an issue loading the view.
+     */
     @FXML
     private void modifyAppAction(ActionEvent event) throws IOException {
         if (selectedAppointment != null) {
@@ -259,6 +255,7 @@ public class HomeController implements Initializable {
             System.out.println("No appointment selected.");
         }
     }
+
 
     //radio buttons for appointment view
     @FXML
@@ -510,7 +507,9 @@ public class HomeController implements Initializable {
     }
 
 
-    //get all customers from database and add to observable list for tableview
+    /**
+     * Retrieves all customers from the database and adds them to the observable list for the table view.
+     */
     public void getAllCustomers() {
         System.out.println("Retrieving Customer Records");
         allCustomers.clear();
@@ -539,7 +538,11 @@ public class HomeController implements Initializable {
         }
     }
 
-    //get all appointments from database and add to observable list for tableview
+    /**
+     * Retrieves all appointments from the database and adds them to the observable list for the table view.
+     *
+     * @return ObservableList of appointments.
+     */
     public ObservableList<Appointment> getAllAppointments() {
         System.out.println("Retrieving Appointment Records");
         allAppointments.clear();
@@ -590,7 +593,13 @@ public class HomeController implements Initializable {
 
     }
 
-    //report button
+    /**
+     * Handles the action for generating a report.
+     * Loads the report view when the button is clicked.
+     *
+     * @param event The action event triggered by the button click.
+     * @throws IOException If there's an issue loading the view.
+     */
     @FXML
     private void reportAction(ActionEvent event) throws IOException {
         Parent reportParent = FXMLLoader.load(getClass().getResource("../views/Report.fxml"));
@@ -600,7 +609,13 @@ public class HomeController implements Initializable {
         window.show();
     }
 
-    //logout button
+    /**
+     * Handles the logout action.
+     * Loads the login view when the logout button is clicked.
+     *
+     * @param event The action event triggered by the button click.
+     * @throws IOException If there's an issue loading the view.
+     */
     @FXML
     private void handleLogout(ActionEvent event) throws IOException {
         // Load the login screen

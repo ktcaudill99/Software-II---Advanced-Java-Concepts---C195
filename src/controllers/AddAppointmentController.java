@@ -24,14 +24,13 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * FXML Controller class
- * This class is used to control the Add Appointment screen
- * This class is used to add a new appointment to the database
- * This class is used to validate the appointment data before saving it to the database
- * This class is used to check if the appointment is within business hours
- * This class is used to check if the appointment is scheduled for a weekend
- * This class is used to check if the appointment overlaps with any existing appointments for the same customer
- *
+ * FXML Controller class.
+ * This class is responsible for controlling the Add Appointment screen.
+ * It provides functionalities to add a new appointment to the database,
+ * validate the appointment data before saving it to the database,
+ * check if the appointment is within business hours,
+ * check if the appointment is scheduled for a weekend, and
+ * check if the appointment overlaps with any existing appointments for the same customer.
  */
 public class AddAppointmentController implements Initializable {
 
@@ -60,6 +59,11 @@ public class AddAppointmentController implements Initializable {
     @FXML
     private TextField appointmentIdField;
 
+    /**
+     * Initializes the controller class.
+     * This method is called after all @FXML annotated members have been injected.
+     * It loads contacts, appointment times, and customers, and sets the User ID field.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadContacts();
@@ -72,7 +76,10 @@ public class AddAppointmentController implements Initializable {
         userIdField.setText(String.valueOf(ConnectDB.getCurrentUserId()));
     }
 
-    // Load the contacts from the database and populate the contactBox
+
+    /**
+     * Loads the contacts from the database and populates the contactBox.
+     */
     private void loadContacts() {
         try {
             List<String> contacts = ConnectDB.getAllContacts();
@@ -83,7 +90,9 @@ public class AddAppointmentController implements Initializable {
         }
     }
 
-    // Load the customers from the database and populate the customerBox
+    /**
+     * Loads the customers from the database and populates the customerBox.
+     */
     private void loadCustomers() {
         try {
             List<String> customers = ConnectDB.getAllCustomers();
@@ -93,7 +102,9 @@ public class AddAppointmentController implements Initializable {
         }
     }
 
-    // Load the appointment times and populate the startTimeBox and endTimeBox
+    /**
+     * Loads the appointment times and populates the startTimeBox and endTimeBox.
+     */
     private void loadAppointmentTimes() {
         ObservableList<String> appointmentTimes = FXCollections.observableArrayList();
         LocalTime firstAppointment = LocalTime.MIN.plusHours(8);
@@ -106,7 +117,15 @@ public class AddAppointmentController implements Initializable {
         endTimeBox.setItems(appointmentTimes);
     }
 
-    // Handle the save button action
+    /**
+     * Handles the save button action.
+     * Validates the appointment details and saves the appointment to the database.
+     * Performs various checks such as verifying if the end time is before the start time,
+     * if the appointment is within business hours, if it is scheduled for a weekend, and if it overlaps with existing appointments.
+     *
+     * @param event the action event
+     * @throws IOException if there's an issue loading the home view
+     */
     @FXML
     public void handleSaveButtonAction(ActionEvent event) throws IOException {
         String title = titleField.getText();
@@ -239,6 +258,7 @@ public class AddAppointmentController implements Initializable {
      * @param event the action event
      * @throws IOException if there's an issue loading the home view
      */
+
     @FXML
     public void cancelCreation(ActionEvent event) throws IOException {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
