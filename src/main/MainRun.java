@@ -15,19 +15,28 @@ import javafx.stage.Stage;
 import java.sql.Connection;
 
 /**
- * This class is the main class for the application.
- * It handles the creation of the main window.
+ * The {@code MainRun} class serves as the main entry point for the application.
+ * It initializes the connection to the database and launches the JavaFX application,
+ * starting with the login screen.
+ * <p>
+ * This class extends the {@code Application} class from the JavaFX framework.
+ *
+ * @author Katherine Caudill
  */
 
 public class MainRun extends Application {
-    
-    // Set main window as FXML.fxml
-public static Connection conn;
-    
+
     /**
+     * The connection object used for interacting with the database.
+     */
+public static Connection conn;
+
+    /**
+     * Starts the JavaFX application by loading the login screen.
      *
-     * @param stage
-     * @throws IOException
+     * @param stage The primary stage for this application, onto which
+     *              the application scene can be set.
+     * @throws IOException If an I/O error occurs while loading the FXML file.
      */
     @Override
     public void start(Stage stage) throws IOException {
@@ -48,7 +57,14 @@ public static Connection conn;
     }
 
     /**
-     * @param args the command line arguments
+     * The main method of the application.
+     * <p>
+     * It establishes a connection to the database, launches the JavaFX application,
+     * and then closes the database connection after the application has exited.
+     *
+     * @param args the command line arguments.
+     * @throws SQLException If a database access error occurs.
+     * @throws Exception If an error occurs during the initialization process.
      */
     public static void main(String[] args) throws SQLException, Exception {
        conn = ConnectDB.makeConnection();

@@ -11,10 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ConnectDB
- * This class is responsible for connecting with the database
+ * The {@code ConnectDB} class is responsible for handling all database-related operations,
+ * including establishing a connection to the database, executing queries, and managing data retrieval
+ * and manipulation for various entities like customers, appointments, contacts, countries, and divisions.
+ * <p>
+ * This class encapsulates the functionality required to interact with the MySQL database, using JDBC.
+ * It provides methods to save, update, retrieve, and manipulate data related to the client scheduling system.
+ *
+ * @author Katherine Caudill
  */
-// This class is responsible for connecting with the database
 public class ConnectDB {
 
     // These are the properties required to establish the connection with the database
@@ -29,7 +34,11 @@ public class ConnectDB {
 
     public static Connection conn; // Connection object to manage the connection
 
-    //This function establishes the connection with the database and returns the connection object
+    /**
+     * Establishes a connection with the database and returns the connection object.
+     *
+     * @return The connection object, or {@code null} if the connection fails.
+     */
     public static Connection makeConnection() {
         // Load and register the JDBC driver
         try {
@@ -47,7 +56,12 @@ public class ConnectDB {
         return null; // If connection fails, return null
     }
 
-    //method to convert local time to UTC
+    /**
+     * Converts the given date-time string to a {@code LocalDateTime} object.
+     *
+     * @param dateTimeStr The date-time string to convert.
+     * @return The corresponding {@code LocalDateTime} object.
+     */
     public static LocalDateTime convertTimeDateUTC(String dateTimeStr) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime dateTime = LocalDateTime.parse(dateTimeStr, formatter);
@@ -56,7 +70,13 @@ public class ConnectDB {
         return dateTime;
     }
 
-    // method to get user name by id
+    /**
+     * Retrieves the username corresponding to the specified user ID.
+     *
+     * @param userId The ID of the user.
+     * @return The username, or {@code null} if no user is found.
+     * @throws SQLException If an error occurs while accessing the database.
+     */
     public static String getUserNameById(int userId) throws SQLException {
         String query = "SELECT User_Name FROM client_schedule.users WHERE User_ID = ?";
 
@@ -321,7 +341,15 @@ public class ConnectDB {
         }
     }
 
-    //appointment overlap check
+    /**
+     * Checks if an appointment overlaps with existing appointments for a given customer.
+     *
+     * @param customerId The customer ID to check.
+     * @param startDateTime The start date-time of the appointment.
+     * @param endDateTime The end date-time of the appointment.
+     * @return {@code true} if an overlapping appointment is found, {@code false} otherwise.
+     * @throws SQLException If an error occurs while accessing the database.
+     */
     public static boolean doesAppointmentOverlap(int customerId, LocalDateTime startDateTime, LocalDateTime endDateTime) throws SQLException {
         String query = "SELECT * FROM client_schedule.appointments WHERE Customer_ID = ? AND ((Start <= ? AND End > ?) OR (Start < ? AND End >= ?) OR (Start >= ? AND End <= ?))";
 
@@ -339,7 +367,12 @@ public class ConnectDB {
         }
     }
 
-    //method to update appointment
+    /**
+     * Updates an existing appointment in the database.
+     *
+     * @param updatedAppointment The updated appointment object.
+     * @throws SQLException If an error occurs while updating the appointment.
+     */
     public static void updateAppointment(Appointment updatedAppointment) throws SQLException {
         String sqlUpdateAppointment = "UPDATE client_schedule.appointments SET Title = ?, Description = ?, Location = ?, Type = ?, Start = ?, End = ?, Customer_ID = ?, User_ID = ?, Contact_ID = ?, Last_Updated_By = ? WHERE Appointment_ID = ?";
 
@@ -364,7 +397,11 @@ public class ConnectDB {
         }
     }
 
-    // This function closes the connection to the database
+    /**
+     * Closes the connection to the database.
+     *
+     * @throws SQLException If an error occurs while closing the connection.
+     */
     public static void closeConnection() throws SQLException{
         conn.close(); // Close the connection
         System.out.println("Connection closed."); // Notify that the connection has been closed
