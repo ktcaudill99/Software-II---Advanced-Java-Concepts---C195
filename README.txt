@@ -77,15 +77,29 @@ Remember to replace the placeholders (databaseName, username, password, and driv
 
 ============================================================================================================================================
 Directions for Running the Program:
-1. Open the project in IntelliJ IDEA.
-2. Ensure that the JDK and JavaFX versions are correctly set up in the project settings.
-3. Configure the project SDK to use Java 20.
-4. Add the JavaFX library to the project.
-5. Set the VM options for JavaFX.
-4. Add the MySQL Connector driver to the project libraries.
-5. Configure the database connection details in the ConnectDB class.
-6. Build and run the 'Main' class to launch the application.
-7. Log in using a valid username and password from the database.
+1.  Open the project in IntelliJ IDEA.
+2.  Ensure that the JDK and JavaFX versions are correctly set up in the project settings.
+3.  Select "IntelliJ IDEA" on the menu bar.
+4.  Select "Preferences..."
+5.  Select "Path Variables" on the left.
+6.  Set variable PATH_TO_FX to the directory of your JavaFX library
+7.  (e.g. /Library/javafx-sdk-20.0.1/lib).
+8.  Configure the project SDK to use Java 20.
+9.  Add the JavaFX library to the project.
+10. Set the VM options for JavaFX.
+11. Add the MySQL Connector driver to the project libraries.
+12. Configure the database connection details in the ConnectDB class.
+13. Build and run the 'Main' class to launch the application.
+14. Log in using a valid username and password from the database.
+
+
+(2) Select "IntelliJ IDEA" on the menu bar.
+(3) Select "Preferences..."
+(4) Select "Path Variables" on the left.
+(5) Set variable PATH_TO_FX to the directory of your JavaFX library
+    (e.g. /Library/javafx-sdk-20.0.1/lib).
+(6) Select "Run" and then "Run 'Main'" on the menu bar."
+
 
 ============================================================================================================================================
 Additional Report Description (A3f):
