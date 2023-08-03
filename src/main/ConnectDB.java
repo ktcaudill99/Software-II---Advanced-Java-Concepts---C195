@@ -52,8 +52,18 @@ public class ConnectDB {
             System.out.println("SQLException: " + e.getMessage()); // Handle exceptions related to the database connectivity
             System.out.println("SQLState: " + e.getSQLState());
             System.out.println("VendorError: " + e.getErrorCode());
+            System.out.println("Please ensure that the database is set up correctly. Refer to the README for instructions.");
         }
+        System.out.println("Connection to MySQL Database failedDatabase connection is not established. Please ensure that the database is set up correctly. Refer to the README for instructions.");
         return null; // If connection fails, return null
+    }
+
+    // New method to check the connection
+    private static void checkConnection() {
+        if (conn == null) {
+            System.out.println("Database connection is not established. Please ensure that the database is set up correctly. Refer to the README for instructions.");
+
+        }
     }
 
     /**
@@ -78,6 +88,7 @@ public class ConnectDB {
      * @throws SQLException If an error occurs while accessing the database.
      */
     public static String getUserNameById(int userId) throws SQLException {
+        checkConnection();
         String query = "SELECT User_Name FROM client_schedule.users WHERE User_ID = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
