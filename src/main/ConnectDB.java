@@ -6,33 +6,39 @@ import constructors.*;
 
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The {@code ConnectDB} class is responsible for handling all database-related operations,
- * including establishing a connection to the database, executing queries, and managing data retrieval
- * and manipulation for various entities like customers, appointments, contacts, countries, and divisions.
- * <p>
- * This class encapsulates the functionality required to interact with the MySQL database, using JDBC.
- * It provides methods to save, update, retrieve, and manipulate data related to the client scheduling system.
+ * The {@code ConnectDB} class provides methods to manage connections and perform various
+ * database operations such as fetching, saving, and updating customer and appointment data.
+ * It uses the JDBC API to interact with the MySQL database.
  *
- * @author Katherine Caudill
  */
+// This class is responsible for connecting with the database
 public class ConnectDB {
 
     // These are the properties required to establish the connection with the database
-    private static final String databaseName = "mysql"; // Name of the database
+    // Name of the database
+    private static final String databaseName = "client_schedule";
+    // URL of the database server
     private static final String DB_URL = "jdbc:mysql://localhost:3306/" + databaseName
             + "?verifyServerCertificate=false"
-            + "&useSSL=true"
-            + "&requireSSL=true"; // URL of the database server
-    private static final String username = "root"; // Username for the database
-    private static final String password = ""; // Password for the database
-    private static final String driver = "com.mysql.cj.jdbc.Driver";  // JDBC driver name
+            + "&useSSL=false"
+            + "&requireSSL=false";
 
-    public static Connection conn; // Connection object to manage the connection
+    // Username for the database
+    private static final String username = "sqlUser";
+    // Password for the database
+    private static final String password = "Passw0rd!";
+    // JDBC driver name
+    private static final String driver = "com.mysql.cj.jdbc.Driver";
+    // Connection object to manage the connection
+    public static Connection conn;
+
 
     /**
      * Establishes a connection with the database and returns the connection object.
@@ -40,30 +46,22 @@ public class ConnectDB {
      * @return The connection object, or {@code null} if the connection fails.
      */
     public static Connection makeConnection() {
-        // Load and register the JDBC driver
-        try {
-            Class.forName(driver);
-            conn = DriverManager.getConnection(DB_URL, username, password); // Connect to the database
-            System.out.println("Connected to MySQL Database");
-            return conn; // Return the connection object
-        } catch (ClassNotFoundException e) {
-            System.out.println("Class Not Found " + e.getMessage()); // Exception handling if the driver class not found
-        } catch (SQLException e) {
-            System.out.println("SQLException: " + e.getMessage()); // Handle exceptions related to the database connectivity
-            System.out.println("SQLState: " + e.getSQLState());
-            System.out.println("VendorError: " + e.getErrorCode());
-            System.out.println("Please ensure that the database is set up correctly. Refer to the README for instructions.");
+        if (conn == null) { // Check if connection is already established
+            // Load and register the JDBC driver
+            try {
+                Class.forName(driver);
+                conn = DriverManager.getConnection(DB_URL, username, password); // Connect to the database
+                System.out.println("Connected to MySQL Database");
+                return conn; // Return the connection object
+            } catch (ClassNotFoundException e) {
+                System.out.println("Class Not Found " + e.getMessage()); // Exception handling if the driver class not found
+            } catch (SQLException e) {
+                System.out.println("SQLException: " + e.getMessage()); // Handle exceptions related to the database connectivity
+                System.out.println("SQLState: " + e.getSQLState());
+                System.out.println("VendorError: " + e.getErrorCode());
+            }
         }
-        System.out.println("Connection to MySQL Database failedDatabase connection is not established. Please ensure that the database is set up correctly. Refer to the README for instructions.");
-        return null; // If connection fails, return null
-    }
-
-    // New method to check the connection
-    private static void checkConnection() {
-        if (conn == null) {
-            System.out.println("Database connection is not established. Please ensure that the database is set up correctly. Refer to the README for instructions.");
-
-        }
+        return conn; // Return existing connection if already established
     }
 
     /**
@@ -74,11 +72,11 @@ public class ConnectDB {
      */
     public static LocalDateTime convertTimeDateUTC(String dateTimeStr) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime dateTime = LocalDateTime.parse(dateTimeStr, formatter);
-        // Implement your UTC conversion here
-        // ...
-        return dateTime;
+        LocalDateTime localDateTime = LocalDateTime.parse(dateTimeStr, formatter);
+        ZonedDateTime zdt = ZonedDateTime.of(localDateTime, ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC"));
+        return zdt.toLocalDateTime();
     }
+
 
     /**
      * Retrieves the username corresponding to the specified user ID.
@@ -88,7 +86,6 @@ public class ConnectDB {
      * @throws SQLException If an error occurs while accessing the database.
      */
     public static String getUserNameById(int userId) throws SQLException {
-        checkConnection();
         String query = "SELECT User_Name FROM client_schedule.users WHERE User_ID = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -103,11 +100,10 @@ public class ConnectDB {
         }
     }
 
+
     // Method to save appointment
     public static void saveAppointment(Appointment appointment) throws SQLException {
-
-        String sqlInsertAppointment = "INSERT INTO client_schedule.appointments(Title, Description, Location, Type, Start, End, Customer_ID, User_ID, Contact_ID, Created_By, Last_Updated_By) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
+        String sqlInsertAppointment = "INSERT INTO client_schedule.appointments(Title, Description, Location, Type, Start, End, Customer_ID, User_ID, Contact_ID, Created_By, Last_Updated_By, Create_Date, Last_Update) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sqlInsertAppointment)) {
             pstmt.setString(1, appointment.getAppointmentTitle());
             pstmt.setString(2, appointment.getAppointmentDescription());
@@ -117,16 +113,18 @@ public class ConnectDB {
             pstmt.setTimestamp(6, Timestamp.valueOf(appointment.getEnd()));
             pstmt.setInt(7, appointment.getCustomerID());
             pstmt.setInt(8, appointment.getUserID());
-            pstmt.setInt(9, appointment.getContactID()); // get the contactId from the Appointment object
+            pstmt.setInt(9, appointment.getContactID());
             pstmt.setString(10, appointment.getCreatedBy());
             pstmt.setString(11, appointment.getLastUpdatedBy());
-
+            pstmt.setTimestamp(12, Timestamp.valueOf(appointment.getCreateDate()));
+            pstmt.setTimestamp(13, Timestamp.valueOf(appointment.getLastUpdate()));
             pstmt.executeUpdate();
             System.out.println("Appointment " + appointment.getAppointmentTitle() + " has been added to the database.");
         } catch (SQLException ex) {
             System.err.println("Error while saving appointment: " + ex.getMessage());
         }
     }
+
 
     //method to get contact id by contact name
     public static int getContactIdByContactName(String contactName) throws SQLException {
@@ -296,6 +294,56 @@ public class ConnectDB {
             }
         }
     }
+    public static List<String> getRegionsByCountryName(String countryName) throws SQLException {
+        List<String> regions = new ArrayList<>();
+        String query = "SELECT fl.Division FROM first_level_divisions fl JOIN countries c ON fl.COUNTRY_ID = c.Country_ID WHERE c.Country = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, countryName);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    regions.add(rs.getString("Division"));
+                }
+            }
+        }
+        return regions;
+    }
+
+
+    public static String getCountryByAppointmentId(int appointmentId) throws SQLException {
+        String query = "SELECT countries.Country FROM countries " +
+                "JOIN first_level_divisions ON countries.Country_ID = first_level_divisions.COUNTRY_ID " +
+                "JOIN customers ON first_level_divisions.Division_ID = customers.Division_ID " +
+                "JOIN appointments ON customers.Customer_ID = appointments.Customer_ID " +
+                "WHERE appointments.Appointment_ID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, appointmentId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("Country");
+                } else {
+                    return null; // return null if no country found
+                }
+            }
+        }
+    }
+
+    public static String getRegionByAppointmentId(int appointmentId) throws SQLException {
+        String query = "SELECT first_level_divisions.Division FROM first_level_divisions " +
+                "JOIN customers ON first_level_divisions.Division_ID = customers.Division_ID " +
+                "JOIN appointments ON customers.Customer_ID = appointments.Customer_ID " +
+                "WHERE appointments.Appointment_ID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, appointmentId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("Division");
+                } else {
+                    return null; // return null if no region found
+                }
+            }
+        }
+    }
+
 
     //method to update customer
     public static void updateCustomer(Customer customer) throws SQLException {
@@ -358,12 +406,12 @@ public class ConnectDB {
      * @param customerId The customer ID to check.
      * @param startDateTime The start date-time of the appointment.
      * @param endDateTime The end date-time of the appointment.
+     * @param appointmentId The ID of the appointment being modified.
      * @return {@code true} if an overlapping appointment is found, {@code false} otherwise.
      * @throws SQLException If an error occurs while accessing the database.
      */
-    public static boolean doesAppointmentOverlap(int customerId, LocalDateTime startDateTime, LocalDateTime endDateTime) throws SQLException {
-        String query = "SELECT * FROM client_schedule.appointments WHERE Customer_ID = ? AND ((Start <= ? AND End > ?) OR (Start < ? AND End >= ?) OR (Start >= ? AND End <= ?))";
-
+    public static boolean doesAppointmentOverlap(int customerId, LocalDateTime startDateTime, LocalDateTime endDateTime, int appointmentId) throws SQLException {
+        String query = "SELECT * FROM client_schedule.appointments WHERE Customer_ID = ? AND ((Start <= ? AND End > ?) OR (Start < ? AND End >= ?) OR (Start >= ? AND End <= ?)) AND Appointment_ID != ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, customerId);
             stmt.setTimestamp(2, Timestamp.valueOf(startDateTime));
@@ -372,11 +420,40 @@ public class ConnectDB {
             stmt.setTimestamp(5, Timestamp.valueOf(endDateTime));
             stmt.setTimestamp(6, Timestamp.valueOf(startDateTime));
             stmt.setTimestamp(7, Timestamp.valueOf(endDateTime));
+            stmt.setInt(8, appointmentId);
             try (ResultSet rs = stmt.executeQuery()) {
                 return rs.next(); // Return true if an overlapping appointment is found, false otherwise
             }
         }
     }
+
+    /**
+     * Checks if an appointment overlaps with existing appointments for a given contact.
+     *
+     * @param contactId The contact ID to check.
+     * @param startDateTime The start date-time of the appointment.
+     * @param endDateTime The end date-time of the appointment.
+     * @param appointmentId The ID of the appointment being modified.
+     * @return {@code true} if an overlapping appointment is found, {@code false} otherwise.
+     * @throws SQLException If an error occurs while accessing the database.
+     */
+    public static boolean doesAppointmentOverlapForContact(int contactId, LocalDateTime startDateTime, LocalDateTime endDateTime, int appointmentId) throws SQLException {
+        String query = "SELECT * FROM client_schedule.appointments WHERE Contact_ID = ? AND ((Start <= ? AND End > ?) OR (Start < ? AND End >= ?) OR (Start >= ? AND End <= ?)) AND Appointment_ID != ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, contactId);
+            stmt.setTimestamp(2, Timestamp.valueOf(startDateTime));
+            stmt.setTimestamp(3, Timestamp.valueOf(startDateTime));
+            stmt.setTimestamp(4, Timestamp.valueOf(endDateTime));
+            stmt.setTimestamp(5, Timestamp.valueOf(endDateTime));
+            stmt.setTimestamp(6, Timestamp.valueOf(startDateTime));
+            stmt.setTimestamp(7, Timestamp.valueOf(endDateTime));
+            stmt.setInt(8, appointmentId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next(); // Return true if an overlapping appointment is found, false otherwise
+            }
+        }
+    }
+
 
     /**
      * Updates an existing appointment in the database.

@@ -1,4 +1,5 @@
 
+// Purpose: Controller for the login form. Handles login operations and logs the login of a user.
 package controllers;
 
 // Necessary import statements for file, database, GUI, and other operations
@@ -34,13 +35,12 @@ import java.time.ZoneId;
 import java.util.Optional;
 
 
-
 /**
  * Controller class for managing the login form of the application.
  * This class contains methods for handling user login and logging user activities.
  *
- * @author Katherine Caudill
  */
+// Class that serves as controller for login operations
 public class LoginController implements Initializable {
 
     // FXML fields for interacting with the GUI
@@ -132,7 +132,16 @@ public class LoginController implements Initializable {
         String password = txtPassword.getText();
 
         // Retrieve user ID from database
-        int userID = getUserID(userName);
+        int userID = -1;
+        try {
+            userID = getUserID(userName);
+        } catch (SQLException e) {
+            // Handle the runtime error that happens for invalid user ID
+            System.err.println("Error fetching user ID: " + e.getMessage());
+            // Log the failed login attempt since there's an exception (considered as a failed attempt)
+            loginLog(userName, false);
+            return;
+        }
 
         // Initialize parent and stage for scene transition
         Parent root;
@@ -145,8 +154,8 @@ public class LoginController implements Initializable {
             user.setUserID(userID);
             user.setUsername(userName);
 
-            // Log the login operation
-            loginLog(user.getUsername());
+            // Log the successful login operation
+            loginLog(user.getUsername(), true);
 
             // Change the scene to home.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/home.fxml"));
@@ -162,12 +171,19 @@ public class LoginController implements Initializable {
             stage.show();
 
         } else {
+            // Get the current locale and resource bundle
+            Locale locale = getCurrentLocale();
+            ResourceBundle rb = ResourceBundle.getBundle("main/language", locale);
+
             // Show an alert when the username or password is incorrect
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("");
-            alert.setHeaderText("Incorrect Username or Password");
-            alert.setContentText("Enter valid Username and Password");
+            alert.setTitle(rb.getString("alert.title"));
+            alert.setHeaderText(rb.getString("alert.header.incorrectCredentials"));
+            alert.setContentText(rb.getString("alert.content.validCredentials"));
             Optional<ButtonType> result = alert.showAndWait();
+
+            // Log the failed login attempt
+            loginLog(userName, false);
         }
     }
 
@@ -229,20 +245,21 @@ public class LoginController implements Initializable {
         return false;
     }
 
-
     /**
      * Logs the successful login of a user.
      *
-     * @param user The username of the user who logged in.
+     * @param user The username of the user who attempted to log in.
+     * @param isSuccess Indicates if the login attempt was successful or not.
      */
-    public void loginLog(String user) {
+    public void loginLog(String user, boolean isSuccess) {
         try {
             // Specify the file name where the logs are to be written
-            String fileName = "loginLog";
+            String fileName = "login_activity.txt";
             BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true));
 
-            // Append the current time stamp and the user who logged in
-            writer.append(DateAndTime.getTimeStamp() + " " + user + " " + "\n");
+            // Append the current time stamp, the user who tried to log in, and the status
+            String status = isSuccess ? "Successful login" : "Failed login";
+            writer.append(DateAndTime.getTimeStamp() + " - User: " + user + " - Status: " + status + "\n");
 
             // Print a message on the console indicating that a new login has been recorded
             System.out.println("New login recorded in log file.");
@@ -255,5 +272,6 @@ public class LoginController implements Initializable {
             System.out.println(e);
         }
     }
+
 
 }

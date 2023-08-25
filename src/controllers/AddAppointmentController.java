@@ -24,13 +24,12 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * FXML Controller class.
- * This class is responsible for controlling the Add Appointment screen.
- * It provides functionalities to add a new appointment to the database,
- * validate the appointment data before saving it to the database,
- * check if the appointment is within business hours,
- * check if the appointment is scheduled for a weekend, and
- * check if the appointment overlaps with any existing appointments for the same customer.
+ * FXML Controller class for the Add Appointment screen.
+ * <p>
+ * This class is responsible for handling the logic of adding a new appointment to the database. It provides various validations
+ * including checking if the appointment is within business hours, if it is scheduled for a weekend, and if the appointment
+ * overlaps with any existing appointments for the same customer.
+ * </p>
  */
 public class AddAppointmentController implements Initializable {
 
@@ -59,10 +58,16 @@ public class AddAppointmentController implements Initializable {
     @FXML
     private TextField appointmentIdField;
 
+    // Add the currentUserTimeZone as a class variable
+    private String currentUserTimeZone = ZoneId.systemDefault().getId();
+
+
     /**
-     * Initializes the controller class.
-     * This method is called after all @FXML annotated members have been injected.
-     * It loads contacts, appointment times, and customers, and sets the User ID field.
+     * Initializes the controller class by loading contacts, appointment times, and customers.
+     * It also sets the User ID field with the ID of the current logged-in user and disables it.
+     *
+     * @param url            the location used to resolve relative paths for the root object
+     * @param resourceBundle the resources used to localize the root object
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -75,7 +80,6 @@ public class AddAppointmentController implements Initializable {
         // Set the User ID field with the ID of the current logged in user
         userIdField.setText(String.valueOf(ConnectDB.getCurrentUserId()));
     }
-
 
     /**
      * Loads the contacts from the database and populates the contactBox.
@@ -119,12 +123,11 @@ public class AddAppointmentController implements Initializable {
 
     /**
      * Handles the save button action.
-     * Validates the appointment details and saves the appointment to the database.
-     * Performs various checks such as verifying if the end time is before the start time,
-     * if the appointment is within business hours, if it is scheduled for a weekend, and if it overlaps with existing appointments.
+     * This method collects the appointment details from the form, validates the data, and saves the appointment to the database.
+     * It also navigates back to the home screen upon successful saving.
      *
-     * @param event the action event
-     * @throws IOException if there's an issue loading the home view
+     * @param event the action event triggered by the Save button
+     * @throws IOException if there's an issue navigating to the home view
      */
     @FXML
     public void handleSaveButtonAction(ActionEvent event) throws IOException {
@@ -150,13 +153,44 @@ public class AddAppointmentController implements Initializable {
             return;
         }
 
-        String startDateTimeStr = startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " " + startTime + ":00";
-        String endDateTimeStr = endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " " + endTime + ":00";
-        LocalDateTime startDateTime = ConnectDB.convertTimeDateUTC(startDateTimeStr);
-        LocalDateTime endDateTime = ConnectDB.convertTimeDateUTC(endDateTimeStr);
+//        String startDateTimeStr = startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " " + startTime + ":00";
+//        String endDateTimeStr = endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " " + endTime + ":00";
+//        LocalDateTime startDateTime = ConnectDB.convertTimeDateUTC(startDateTimeStr);
+//        LocalDateTime endDateTime = ConnectDB.convertTimeDateUTC(endDateTimeStr);
+
+        //this for enter time in local time  zone
+//        ZoneId userZone = ZoneId.of(currentUserTimeZone);
+//        ZonedDateTime startZDT = ZonedDateTime.of(startDate, LocalTime.parse(startTime), userZone);
+//        ZonedDateTime endZDT = ZonedDateTime.of(endDate, LocalTime.parse(endTime), userZone);
+
+        // Assume the user enters the time in Eastern Standard Time (EST)
+        ZoneId estZone = ZoneId.of("America/New_York");
+        ZonedDateTime startZDT = ZonedDateTime.of(startDate, LocalTime.parse(startTime), estZone);
+        ZonedDateTime endZDT = ZonedDateTime.of(endDate, LocalTime.parse(endTime), estZone);
+
+
+//        // Convert the local time to ET for business hour vafndleSaveButtonlidation
+//        ZonedDateTime startDateTimeET = startZDT.withZoneSameInstant(ZoneId.of("America/New_York"));
+//        ZonedDateTime endDateTimeET = endZDT.withZoneSameInstant(ZoneId.of("America/New_York"));
+//
+//        if (startDateTimeET.toLocalTime().isBefore(LocalTime.of(8, 0)) || endDateTimeET.toLocalTime().isAfter(LocalTime.of(22, 0))) {
+//            actionStatus.setText("Appointment times must be within business hours (8:00 a.m. to 10:00 p.m. ET).");
+//            return;
+//        }
+
+        // Check if the appointment is within business hours in EST
+        if (startZDT.toLocalTime().isBefore(LocalTime.of(8, 0)) || endZDT.toLocalTime().isAfter(LocalTime.of(22, 0))) {
+            actionStatus.setText("Appointment times must be within business hours (8:00 a.m. to 10:00 p.m. ET).");
+            return;
+        }
+
+        // Convert to UTC for storage
+        LocalDateTime startDateTimeUTC = startZDT.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
+        LocalDateTime endDateTimeUTC = endZDT.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
+
 
         // Check if the end time is before the start time
-        if (endDateTime.isBefore(startDateTime)) {
+        if (endDateTimeUTC.isBefore(startDateTimeUTC)) {
             actionStatus.setText("End time cannot be before start time.");
             return;
         }
@@ -203,43 +237,59 @@ public class AddAppointmentController implements Initializable {
         }
 
         // Check if the appointment is within business hours
-        ZonedDateTime startDateTimeET = startDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("America/New_York"));
-        ZonedDateTime endDateTimeET = endDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("America/New_York"));
-        if (startDateTimeET.toLocalTime().isBefore(LocalTime.of(8, 0)) || endDateTimeET.toLocalTime().isAfter(LocalTime.of(22, 0))) {
-            actionStatus.setText("Appointment times must be within business hours (8:00 a.m. to 10:00 p.m. ET).");
-            return;
-        }
+//        ZonedDateTime startDateTimeET = startDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("America/New_York"));
+//        ZonedDateTime endDateTimeET = endDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("America/New_York"));
+//        if (startDateTimeET.toLocalTime().isBefore(LocalTime.of(8, 0)) || endDateTimeET.toLocalTime().isAfter(LocalTime.of(22, 0))) {
+//            actionStatus.setText("Appointment times must be within business hours (8:00 a.m. to 10:00 p.m. ET).");
+//            return;
+//        }
+        // Check if the appointment is within business hours
+//        if (startDateTimeUTC.toLocalTime().isBefore(LocalTime.of(8, 0)) || endDateTimeUTC.toLocalTime().isAfter(LocalTime.of(22, 0))) {
+//            actionStatus.setText("Appointment times must be within business hours (8:00 a.m. to 10:00 p.m. ET).");
+//            return;
+//        }
+
 
         // Check if the appointment is scheduled for a weekend
-        if (startDateTime.getDayOfWeek() == DayOfWeek.SATURDAY || startDateTime.getDayOfWeek() == DayOfWeek.SUNDAY ||
-                endDateTime.getDayOfWeek() == DayOfWeek.SATURDAY || endDateTime.getDayOfWeek() == DayOfWeek.SUNDAY) {
-            actionStatus.setText("Appointments cannot be scheduled on weekends.");
-            return;
-        }
+//        if (startDateTime.getDayOfWeek() == DayOfWeek.SATURDAY || startDateTime.getDayOfWeek() == DayOfWeek.SUNDAY ||
+//                endDateTime.getDayOfWeek() == DayOfWeek.SATURDAY || endDateTime.getDayOfWeek() == DayOfWeek.SUNDAY) {
+//            actionStatus.setText("Appointments cannot be scheduled on weekends.");
+//            return;
+//        }
 
         // Check if the appointment overlaps with any existing appointments for the same customer
         try {
-            if (ConnectDB.doesAppointmentOverlap(customerId, startDateTime, endDateTime)) {
-                actionStatus.setText("Cannot main overlapping appointments for the same customer.");
+            if (ConnectDB.doesAppointmentOverlap(customerId, startDateTimeUTC, endDateTimeUTC, -1)) {
+                actionStatus.setText("Cannot have overlapping appointments for the same customer. Must change to not be overlapping or cancel.");
                 return;
             }
         } catch (SQLException ex) {
             actionStatus.setText("Error while checking for overlapping appointments: " + ex.getMessage());
             return;
         }
-
         // Check if the appointment is within business hours
-        if (startDateTime.toLocalTime().isBefore(LocalTime.of(8, 0)) || endDateTime.toLocalTime().isAfter(LocalTime.of(22, 0))) {
-            actionStatus.setText("Appointment times must be within business hours (8:00 a.m. to 10:00 p.m. ET).");
+//        if (startDateTime.toLocalTime().isBefore(LocalTime.of(8, 0)) || endDateTime.toLocalTime().isAfter(LocalTime.of(22, 0))) {
+//            actionStatus.setText("Appointment times must be within business hours (8:00 a.m. to 10:00 p.m. ET).");
+//            return;
+//        }
+
+        // Check if the appointment overlaps with any existing appointments for the same contact
+        try {
+            if (ConnectDB.doesAppointmentOverlapForContact(contactId, startDateTimeUTC, endDateTimeUTC, -1)) {
+                actionStatus.setText("Cannot have overlapping appointments for the same contact. Must change to not be overlapping or cancel.");
+                return;
+            }
+        } catch (SQLException ex) {
+            actionStatus.setText("Error while checking for overlapping appointments for contact: " + ex.getMessage());
             return;
         }
 
         // Create a new Appointment object with the data
         Appointment newAppointment = new Appointment(0, contactId, now, currentUser, customerId,
-                description, endDateTime, now, currentUser, location, startDateTime, title, type, userId);
+                description, endDateTimeUTC, now, currentUser, location, startDateTimeUTC, title, type, userId);
 
         try {
-            ConnectDB.saveAppointment(newAppointment);  // pass in contactId
+            ConnectDB.saveAppointment(newAppointment);
             Parent homeParent = FXMLLoader.load(getClass().getResource("/views/home.fxml"));
             Scene homeScene = new Scene(homeParent);
             Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -251,14 +301,13 @@ public class AddAppointmentController implements Initializable {
     }
 
     /**
-     * Handle the cancel button action
-     * A lambda expression is used to handle the alert dialog button click event.
-     * This provides a concise way to define the functionality directly within the method.
+     * Handles the cancel button action.
+     * This method displays a confirmation dialog to the user and navigates back to the home screen if the user confirms the cancellation.
+     * A lambda expression is used to handle the alert dialog button click event, providing a concise way to define the functionality.
      *
-     * @param event the action event
+     * @param event the action event triggered by the Cancel button
      * @throws IOException if there's an issue loading the home view
      */
-
     @FXML
     public void cancelCreation(ActionEvent event) throws IOException {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION,

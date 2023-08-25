@@ -9,8 +9,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import constructors.Appointment;
+import constructors.Country;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -36,7 +38,7 @@ import main.ConnectDB;
  * This class handles the modification of existing appointments, including loading appointment data
  * and handling user interactions to update or cancel the modification.
  *
- * @author Katherine Caudill
+ *
  */
 public class ModifyAppointmentController implements Initializable {
 
@@ -62,6 +64,7 @@ public class ModifyAppointmentController implements Initializable {
     private Text actionStatus;
     @FXML
     private ComboBox<String> customerBox;
+
     @FXML
     private TextField appointmentIdField;
     private Appointment appointmentToModify;
@@ -76,6 +79,9 @@ public class ModifyAppointmentController implements Initializable {
         loadAppointmentData();
     }
 
+    private String currentUserTimeZone = ZoneId.systemDefault().getId();
+
+
     /**
      * Loads the appointment data into the form fields.
      */
@@ -86,23 +92,36 @@ public class ModifyAppointmentController implements Initializable {
             locationField.setText(appointmentToModify.getAppointmentLocation());
             typeField.setText(appointmentToModify.getAppointmentType());
 
-            // Convert the LocalDateTime to LocalDate and LocalTime
-            LocalDate startDate = appointmentToModify.getStart().toLocalDate();
-            LocalTime startTime = appointmentToModify.getStart().toLocalTime();
-            LocalDate endDate = appointmentToModify.getEnd().toLocalDate();
-            LocalTime endTime = appointmentToModify.getEnd().toLocalTime();
+            // Convert UTC LocalDateTime to user's time zone
+//            ZonedDateTime startZDT = appointmentToModify.getStart().atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of(currentUserTimeZone));
+//            ZonedDateTime endZDT = appointmentToModify.getEnd().atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of(currentUserTimeZone));
 
-            startDatePicker.setValue(startDate);
-            startTimeBox.setValue(startTime.toString());
-            endDatePicker.setValue(endDate);
-            endTimeBox.setValue(endTime.toString());
+
+//            startDatePicker.setValue(startZDT.toLocalDate());
+//            startTimeBox.setValue(startZDT.toLocalTime().toString());
+//            endDatePicker.setValue(endZDT.toLocalDate());
+//            endTimeBox.setValue(endZDT.toLocalTime().toString());
+
+            // Convert UTC LocalDateTime to Eastern Standard Time (EST)
+            ZonedDateTime startZDT = appointmentToModify.getStart().atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("America/New_York"));
+            ZonedDateTime endZDT = appointmentToModify.getEnd().atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("America/New_York"));
+
+            startDatePicker.setValue(startZDT.toLocalDate());
+            startTimeBox.setValue(startZDT.toLocalTime().toString());
+            endDatePicker.setValue(endZDT.toLocalDate());
+            endTimeBox.setValue(endZDT.toLocalTime().toString());
+
+//            startDatePicker.setValue(startZDT.toLocalDate());
+//            startTimeBox.setValue(startZDT.toLocalTime().toString());
+//            endDatePicker.setValue(endZDT.toLocalDate());
+//            endTimeBox.setValue(endZDT.toLocalTime().toString());
 
             try {
                 // Get the names of the contact and customer for this appointment
                 String contactName = ConnectDB.getContactNameById(appointmentToModify.getContactID());
                 String customerName = ConnectDB.getCustomerNameById(appointmentToModify.getCustomerID());
+                String countryName = ConnectDB.getCountryByAppointmentId(appointmentToModify.getAppointmentID());
 
-                // Set the ComboBoxes to the selected contact and customer
                 contactBox.setValue(contactName);
                 customerBox.setValue(customerName);
 
@@ -127,7 +146,11 @@ public class ModifyAppointmentController implements Initializable {
         loadContacts();
         loadAppointmentTimes();
         loadCustomers();
+        // loadCountries();  // New method to load countries
+        //preloadRegionForSelectedCountry();  // New method to preload regions for the selected country
         loadAppointmentData();
+
+
         // Disable the User ID field
         userIdField.setDisable(true);
 
@@ -185,7 +208,6 @@ public class ModifyAppointmentController implements Initializable {
         }
     }
 
-
     /**
      * Loads all appointment times into the startTimeBox and endTimeBox ComboBoxes.
      */
@@ -200,6 +222,9 @@ public class ModifyAppointmentController implements Initializable {
         startTimeBox.setItems(appointmentTimes);
         endTimeBox.setItems(appointmentTimes);
     }
+
+
+
 
     /**
      * Handles the save button action for updating the appointment.
@@ -217,62 +242,86 @@ public class ModifyAppointmentController implements Initializable {
         String description = descriptionField.getText();
         String contactName = contactBox.getValue();
         String customerName = customerBox.getValue();
-        LocalDateTime startDateTime = LocalDateTime.of(startDatePicker.getValue(), LocalTime.parse(startTimeBox.getValue()));
-        LocalDateTime endDateTime = LocalDateTime.of(endDatePicker.getValue(), LocalTime.parse(endTimeBox.getValue()));
+
+        //for entering in local time zone
+//        ZoneId userZone = ZoneId.of(currentUserTimeZone);
+//        ZonedDateTime startZDT = ZonedDateTime.of(startDatePicker.getValue(), LocalTime.parse(startTimeBox.getValue()), userZone);
+//        ZonedDateTime endZDT = ZonedDateTime.of(endDatePicker.getValue(), LocalTime.parse(endTimeBox.getValue()), userZone);
+
+//        LocalDateTime startDateTimeUTC = startZDT.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
+//        LocalDateTime endDateTimeUTC = endZDT.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
+
+        // Assume the user enters the time in Eastern Standard Time (EST)
+        ZoneId estZone = ZoneId.of("America/New_York");
+        ZonedDateTime startZDT = ZonedDateTime.of(startDatePicker.getValue(), LocalTime.parse(startTimeBox.getValue()), estZone);
+        ZonedDateTime endZDT = ZonedDateTime.of(endDatePicker.getValue(), LocalTime.parse(endTimeBox.getValue()), estZone);
+
+        // Convert the EST time to UTC for storage in the database
+        LocalDateTime startDateTimeUTC = startZDT.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
+        LocalDateTime endDateTimeUTC = endZDT.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
+
         int userId = Integer.parseInt(userIdField.getText());
         int appointmentId = Integer.parseInt(appointmentIdField.getText());
-
         int contactId = ConnectDB.getContactIdByContactName(contactName);
         int customerId = ConnectDB.getCustomerIdByCustomerName(customerName);
-        Appointment updatedAppointment = new Appointment(
-                appointmentId,
-                contactId,
-                startDateTime,
-                "", // createdBy
-                customerId,
-                description,
-                endDateTime,
-                startDateTime, // lastUpdate
-                "", // lastUpdatedBy
-                location,
-                startDateTime,
-                title,
-                type,
-                userId
-        );
-
-        // Check if the appointment is within business hours
-        ZonedDateTime startDateTimeET = startDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("America/New_York"));
-        ZonedDateTime endDateTimeET = endDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("America/New_York"));
-        if (startDateTimeET.toLocalTime().isBefore(LocalTime.of(8, 0)) || endDateTimeET.toLocalTime().isAfter(LocalTime.of(22, 0))) {
-            actionStatus.setText("Appointment times must be within business hours (8:00 a.m. to 10:00 p.m. ET).");
-            return;
-        }
-
-
-        // Check if the appointment is scheduled for a weekend
-        if (startDateTime.getDayOfWeek() == DayOfWeek.SATURDAY || startDateTime.getDayOfWeek() == DayOfWeek.SUNDAY ||
-                endDateTime.getDayOfWeek() == DayOfWeek.SATURDAY || endDateTime.getDayOfWeek() == DayOfWeek.SUNDAY) {
-            actionStatus.setText("Appointments cannot be scheduled on weekends.");
-            return;
-        }
 
         // Check if the end time is before the start time
-        if (endDateTime.isBefore(startDateTime)) {
+        if (endDateTimeUTC.isBefore(startDateTimeUTC)) {
             actionStatus.setText("End time cannot be before start time.");
             return;
         }
 
         // Check if the appointment overlaps with any existing appointments for the same customer
         try {
-            if (ConnectDB.doesAppointmentOverlap(customerId, startDateTime, endDateTime)) {
-                actionStatus.setText("Cannot main overlapping appointments for the same customer.");
+            int currentAppointmentId = Integer.parseInt(appointmentIdField.getText());
+            if (ConnectDB.doesAppointmentOverlap(customerId, startDateTimeUTC, endDateTimeUTC, currentAppointmentId)) {
+                actionStatus.setText("Cannot have overlapping appointments for the same customer. Must change to not be overlapping or cancel.");
                 return;
             }
         } catch (SQLException ex) {
             actionStatus.setText("Error while checking for overlapping appointments: " + ex.getMessage());
             return;
         }
+
+        // Check if the appointment overlaps with any existing appointments for the same contact
+        try {
+            int currentAppointmentId = Integer.parseInt(appointmentIdField.getText());
+            if (ConnectDB.doesAppointmentOverlapForContact(contactId, startDateTimeUTC, endDateTimeUTC, currentAppointmentId)) {
+                actionStatus.setText("Cannot have overlapping appointments for the same contact. Must change to not be overlapping or cancel.");
+                return;
+            }
+        } catch (SQLException ex) {
+            actionStatus.setText("Error while checking for overlapping appointments for contact: " + ex.getMessage());
+            return;
+        }
+
+
+        // Check if the appointment is within business hours (converted to ET for consistency)
+        ZonedDateTime startDateTimeET = startZDT.withZoneSameInstant(ZoneId.of("America/New_York"));
+        ZonedDateTime endDateTimeET = endZDT.withZoneSameInstant(ZoneId.of("America/New_York"));
+        if (startDateTimeET.toLocalTime().isBefore(LocalTime.of(8, 0)) || endDateTimeET.toLocalTime().isAfter(LocalTime.of(22, 0))) {
+            actionStatus.setText("Appointment times must be within business hours (8:00 a.m. to 10:00 p.m. ET).");
+            return;
+        }
+
+        // Create the updated Appointment object
+        Appointment updatedAppointment = new Appointment(
+                appointmentId,
+                contactId,
+                startDateTimeUTC,
+                "", // createdBy
+                customerId,
+                description,
+                endDateTimeUTC,
+                startDateTimeUTC, // lastUpdate
+                "", // lastUpdatedBy
+                location,
+                startDateTimeUTC,
+                title,
+                type,
+                userId
+        );
+
         try {
             ConnectDB.updateAppointment(updatedAppointment);
             Parent homeParent = FXMLLoader.load(getClass().getResource("/views/home.fxml"));
@@ -284,6 +333,7 @@ public class ModifyAppointmentController implements Initializable {
             System.err.println("Error while updating appointment: " + ex.getMessage());
         }
     }
+
 
     /**
      * Handles the cancel button action for canceling the appointment update.

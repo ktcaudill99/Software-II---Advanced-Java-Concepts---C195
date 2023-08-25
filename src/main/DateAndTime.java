@@ -2,6 +2,7 @@
 package main;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -11,8 +12,6 @@ import java.time.format.DateTimeFormatter;
  * formatted according to the system's default time zone.
  * <p>
  * It includes methods to get the current timestamp as a formatted string and the current date as a SQL date object.
- *
- * @author Katherine Caudill
  */
 public class DateAndTime {
 
@@ -37,5 +36,31 @@ public class DateAndTime {
         java.sql.Date date = java.sql.Date.valueOf(LocalDate.now());
         return date;
     }
+    public static LocalDateTime convertToLocalDateTimeFromUTC(String dateTimeStr) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.parse(dateTimeStr, formatter);
+        ZoneId utcZoneId = ZoneId.of("UTC");
+        ZoneId systemZoneId = ZoneId.systemDefault();
+        return dateTime.atZone(utcZoneId).withZoneSameInstant(systemZoneId).toLocalDateTime();
+    }
+
+    public static LocalDateTime convertToUTCFromLocalDateTime(LocalDateTime localDateTime) {
+        ZoneId systemZoneId = ZoneId.systemDefault();
+        ZoneId utcZoneId = ZoneId.of("UTC");
+        return localDateTime.atZone(systemZoneId).withZoneSameInstant(utcZoneId).toLocalDateTime();
+    }
+
+    public static LocalDateTime convertToETFromLocalDateTime(LocalDateTime localDateTime) {
+        ZoneId systemZoneId = ZoneId.systemDefault();
+        ZoneId etZoneId = ZoneId.of("America/New_York");
+        return localDateTime.atZone(systemZoneId).withZoneSameInstant(etZoneId).toLocalDateTime();
+    }
+
+    public static LocalDateTime convertToLocalDateTimeFromET(LocalDateTime etDateTime) {
+        ZoneId etZoneId = ZoneId.of("America/New_York");
+        ZoneId systemZoneId = ZoneId.systemDefault();
+        return etDateTime.atZone(etZoneId).withZoneSameInstant(systemZoneId).toLocalDateTime();
+    }
+
 }
 

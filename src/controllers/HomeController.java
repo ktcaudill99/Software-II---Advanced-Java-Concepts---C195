@@ -4,7 +4,8 @@ package controllers;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
-import java.time.LocalDateTime;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
 import constructors.Appointment;
@@ -28,11 +29,11 @@ import javafx.util.Callback;
 import main.ConnectDB;
 import main.ScheduleService;
 
-import java.time.LocalDate;
-import java.time.Month;
 import java.time.temporal.WeekFields;
 import java.util.stream.Collectors;
 import java.sql.Timestamp;
+
+
 
 
 /**
@@ -109,7 +110,16 @@ public class HomeController implements Initializable {
     @FXML
     private ToggleGroup radioButtonToggleGroup;
 
-
+    /**
+     * Converts the provided UTC date and time to the local system's date and time.
+     *
+     * @param utcDateTime The date and time in UTC to convert.
+     * @return The converted local date and time.
+     */
+    public static LocalDateTime convertFromUTCtoLocal(LocalDateTime utcDateTime) {
+        ZonedDateTime zdt = ZonedDateTime.of(utcDateTime, ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault());
+        return zdt.toLocalDateTime();
+    }
     /**
      * Initializes the controller for the Home view.
      * Sets up radio buttons, retrieves all customers and appointments, sets cell value factories, and initializes ScheduleService.
@@ -148,12 +158,25 @@ public class HomeController implements Initializable {
 
         this.colAppID.setCellValueFactory(new PropertyValueFactory<>("appointmentID"));
         this.colContact.setCellValueFactory(new PropertyValueFactory<>("contactID"));
-        this.colStart.setCellValueFactory(new PropertyValueFactory<>("start"));
+
+        // Format the start time using a custom cell factory
+        this.colStart.setCellValueFactory(cellData -> {
+            LocalDateTime localStart = convertFromUTCtoLocal(cellData.getValue().getStart());
+            return new SimpleStringProperty(localStart.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+        });
+
+        // Format the end time using a custom cell factory
+        this.colEnd.setCellValueFactory(cellData -> {
+            LocalDateTime localEnd = convertFromUTCtoLocal(cellData.getValue().getEnd());
+            return new SimpleStringProperty(localEnd.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+        });
+
+        // this.colStart.setCellValueFactory(new PropertyValueFactory<>("start"));
         this.colTitle.setCellValueFactory(new PropertyValueFactory<>("appointmentTitle"));
         this.colType.setCellValueFactory(new PropertyValueFactory<>("appointmentType"));
         this.colCustomerID.setCellValueFactory(new PropertyValueFactory<>("customerID"));
         this.colDescription.setCellValueFactory(new PropertyValueFactory<>("appointmentDescription"));
-        this.colEnd.setCellValueFactory(new PropertyValueFactory<>("end"));
+        //   this.colEnd.setCellValueFactory(new PropertyValueFactory<>("end"));
         this.colLocation.setCellValueFactory(new PropertyValueFactory<>("appointmentLocation"));
         this.colUserID.setCellValueFactory(new PropertyValueFactory<>("userID"));
 
@@ -256,7 +279,6 @@ public class HomeController implements Initializable {
         }
     }
 
-
     //radio buttons for appointment view
     @FXML
     private void currentMonthAction(ActionEvent event) {
@@ -312,59 +334,74 @@ public class HomeController implements Initializable {
     @FXML
     private void deleteAppAction(ActionEvent event) throws SQLException {
         if (selectedAppointment != null) {
-        System.out.println("Selected Appointment: " + selectedAppointment.getAppointmentID()); // Debug line
+            System.out.println("Selected Appointment: " + selectedAppointment.getAppointmentID()); // Debug line
 
-        // Confirm deletion
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirmation Dialog");
-        alert.setHeaderText("Delete Appointment");
-        alert.setContentText("Are you sure you want to delete this appointment?");
+            int appointmentId = selectedAppointment.getAppointmentID(); // Store the ID before deleting
+            String appointmentType = selectedAppointment.getAppointmentType(); // Assuming there's a getAppointmentType() method. Store the type before deleting
 
-        // Show alert and wait for user to close it
-        ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
+            // Confirm deletion
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation Dialog");
+            alert.setHeaderText("Delete Appointment");
+            alert.setContentText("Are you sure you want to delete this appointment?");
 
-        // Only proceed with deletion if OK was clicked
-        if (result == ButtonType.OK) {
-            String sqlDeleteAppointments = "DELETE FROM client_schedule.appointments WHERE appointment_ID = ?";
-            try (PreparedStatement pstmtAppointments = ConnectDB.conn.prepareStatement(sqlDeleteAppointments))
-                {
-                // Start a transaction
-                ConnectDB.conn.setAutoCommit(false);
-                // Delete appointments
-                pstmtAppointments.setInt(1, selectedAppointment.getAppointmentID());
-                int rowsAffectedAppointments = pstmtAppointments.executeUpdate(); // Returns number of affected rows
-                System.out.println("Appointments Deleted: " + rowsAffectedAppointments); // Debug line
-                // Commit transaction
-                ConnectDB.conn.commit();
-                // Remove appointment from list
-                allAppointments.remove(selectedAppointment);
-                // Also, remove this customer's appointments from the allAppointments list
-                tvAppointments.refresh();
+            // Show alert and wait for user to close it
+            ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
 
-            } catch (SQLException ex) {
-                // If there was an error then rollback the changes
-                if (ConnectDB.conn != null) {
+            // Only proceed with deletion if OK was clicked
+            if (result == ButtonType.OK) {
+                String sqlDeleteAppointments = "DELETE FROM client_schedule.appointments WHERE appointment_ID = ?";
+                try (PreparedStatement pstmtAppointments = ConnectDB.conn.prepareStatement(sqlDeleteAppointments)) {
+
+                    // Start a transaction
+                    ConnectDB.conn.setAutoCommit(false);
+
+                    // Delete appointments
+                    pstmtAppointments.setInt(1, appointmentId);
+                    int rowsAffectedAppointments = pstmtAppointments.executeUpdate(); // Returns number of affected rows
+                    System.out.println("Appointments Deleted: " + rowsAffectedAppointments); // Debug line
+
+                    // Commit transaction
+                    ConnectDB.conn.commit();
+
+                    // Remove appointment from list
+                    allAppointments.remove(selectedAppointment);
+
+                    // Refresh the table view to reflect changes
+                    tvAppointments.refresh();
+
+                    // Show confirmation after successful deletion using stored ID and type
+                    Alert confirmation = new Alert(Alert.AlertType.INFORMATION);
+                    confirmation.setTitle("Appointment Deleted");
+                    confirmation.setHeaderText("Successfully Deleted Appointment");
+                    confirmation.setContentText("Appointment ID: " + appointmentId +
+                            "\nType: " + appointmentType);
+                    confirmation.show();
+
+                } catch (SQLException ex) {
+                    // If there was an error then rollback the changes
+                    if (ConnectDB.conn != null) {
+                        try {
+                            System.err.println("Transaction is being rolled back due to: " + ex.getMessage()); // Debug line
+                            ConnectDB.conn.rollback();
+                        } catch (SQLException e) {
+                            // Handle exception
+                            System.err.println("Error during rollback: " + e.getMessage()); // Debug line
+                        }
+                    }
+                } finally {
                     try {
-                        System.err.println("Transaction is being rolled back due to: " + ex.getMessage()); // Debug line
-                        ConnectDB.conn.rollback();
+                        ConnectDB.conn.setAutoCommit(true);
                     } catch (SQLException e) {
                         // Handle exception
-                        System.err.println("Error during rollback: " + e.getMessage()); // Debug line
+                        System.err.println("Error setting auto commit: " + e.getMessage()); // Debug line
                     }
                 }
-            } finally {
-                try {
-                    ConnectDB.conn.setAutoCommit(true);
-                } catch (SQLException e) {
-                    // Handle exception
-                    System.err.println("Error setting auto commit: " + e.getMessage()); // Debug line
-                }
             }
+        } else {
+            // Inform the user that no appointment was selected
+            System.out.println("No appointment selected."); // Debug line
         }
-    } else {
-        // Inform the user that no customer was selected
-            System.out.println("No customer selected."); // Debug line
-    }
     }
 
     //add customer button

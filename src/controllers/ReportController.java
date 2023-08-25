@@ -15,8 +15,10 @@ import main.ConnectDB;
 
 
 /**
- * This class is the controller for the report view.
- * It handles the generation of reports.
+ * Controller class for the report view.
+ * This class is responsible for generating various reports related to appointments, contacts, and scheduling.
+ * It provides functionality to generate reports based on appointment types, contact schedules, and contact information.
+ *
  *
  */
 public class ReportController {
@@ -68,7 +70,6 @@ public class ReportController {
             reportArea2.appendText("Error generating report: " + e.getMessage() + "\n");
         }
     }
-
 
     /**
      * Generates the contact schedule for a specific contact.
